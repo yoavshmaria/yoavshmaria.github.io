@@ -1,0 +1,984 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>HSBC UK — Marketing ROI Intelligence Portal</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.js"></script>
+<style>
+  :root {
+    --red: #DB0011;
+    --red-light: #fff0f1;
+    --red-mid: #f5c0c4;
+    --dark: #1a1a2e;
+    --darker: #0f0f1a;
+    --card: #1e1e32;
+    --card2: #252540;
+    --border: rgba(255,255,255,0.08);
+    --text: #e8e8f0;
+    --muted: #8888aa;
+    --green: #22c55e;
+    --amber: #f59e0b;
+    --blue: #3b82f6;
+    --purple: #a855f7;
+    --teal: #14b8a6;
+    --pink: #ec4899;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { background: var(--darker); color: var(--text); font-family: 'Segoe UI', system-ui, sans-serif; min-height: 100vh; }
+
+  /* SIDEBAR */
+  .sidebar {
+    position: fixed; left: 0; top: 0; width: 220px; height: 100vh;
+    background: var(--darker); border-right: 1px solid var(--border);
+    display: flex; flex-direction: column; z-index: 100; overflow-y: auto;
+  }
+  .logo { padding: 20px 20px 16px; border-bottom: 1px solid var(--border); }
+  .logo-badge { background: var(--red); color: #fff; font-size: 13px; font-weight: 700; padding: 6px 12px; border-radius: 6px; display: inline-block; letter-spacing: 0.5px; }
+  .logo-sub { font-size: 10px; color: var(--muted); margin-top: 6px; letter-spacing: 0.08em; text-transform: uppercase; }
+  .nav { padding: 12px 0; flex: 1; }
+  .nav-section { font-size: 9px; color: var(--muted); letter-spacing: 0.12em; text-transform: uppercase; padding: 12px 20px 6px; }
+  .nav-item {
+    display: flex; align-items: center; gap: 10px; padding: 9px 20px;
+    font-size: 13px; color: var(--muted); cursor: pointer; transition: all 0.15s;
+    border-left: 3px solid transparent;
+  }
+  .nav-item:hover { color: var(--text); background: rgba(255,255,255,0.04); }
+  .nav-item.active { color: #fff; background: rgba(219,0,17,0.12); border-left-color: var(--red); }
+  .nav-icon { font-size: 15px; width: 18px; text-align: center; }
+  .sidebar-footer { padding: 16px 20px; border-top: 1px solid var(--border); font-size: 10px; color: var(--muted); }
+  .data-badge { background: rgba(34,197,94,0.15); color: var(--green); font-size: 9px; padding: 2px 7px; border-radius: 99px; display: inline-block; }
+
+  /* MAIN */
+  .main { margin-left: 220px; padding: 0; min-height: 100vh; }
+  .topbar {
+    background: var(--darker); border-bottom: 1px solid var(--border);
+    padding: 0 28px; height: 56px; display: flex; align-items: center; justify-content: space-between;
+    position: sticky; top: 0; z-index: 50;
+  }
+  .topbar-title { font-size: 14px; font-weight: 600; }
+  .topbar-right { display: flex; align-items: center; gap: 12px; }
+  .time-badge { font-size: 11px; color: var(--muted); background: var(--card); padding: 4px 12px; border-radius: 6px; border: 1px solid var(--border); }
+  .export-btn {
+    font-size: 11px; color: var(--text); background: var(--red); padding: 6px 14px; border-radius: 6px;
+    border: none; cursor: pointer; font-weight: 500; transition: opacity 0.15s;
+  }
+  .export-btn:hover { opacity: 0.85; }
+
+  /* PAGES */
+  .page { display: none; padding: 24px 28px; }
+  .page.active { display: block; }
+
+  /* PAGE HEADER */
+  .page-header { margin-bottom: 24px; }
+  .page-header h1 { font-size: 20px; font-weight: 600; margin-bottom: 4px; }
+  .page-header p { font-size: 13px; color: var(--muted); }
+
+  /* KPI GRID */
+  .kpi-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 14px; margin-bottom: 22px; }
+  .kpi-card {
+    background: var(--card); border: 1px solid var(--border); border-radius: 12px; padding: 18px 20px;
+    position: relative; overflow: hidden;
+  }
+  .kpi-card::before { content:''; position:absolute; top:0; left:0; right:0; height:3px; background: var(--accent, var(--red)); }
+  .kpi-label { font-size: 11px; color: var(--muted); text-transform: uppercase; letter-spacing: 0.07em; margin-bottom: 8px; }
+  .kpi-value { font-size: 26px; font-weight: 700; letter-spacing: -0.5px; }
+  .kpi-delta { font-size: 11px; margin-top: 4px; }
+  .pos { color: var(--green); } .neg { color: #f87171; }
+
+  /* CHARTS */
+  .charts-grid { display: grid; gap: 16px; margin-bottom: 20px; }
+  .charts-grid.cols2 { grid-template-columns: 1fr 1fr; }
+  .charts-grid.cols3 { grid-template-columns: 1fr 1fr 1fr; }
+  .chart-card {
+    background: var(--card); border: 1px solid var(--border); border-radius: 12px; padding: 20px;
+  }
+  .chart-title { font-size: 13px; font-weight: 600; margin-bottom: 3px; }
+  .chart-sub { font-size: 11px; color: var(--muted); margin-bottom: 16px; }
+  .chart-wrap { position: relative; }
+  .legend { display: flex; flex-wrap: wrap; gap: 12px; margin-bottom: 12px; font-size: 11px; color: var(--muted); }
+  .legend span { display: flex; align-items: center; gap: 5px; }
+  .ld { width: 8px; height: 8px; border-radius: 2px; flex-shrink: 0; }
+
+  /* BAR ROWS */
+  .bar-row { display: flex; align-items: center; gap: 10px; margin-bottom: 10px; font-size: 11px; }
+  .bl { width: 110px; color: var(--muted); text-align: right; flex-shrink: 0; }
+  .bt { flex: 1; background: rgba(255,255,255,0.07); border-radius: 4px; height: 22px; overflow: hidden; }
+  .bf { height: 100%; border-radius: 4px; display: flex; align-items: center; padding-left: 8px; font-size: 10px; font-weight: 600; color: rgba(255,255,255,0.9); min-width: 2%; transition: width 1s ease; }
+
+  /* LEVER CARDS */
+  .levers-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; margin-bottom: 22px; }
+  .lever-card {
+    background: var(--card); border: 1px solid var(--border); border-radius: 12px; padding: 18px 20px;
+    display: flex; gap: 14px; cursor: pointer; transition: border-color 0.15s;
+  }
+  .lever-card:hover { border-color: rgba(219,0,17,0.4); }
+  .lever-num { font-size: 28px; font-weight: 800; color: rgba(255,255,255,0.12); min-width: 36px; line-height: 1; padding-top: 2px; }
+  .lever-body { flex: 1; }
+  .lever-title { font-size: 13px; font-weight: 600; margin-bottom: 6px; }
+  .lever-desc { font-size: 11px; color: var(--muted); line-height: 1.65; }
+  .pill { display: inline-block; font-size: 9px; font-weight: 700; padding: 2px 8px; border-radius: 99px; margin-bottom: 8px; letter-spacing: 0.05em; text-transform: uppercase; }
+  .pill-red { background: rgba(219,0,17,0.2); color: #f87171; }
+  .pill-amber { background: rgba(245,158,11,0.2); color: #fbbf24; }
+  .pill-green { background: rgba(34,197,94,0.2); color: var(--green); }
+  .pill-blue { background: rgba(59,130,246,0.2); color: #60a5fa; }
+
+  /* TABLES */
+  .table-card { background: var(--card); border: 1px solid var(--border); border-radius: 12px; overflow: hidden; margin-bottom: 20px; }
+  .table-head { padding: 16px 20px; border-bottom: 1px solid var(--border); display: flex; justify-content: space-between; align-items: center; }
+  table { width: 100%; border-collapse: collapse; font-size: 12px; }
+  th { background: rgba(255,255,255,0.03); padding: 10px 16px; text-align: left; font-size: 10px; font-weight: 600; color: var(--muted); text-transform: uppercase; letter-spacing: 0.07em; border-bottom: 1px solid var(--border); }
+  td { padding: 11px 16px; border-bottom: 1px solid rgba(255,255,255,0.04); color: var(--text); }
+  tr:last-child td { border-bottom: none; }
+  tr:hover td { background: rgba(255,255,255,0.02); }
+  .trend-up { color: var(--green); font-size: 11px; }
+  .trend-dn { color: #f87171; font-size: 11px; }
+
+  /* RECS */
+  .recs-grid { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 14px; margin-bottom: 22px; }
+  .rec-card { background: var(--card); border: 1px solid var(--border); border-radius: 12px; padding: 18px 20px; }
+  .rec-icon { font-size: 22px; margin-bottom: 10px; }
+  .rec-title { font-size: 13px; font-weight: 600; margin-bottom: 8px; }
+  .rec-body { font-size: 11px; color: var(--muted); line-height: 1.65; }
+  .rec-impact { display: flex; gap: 8px; margin-top: 12px; }
+  .impact-item { font-size: 10px; color: var(--muted); background: rgba(255,255,255,0.05); padding: 3px 8px; border-radius: 6px; }
+
+  /* COMPETITOR TABLE */
+  .comp-badge { display: inline-block; width: 8px; height: 8px; border-radius: 50%; margin-right: 6px; }
+  .score-bar { display: inline-flex; align-items: center; gap: 6px; }
+  .score-fill { height: 6px; border-radius: 3px; }
+
+  /* TABS */
+  .tabs { display: flex; gap: 4px; margin-bottom: 20px; border-bottom: 1px solid var(--border); padding-bottom: 0; }
+  .tab { font-size: 12px; padding: 8px 16px; cursor: pointer; color: var(--muted); border-bottom: 2px solid transparent; margin-bottom: -1px; transition: all 0.15s; }
+  .tab.active { color: var(--text); border-bottom-color: var(--red); }
+  .tab:hover { color: var(--text); }
+  .tab-content { display: none; }
+  .tab-content.active { display: block; }
+
+  /* ALERT */
+  .alert { border-radius: 10px; padding: 14px 16px; margin-bottom: 14px; display: flex; gap: 10px; align-items: flex-start; font-size: 12px; }
+  .alert-warn { background: rgba(245,158,11,0.1); border: 1px solid rgba(245,158,11,0.25); color: #fde68a; }
+  .alert-info { background: rgba(59,130,246,0.1); border: 1px solid rgba(59,130,246,0.25); color: #bfdbfe; }
+  .alert-success { background: rgba(34,197,94,0.1); border: 1px solid rgba(34,197,94,0.25); color: #bbf7d0; }
+
+  /* METRIC SELECT */
+  .filter-bar { display: flex; gap: 8px; margin-bottom: 18px; flex-wrap: wrap; align-items: center; }
+  .filter-label { font-size: 11px; color: var(--muted); }
+  .filter-btn { font-size: 11px; padding: 5px 12px; border-radius: 6px; border: 1px solid var(--border); background: transparent; color: var(--muted); cursor: pointer; transition: all 0.15s; }
+  .filter-btn.active { background: var(--red); color: #fff; border-color: var(--red); }
+  .filter-btn:hover:not(.active) { border-color: rgba(255,255,255,0.2); color: var(--text); }
+
+  /* LOADING */
+  .loading { display: flex; align-items: center; justify-content: center; height: 100px; color: var(--muted); font-size: 13px; gap: 10px; }
+  .spinner { width: 16px; height: 16px; border: 2px solid var(--border); border-top-color: var(--red); border-radius: 50%; animation: spin 0.7s linear infinite; }
+  @keyframes spin { to { transform: rotate(360deg); } }
+
+  /* RESPONSIVE */
+  @media (max-width: 900px) {
+    .sidebar { width: 56px; }
+    .sidebar .logo-sub, .sidebar .nav-item span, .sidebar .nav-section, .sidebar-footer { display: none; }
+    .logo { padding: 16px 14px; }
+    .nav-item { padding: 12px 18px; justify-content: center; }
+    .main { margin-left: 56px; }
+    .kpi-grid { grid-template-columns: repeat(2,1fr); }
+    .charts-grid.cols2, .charts-grid.cols3, .levers-grid, .recs-grid { grid-template-columns: 1fr; }
+  }
+
+  /* SCROLLBAR */
+  ::-webkit-scrollbar { width: 4px; height: 4px; }
+  ::-webkit-scrollbar-track { background: transparent; }
+  ::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.1); border-radius: 2px; }
+</style>
+</head>
+<body>
+
+<!-- SIDEBAR -->
+<div class="sidebar">
+  <div class="logo">
+    <div class="logo-badge">HSBC</div>
+    <div class="logo-sub">Marketing Intelligence</div>
+  </div>
+  <nav class="nav">
+    <div class="nav-section">Overview</div>
+    <div class="nav-item active" onclick="showPage('overview',this)">
+      <span class="nav-icon">📊</span><span>Dashboard</span>
+    </div>
+    <div class="nav-item" onclick="showPage('traffic',this)">
+      <span class="nav-icon">📈</span><span>Traffic Analysis</span>
+    </div>
+    <div class="nav-section">Competitive</div>
+    <div class="nav-item" onclick="showPage('benchmark',this)">
+      <span class="nav-icon">⚔️</span><span>Benchmarks</span>
+    </div>
+    <div class="nav-item" onclick="showPage('channels',this)">
+      <span class="nav-icon">📡</span><span>Channels</span>
+    </div>
+    <div class="nav-section">Strategy</div>
+    <div class="nav-item" onclick="showPage('levers',this)">
+      <span class="nav-icon">🎯</span><span>ROI Levers</span>
+    </div>
+    <div class="nav-item" onclick="showPage('recommendations',this)">
+      <span class="nav-icon">💡</span><span>Recommendations</span>
+    </div>
+    <div class="nav-item" onclick="showPage('pages',this)">
+      <span class="nav-icon">🔍</span><span>Top Pages</span>
+    </div>
+  </nav>
+  <div class="sidebar-footer">
+    <div style="margin-bottom:4px;">Data source: Similarweb</div>
+    <div class="data-badge">● Live</div>
+    <div style="margin-top:6px;">Last updated Feb 2026</div>
+  </div>
+</div>
+
+<!-- MAIN -->
+<div class="main">
+  <div class="topbar">
+    <div class="topbar-title" id="page-title">Dashboard</div>
+    <div class="topbar-right">
+      <span class="time-badge">Sep 2024 – Jan 2025 · UK</span>
+      <button class="export-btn" onclick="exportData()">⬇ Export</button>
+    </div>
+  </div>
+
+  <!-- ========== OVERVIEW PAGE ========== -->
+  <div class="page active" id="page-overview">
+    <div class="page-header">
+      <h1>Marketing ROI Intelligence</h1>
+      <p>HSBC UK digital performance — powered by Similarweb live data</p>
+    </div>
+
+    <div class="kpi-grid">
+      <div class="kpi-card" style="--accent:#DB0011">
+        <div class="kpi-label">Monthly Visits (Jan '25)</div>
+        <div class="kpi-value">7.73M</div>
+        <div class="kpi-delta neg">▼ 1.5% vs Sep '24</div>
+      </div>
+      <div class="kpi-card" style="--accent:#3b82f6">
+        <div class="kpi-label">Unique Visitors</div>
+        <div class="kpi-value">3.08M</div>
+        <div class="kpi-delta pos">▲ 0.5% vs Sep '24</div>
+      </div>
+      <div class="kpi-card" style="--accent:#f59e0b">
+        <div class="kpi-label">Avg Visit Duration</div>
+        <div class="kpi-value">6:00</div>
+        <div class="kpi-delta neg">▼ 12% vs NatWest 7:34</div>
+      </div>
+      <div class="kpi-card" style="--accent:#22c55e">
+        <div class="kpi-label">Pages / Visit</div>
+        <div class="kpi-value">6.9</div>
+        <div class="kpi-delta neg">▼ vs Barclays 8.8pp</div>
+      </div>
+    </div>
+
+    <div class="kpi-grid">
+      <div class="kpi-card" style="--accent:#a855f7">
+        <div class="kpi-label">Bounce Rate</div>
+        <div class="kpi-value">27.6%</div>
+        <div class="kpi-delta pos">▲ Better than Lloyds 43.6%</div>
+      </div>
+      <div class="kpi-card" style="--accent:#14b8a6">
+        <div class="kpi-label">Paid Search Visits</div>
+        <div class="kpi-value">30.8K</div>
+        <div class="kpi-delta neg">▼ 6× below Barclays 194.6K</div>
+      </div>
+      <div class="kpi-card" style="--accent:#ec4899">
+        <div class="kpi-label">Email Traffic</div>
+        <div class="kpi-value">3.3K</div>
+        <div class="kpi-delta neg">▼ 4× below Barclays 13.9K</div>
+      </div>
+      <div class="kpi-card" style="--accent:#DB0011">
+        <div class="kpi-label">Direct Traffic Share</div>
+        <div class="kpi-value">59.8%</div>
+        <div class="kpi-delta" style="color:var(--amber)">⚠ Heavy brand dependency</div>
+      </div>
+    </div>
+
+    <div class="charts-grid cols2">
+      <div class="chart-card">
+        <div class="chart-title">Monthly visits trend — all banks</div>
+        <div class="chart-sub">UK traffic, Sep 2024 – Jan 2025 (millions)</div>
+        <div class="legend">
+          <span><span class="ld" style="background:#DB0011"></span>HSBC</span>
+          <span><span class="ld" style="background:#3b82f6"></span>Barclays</span>
+          <span><span class="ld" style="background:#22c55e"></span>Lloyds</span>
+          <span><span class="ld" style="background:#a855f7"></span>NatWest</span>
+        </div>
+        <div class="chart-wrap" style="height:220px"><canvas id="ov-visits"></canvas></div>
+      </div>
+      <div class="chart-card">
+        <div class="chart-title">HSBC traffic channel mix — Jan 2025</div>
+        <div class="chart-sub">Share of desktop visits by source</div>
+        <div class="chart-wrap" style="height:220px"><canvas id="ov-mix"></canvas></div>
+      </div>
+    </div>
+
+    <div class="charts-grid cols2">
+      <div class="chart-card">
+        <div class="chart-title">Bounce rate comparison</div>
+        <div class="chart-sub">Lower = better engagement quality</div>
+        <div class="chart-wrap" style="height:160px"><canvas id="ov-bounce"></canvas></div>
+      </div>
+      <div class="chart-card">
+        <div class="chart-title">Pages per visit comparison</div>
+        <div class="chart-sub">Higher = deeper content engagement</div>
+        <div class="chart-wrap" style="height:160px"><canvas id="ov-ppv"></canvas></div>
+      </div>
+    </div>
+
+    <div class="alert alert-warn">
+      <span>⚠️</span>
+      <div><strong>Critical gap:</strong> HSBC ranks 4th in total visits among UK big banks (behind NatWest 12.8M, Lloyds 9.6M, Barclays 8.7M). Despite strong organic SEO, severe underinvestment in paid search and email is costing significant acquistable traffic.</div>
+    </div>
+  </div>
+
+  <!-- ========== TRAFFIC PAGE ========== -->
+  <div class="page" id="page-traffic">
+    <div class="page-header">
+      <h1>Traffic Analysis</h1>
+      <p>5-month trend analysis across engagement metrics</p>
+    </div>
+
+    <div class="filter-bar">
+      <span class="filter-label">Metric:</span>
+      <button class="filter-btn active" onclick="setMetric('visits',this)">Visits</button>
+      <button class="filter-btn" onclick="setMetric('duration',this)">Duration</button>
+      <button class="filter-btn" onclick="setMetric('ppv',this)">Pages/Visit</button>
+      <button class="filter-btn" onclick="setMetric('bounce',this)">Bounce Rate</button>
+    </div>
+
+    <div class="chart-card" style="margin-bottom:20px;">
+      <div class="chart-title" id="metric-title">Monthly visits — HSBC vs competitors</div>
+      <div class="chart-sub">UK, Sep 2024 – Jan 2025</div>
+      <div class="legend">
+        <span><span class="ld" style="background:#DB0011"></span>HSBC</span>
+        <span><span class="ld" style="background:#3b82f6"></span>Barclays</span>
+        <span><span class="ld" style="background:#22c55e"></span>Lloyds</span>
+        <span><span class="ld" style="background:#a855f7"></span>NatWest</span>
+      </div>
+      <div class="chart-wrap" style="height:280px"><canvas id="tr-main"></canvas></div>
+    </div>
+
+    <div class="charts-grid cols2">
+      <div class="chart-card">
+        <div class="chart-title">HSBC visits — monthly detail</div>
+        <div class="chart-sub">Sep 2024 – Jan 2025</div>
+        <div class="chart-wrap" style="height:180px"><canvas id="tr-hsbc"></canvas></div>
+      </div>
+      <div class="chart-card">
+        <div class="chart-title">Unique visitors trend</div>
+        <div class="chart-sub">HSBC UK monthly unique visitors</div>
+        <div class="chart-wrap" style="height:180px"><canvas id="tr-uniq"></canvas></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ========== BENCHMARK PAGE ========== -->
+  <div class="page" id="page-benchmark">
+    <div class="page-header">
+      <h1>Competitive Benchmarks</h1>
+      <p>HSBC vs Barclays, Lloyds & NatWest — Jan 2025</p>
+    </div>
+
+    <div class="table-card">
+      <div class="table-head">
+        <div>
+          <div style="font-size:13px;font-weight:600;">Head-to-head comparison</div>
+          <div style="font-size:11px;color:var(--muted);">Jan 2025 · UK total traffic</div>
+        </div>
+        <span class="pill pill-blue">Jan 2025</span>
+      </div>
+      <table>
+        <thead>
+          <tr>
+            <th>Bank</th>
+            <th>Monthly Visits</th>
+            <th>Unique Visitors</th>
+            <th>Pages/Visit</th>
+            <th>Avg Duration</th>
+            <th>Bounce Rate</th>
+            <th>vs HSBC Visits</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><span class="comp-badge" style="background:#DB0011"></span><strong>HSBC</strong></td>
+            <td><strong>7.73M</strong></td>
+            <td>3.08M</td>
+            <td>6.9</td>
+            <td>6:00</td>
+            <td>27.6%</td>
+            <td>—</td>
+          </tr>
+          <tr>
+            <td><span class="comp-badge" style="background:#3b82f6"></span>Barclays</td>
+            <td>8.70M</td>
+            <td>3.08M</td>
+            <td>8.8</td>
+            <td>6:49</td>
+            <td>24.8%</td>
+            <td class="neg">▲ +12.6%</td>
+          </tr>
+          <tr>
+            <td><span class="comp-badge" style="background:#22c55e"></span>Lloyds</td>
+            <td>9.61M</td>
+            <td>3.10M</td>
+            <td>2.2</td>
+            <td>2:04</td>
+            <td>43.6%</td>
+            <td class="neg">▲ +24.3%</td>
+          </tr>
+          <tr>
+            <td><span class="comp-badge" style="background:#a855f7"></span>NatWest</td>
+            <td>12.82M</td>
+            <td>4.43M</td>
+            <td>6.9</td>
+            <td>7:34</td>
+            <td>29.0%</td>
+            <td class="neg">▲ +65.8%</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="charts-grid cols2">
+      <div class="chart-card">
+        <div class="chart-title">Traffic volume — Jan 2025</div>
+        <div class="chart-sub">Monthly visits by bank (millions)</div>
+        <div class="chart-wrap" style="height:200px"><canvas id="bm-visits"></canvas></div>
+      </div>
+      <div class="chart-card">
+        <div class="chart-title">Engagement radar — Jan 2025</div>
+        <div class="chart-sub">Normalised scores across key metrics</div>
+        <div class="chart-wrap" style="height:200px"><canvas id="bm-radar"></canvas></div>
+      </div>
+    </div>
+
+    <div class="alert alert-info">
+      <span>ℹ️</span>
+      <div><strong>Key insight:</strong> HSBC leads on bounce rate (27.6%) showing quality traffic — existing customers engaging deeply. The visit volume gap vs NatWest (65.8% more) is almost entirely attributable to NatWest's larger customer base and heavier paid acquisition investment, not organic quality.</div>
+    </div>
+  </div>
+
+  <!-- ========== CHANNELS PAGE ========== -->
+  <div class="page" id="page-channels">
+    <div class="page-header">
+      <h1>Channel Analysis</h1>
+      <p>Traffic source breakdown & competitive channel gaps</p>
+    </div>
+
+    <div class="tabs">
+      <div class="tab active" onclick="showTab('ch-hsbc',this)">HSBC Channels</div>
+      <div class="tab" onclick="showTab('ch-compare',this)">HSBC vs Barclays</div>
+      <div class="tab" onclick="showTab('ch-trend',this)">Channel Trends</div>
+    </div>
+
+    <div class="tab-content active" id="ch-hsbc">
+      <div class="charts-grid cols2">
+        <div class="chart-card">
+          <div class="chart-title">Traffic sources — Jan 2025 (desktop)</div>
+          <div class="chart-sub">Visits by channel</div>
+          <div class="chart-wrap" style="height:240px"><canvas id="ch-donut"></canvas></div>
+        </div>
+        <div class="chart-card">
+          <div class="chart-title">Channel breakdown</div>
+          <div class="chart-sub">Absolute visits, Jan 2025</div>
+          <div style="margin-top:8px;" id="ch-bars"></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="tab-content" id="ch-compare">
+      <div class="chart-card" style="margin-bottom:18px;">
+        <div class="chart-title">HSBC vs Barclays — channel gap analysis (Jan 2025)</div>
+        <div class="chart-sub">Desktop visits by channel — Barclays outspends HSBC significantly in paid & email</div>
+        <div class="legend">
+          <span><span class="ld" style="background:#DB0011"></span>HSBC</span>
+          <span><span class="ld" style="background:#3b82f6"></span>Barclays</span>
+        </div>
+        <div class="chart-wrap" style="height:280px"><canvas id="ch-gap"></canvas></div>
+      </div>
+      <div class="alert alert-warn">
+        <span>🎯</span>
+        <div><strong>Paid search gap is the #1 ROI lever:</strong> Barclays generates 194.6K paid visits vs HSBC's 30.8K — a 6.3× gap. Email gap is 4.2×. Both channels have direct ROI measurement making them priority investments.</div>
+      </div>
+    </div>
+
+    <div class="tab-content" id="ch-trend">
+      <div class="chart-card">
+        <div class="chart-title">HSBC channel trend — Sep 2024 to Jan 2025</div>
+        <div class="chart-sub">Desktop visits by source over time</div>
+        <div class="legend">
+          <span><span class="ld" style="background:#a855f7"></span>Direct</span>
+          <span><span class="ld" style="background:#22c55e"></span>Organic</span>
+          <span><span class="ld" style="background:#3b82f6"></span>Referrals</span>
+          <span><span class="ld" style="background:#DB0011"></span>Paid Search</span>
+        </div>
+        <div class="chart-wrap" style="height:280px"><canvas id="ch-trendchart"></canvas></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ========== LEVERS PAGE ========== -->
+  <div class="page" id="page-levers">
+    <div class="page-header">
+      <h1>Top ROI Levers</h1>
+      <p>Priority-ranked growth opportunities based on competitive gap analysis</p>
+    </div>
+
+    <div class="chart-card" style="margin-bottom:20px;">
+      <div class="chart-title">ROI lever prioritisation matrix</div>
+      <div class="chart-sub">Impact vs effort — size represents estimated traffic uplift potential</div>
+      <div class="chart-wrap" style="height:260px"><canvas id="lv-bubble"></canvas></div>
+    </div>
+
+    <div class="levers-grid">
+      <div class="lever-card">
+        <div class="lever-num">01</div>
+        <div class="lever-body">
+          <div class="pill pill-red">Critical gap</div>
+          <div class="lever-title">Scale paid search 6×</div>
+          <div class="lever-desc">HSBC: 30.8K visits · Barclays: 194.6K visits. Target keywords: "mortgage rates uk", "mortgage calculator", "best current account uk", "switch bank account". Quick wins: conquest Barclays/NatWest brand terms. Est. uplift: +150–200K visits/month at full parity.</div>
+        </div>
+      </div>
+      <div class="lever-card">
+        <div class="lever-num">02</div>
+        <div class="lever-body">
+          <div class="pill pill-red">High impact</div>
+          <div class="lever-title">Fix engagement depth</div>
+          <div class="lever-desc">6.9 pages/visit vs Barclays 8.8 — a 27% gap. Every +1 page/visit at conversion rates translates directly to more applications. Priority: link mortgage calculator → product pages → apply flow. Add contextual CTAs on all top-10 organic landing pages.</div>
+        </div>
+      </div>
+      <div class="lever-card">
+        <div class="lever-num">03</div>
+        <div class="lever-body">
+          <div class="pill pill-amber">Medium impact</div>
+          <div class="lever-title">Build email lifecycle programme</div>
+          <div class="lever-desc">HSBC email: 3.3K desktop visits · Barclays: 13.9K (Jan '25). Barclays surged 4× from Nov→Jan with a "new year finances" campaign. Launch lifecycle sequences: new account (30/60/90 days), cross-sell (savings → mortgage → ISA), annual review. Email delivers highest ROI in FS.</div>
+        </div>
+      </div>
+      <div class="lever-card">
+        <div class="lever-num">04</div>
+        <div class="lever-body">
+          <div class="pill pill-amber">Medium impact</div>
+          <div class="lever-title">Expand mortgage content hub</div>
+          <div class="lever-desc">Top 3 organic pages are all mortgage-related: /mortgages/our-rates (50.9K), /mortgages/repayment-calculator (48K), /mortgages/calculators (31K). These alone = 130K organic clicks. Add: first-time buyer guides, remortgage guides, rate comparison tables, stamp duty calculator. Capture mid-funnel intent at zero marginal CPA.</div>
+        </div>
+      </div>
+      <div class="lever-card">
+        <div class="lever-num">05</div>
+        <div class="lever-body">
+          <div class="pill pill-green">Quick win</div>
+          <div class="lever-title">AI search optimisation</div>
+          <div class="lever-desc">ChatGPT.com is already a top-10 referrer (4.4K visits). As AI-powered search scales, being the primary cited source for banking queries could become a major channel. Add structured FAQ schema, clear product comparison content, and direct answer blocks to high-traffic pages. Low effort, high future upside.</div>
+        </div>
+      </div>
+      <div class="lever-card">
+        <div class="lever-num">06</div>
+        <div class="lever-body">
+          <div class="pill pill-green">Quick win</div>
+          <div class="lever-title">Activate social traffic</div>
+          <div class="lever-desc">Social drives only 1.9K desktop visits — essentially zero. While direct social ROI in FS is complex, targeted LinkedIn campaigns for business banking products and YouTube/Instagram for mortgage/savings content builds brand-direct traffic and reduces long-term reliance on branded search. Start with LinkedIn for SME banking.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ========== RECOMMENDATIONS PAGE ========== -->
+  <div class="page" id="page-recommendations">
+    <div class="page-header">
+      <h1>Strategic Recommendations</h1>
+      <p>Actionable 12-month roadmap to improve marketing ROI</p>
+    </div>
+
+    <div class="charts-grid" style="grid-template-columns:1fr;margin-bottom:20px;">
+      <div class="chart-card">
+        <div class="chart-title">12-month traffic uplift projection</div>
+        <div class="chart-sub">Estimated monthly visits if levers are executed (millions)</div>
+        <div class="legend">
+          <span><span class="ld" style="background:#DB0011"></span>Current trajectory</span>
+          <span><span class="ld" style="background:#22c55e"></span>With ROI levers</span>
+        </div>
+        <div class="chart-wrap" style="height:220px"><canvas id="rc-projection"></canvas></div>
+      </div>
+    </div>
+
+    <div class="recs-grid">
+      <div class="rec-card" style="border-top:3px solid #f87171;">
+        <div class="rec-icon">🚀</div>
+        <div class="pill pill-red">Immediate · 0–3 months</div>
+        <div class="rec-title">Paid search blitz — mortgage & current account</div>
+        <div class="rec-body">Launch Google Ads targeting "best mortgage rates UK", "HSBC mortgage calculator", "switch current account". Shift budget from display (minimal ROI at 5.2K visits) to search. Run competitor conquest on Barclays, NatWest, Lloyds brand terms. Set up conversion tracking from landing page → application start.</div>
+        <div class="rec-impact">
+          <span class="impact-item">+150K visits/mo</span>
+          <span class="impact-item">Direct measurable ROI</span>
+        </div>
+      </div>
+      <div class="rec-card" style="border-top:3px solid #fbbf24;">
+        <div class="rec-icon">✉️</div>
+        <div class="pill pill-amber">Short-term · 3–6 months</div>
+        <div class="rec-title">Email lifecycle programme launch</div>
+        <div class="rec-body">Map 3M+ monthly visitors into journey stages. Build triggered sequences: welcome (day 1, 7, 30), product discovery (savings, mortgage, credit), seasonal (Jan "new year", Apr tax year-end, Sep back-to-school). Barclays' Jan email surge to 13.9K is a clear playbook to replicate. Estimate 4–5× email traffic uplift.</div>
+        <div class="rec-impact">
+          <span class="impact-item">+10K visits/mo</span>
+          <span class="impact-item">High conversion intent</span>
+        </div>
+      </div>
+      <div class="rec-card" style="border-top:3px solid #22c55e;">
+        <div class="rec-icon">🏠</div>
+        <div class="pill pill-green">Medium-term · 6–12 months</div>
+        <div class="rec-title">Mortgage content authority hub</div>
+        <div class="rec-body">3 of top 10 organic pages are mortgage-related, driving 130K+ clicks/month. Build out the full content cluster: first-time buyer hub, remortgage guides, stamp duty calculator, rate comparison tables, broker comparison content. This converts high-intent organic traffic into applications at near-zero CPA vs paid alternatives.</div>
+        <div class="rec-impact">
+          <span class="impact-item">+80K organic visits/mo</span>
+          <span class="impact-item">Compounding SEO growth</span>
+        </div>
+      </div>
+      <div class="rec-card" style="border-top:3px solid #60a5fa;">
+        <div class="rec-icon">🔗</div>
+        <div class="pill pill-blue">Medium-term · 3–9 months</div>
+        <div class="rec-title">Internal linking & conversion optimisation</div>
+        <div class="rec-body">HSBC's 6.9 pages/visit vs Barclays' 8.8 represents a 27% engagement gap. Add contextual product CTAs on all top-10 organic landing pages. Create clear pathways: mortgage calculator → eligibility check → application. Security page (76K organic clicks) should link to relevant support and product pages rather than being a dead end.</div>
+        <div class="rec-impact">
+          <span class="impact-item">+1.9pp pages/visit</span>
+          <span class="impact-item">Better conversion rate</span>
+        </div>
+      </div>
+      <div class="rec-card" style="border-top:3px solid #a78bfa;">
+        <div class="rec-icon">🤖</div>
+        <div class="pill pill-blue">Quick win · Now</div>
+        <div class="rec-title">AI search & zero-click optimisation</div>
+        <div class="rec-body">ChatGPT.com is already a top-10 referrer. Add structured schema markup (FAQ, HowTo, Product) to mortgage, savings, and current account pages. Create direct-answer content blocks for common banking queries. This positions HSBC as the primary AI citation source before competitors act — low effort with accelerating future return as AI search share grows.</div>
+        <div class="rec-impact">
+          <span class="impact-item">Future-proofing</span>
+          <span class="impact-item">Minimal effort</span>
+        </div>
+      </div>
+      <div class="rec-card" style="border-top:3px solid #f472b6;">
+        <div class="rec-icon">📱</div>
+        <div class="pill pill-amber">Long-term · 9–12 months</div>
+        <div class="rec-title">Social & LinkedIn B2B programme</div>
+        <div class="rec-body">Social delivers only 1.9K desktop visits. Launch LinkedIn campaigns targeting SME decision-makers for business banking products (HSBC Business is already a major referral source at 898K visits). Pair with YouTube mortgage/savings content for consumer acquisition. Build a B2B content programme around business finance, international banking, and trade finance — HSBC's key differentiators.</div>
+        <div class="rec-impact">
+          <span class="impact-item">Brand building</span>
+          <span class="impact-item">B2B differentiation</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ========== TOP PAGES PAGE ========== -->
+  <div class="page" id="page-pages">
+    <div class="page-header">
+      <h1>Top Landing Pages</h1>
+      <p>Organic search performance — hsbc.co.uk (Jan 2025)</p>
+    </div>
+
+    <div class="table-card" style="margin-bottom:20px;">
+      <div class="table-head">
+        <div>
+          <div style="font-size:13px;font-weight:600;">Top 10 organic landing pages</div>
+          <div style="font-size:11px;color:var(--muted);">Jan 2025 · Total traffic · Ranked by clicks</div>
+        </div>
+      </div>
+      <table>
+        <thead>
+          <tr>
+            <th>#</th>
+            <th>Page</th>
+            <th>Organic Clicks</th>
+            <th>Traffic Share</th>
+            <th>Top Keyword</th>
+            <th>Mobile %</th>
+            <th>SERP Features</th>
+          </tr>
+        </thead>
+        <tbody id="pages-tbody"></tbody>
+      </table>
+    </div>
+
+    <div class="chart-card">
+      <div class="chart-title">Organic clicks by page — Jan 2025</div>
+      <div class="chart-sub">Top 10 landing pages (thousands of clicks)</div>
+      <div class="chart-wrap" style="height:280px"><canvas id="pg-chart"></canvas></div>
+    </div>
+  </div>
+
+</div><!-- /main -->
+
+<script>
+// ==============================
+// DATA
+// ==============================
+const months = ['Sep','Oct','Nov','Dec','Jan'];
+const data = {
+  hsbc:    { visits:[7.85,7.63,6.95,7.07,7.73], bounce:[25.2,25.2,25.6,25.5,27.6], ppv:[6.9,7.2,7.1,6.9,6.9], dur:[6.2,6.3,6.3,6.2,6.0], uniq:[3.07,2.88,2.65,2.69,3.08] },
+  barclays:{ visits:[9.36,9.08,8.08,7.93,8.70], bounce:[26.4,26.4,25.1,24.3,24.8], ppv:[8.3,8.6,8.6,9.0,8.8], dur:[6.5,6.9,7.1,6.6,6.8] },
+  lloyds:  { visits:[10.78,11.45,10.23,10.60,9.61], bounce:[46.0,47.9,46.9,47.1,43.6], ppv:[2.1,2.1,2.1,2.1,2.2], dur:[2.0,2.1,2.1,1.9,2.1] },
+  natwest: { visits:[13.17,12.79,12.09,11.58,12.82], bounce:[31.2,31.6,29.6,28.7,29.0], ppv:[4.7,4.6,6.6,6.8,6.9], dur:[5.3,5.3,7.3,7.2,7.6] }
+};
+const sources = [
+  { label:'Direct', value:2411430, color:'#a855f7' },
+  { label:'Organic', value:1351293, color:'#22c55e' },
+  { label:'Referrals', value:335321, color:'#3b82f6' },
+  { label:'Paid Search', value:30753, color:'#DB0011' },
+  { label:'Display', value:5215, color:'#f59e0b' },
+  { label:'Email', value:3307, color:'#14b8a6' },
+  { label:'Social', value:1894, color:'#ec4899' },
+];
+const barclaySources = [
+  { label:'Direct', value:2703300 },
+  { label:'Organic', value:1564952 },
+  { label:'Referrals', value:193203 },
+  { label:'Paid Search', value:194608 },
+  { label:'Display', value:4050 },
+  { label:'Email', value:13936 },
+  { label:'Social', value:1758 },
+];
+const pages = [
+  { url:'hsbc.co.uk', clicks:520630, share:'29.5%', kw:'hsbc', mobile:'32%', serp:'Organic, Local pack, Images' },
+  { url:'/online/dashboard', clicks:115906, share:'6.6%', kw:'hsbc', mobile:'18%', serp:'Organic, Sitelinks' },
+  { url:'/security', clicks:76171, share:'4.3%', kw:'hsbc', mobile:'14%', serp:'Sitelinks, Related Q' },
+  { url:'/mortgages/our-rates', clicks:50923, share:'2.9%', kw:'hsbc mortgage rates', mobile:'72%', serp:'Featured table, Organic' },
+  { url:'/mortgages/repayment-calculator', clicks:47984, share:'2.7%', kw:'mortgage calculator', mobile:'67%', serp:'Organic, Sitelinks' },
+  { url:'/contact', clicks:44903, share:'2.5%', kw:'hsbc', mobile:'68%', serp:'Sitelinks, Related Q' },
+  { url:'/business-login', clicks:35184, share:'2.0%', kw:'hsbc business login', mobile:'11%', serp:'Organic, Sitelinks' },
+  { url:'/ways-to-bank/online-banking', clicks:31375, share:'1.8%', kw:'hsbc', mobile:'61%', serp:'Organic, Sitelinks' },
+  { url:'/mortgages/calculators', clicks:30952, share:'1.8%', kw:'mortgage calculator', mobile:'80%', serp:'Organic, Sitelinks' },
+  { url:'/current-accounts/bank-account', clicks:29942, share:'1.7%', kw:'hsbc', mobile:'69%', serp:'Sitelinks, Related Q' },
+];
+
+// ==============================
+// CHART DEFAULTS
+// ==============================
+Chart.defaults.color = '#8888aa';
+Chart.defaults.borderColor = 'rgba(255,255,255,0.07)';
+Chart.defaults.font.family = 'Segoe UI, system-ui, sans-serif';
+Chart.defaults.font.size = 11;
+
+function lineDataset(label, data, color, fill=false) {
+  return { label, data, borderColor:color, backgroundColor: fill ? color+'22' : 'transparent',
+    tension:0.4, pointRadius:3, pointHoverRadius:5, borderWidth:2, fill };
+}
+
+// ==============================
+// INIT CHARTS
+// ==============================
+function initCharts() {
+  // Overview: visits trend
+  new Chart('ov-visits', { type:'line', data:{ labels:months, datasets:[
+    lineDataset('HSBC',data.hsbc.visits,'#DB0011',true),
+    lineDataset('Barclays',data.barclays.visits,'#3b82f6'),
+    lineDataset('Lloyds',data.lloyds.visits,'#22c55e'),
+    lineDataset('NatWest',data.natwest.visits,'#a855f7'),
+  ]}, options:{ responsive:true, maintainAspectRatio:false, plugins:{legend:{display:false}},
+    scales:{ y:{ ticks:{ callback:v=>v+'M' }, grid:{color:'rgba(255,255,255,0.05)'} },
+             x:{ grid:{display:false} } } } });
+
+  // Overview: mix donut
+  new Chart('ov-mix', { type:'doughnut', data:{ labels:sources.map(s=>s.label),
+    datasets:[{ data:sources.map(s=>s.value), backgroundColor:sources.map(s=>s.color), borderWidth:0, hoverOffset:6 }]
+  }, options:{ responsive:true, maintainAspectRatio:false, cutout:'65%',
+    plugins:{ legend:{ position:'right', labels:{ boxWidth:10, font:{size:10}, padding:10,
+      generateLabels:(c)=>c.data.labels.map((l,i)=>({ text:`${l} ${(c.data.datasets[0].data[i]/4137212*100).toFixed(1)}%`, fillStyle:sources[i].color, strokeStyle:'transparent', fontColor:'#8888aa' })) } } } } });
+
+  // Overview: bounce & ppv
+  const bankLabels = ['HSBC','Barclays','Lloyds','NatWest'];
+  const bounceData = [27.6,24.8,43.6,29.0];
+  const ppvData = [6.9,8.8,2.2,6.9];
+  const bankColors = ['#DB0011','#3b82f6','#22c55e','#a855f7'];
+  new Chart('ov-bounce', { type:'bar', data:{ labels:bankLabels, datasets:[{ data:bounceData, backgroundColor:bankColors, borderRadius:4 }]},
+    options:{ responsive:true, maintainAspectRatio:false, plugins:{legend:{display:false}}, scales:{ y:{ticks:{callback:v=>v+'%'},grid:{color:'rgba(255,255,255,0.05)'}}, x:{grid:{display:false}} } } });
+  new Chart('ov-ppv', { type:'bar', data:{ labels:bankLabels, datasets:[{ data:ppvData, backgroundColor:bankColors, borderRadius:4 }]},
+    options:{ responsive:true, maintainAspectRatio:false, plugins:{legend:{display:false}}, scales:{ y:{grid:{color:'rgba(255,255,255,0.05)'}}, x:{grid:{display:false}} } } });
+
+  // Traffic page
+  window.trMain = new Chart('tr-main', { type:'line', data:{ labels:months, datasets:[
+    lineDataset('HSBC',data.hsbc.visits,'#DB0011',true),
+    lineDataset('Barclays',data.barclays.visits,'#3b82f6'),
+    lineDataset('Lloyds',data.lloyds.visits,'#22c55e'),
+    lineDataset('NatWest',data.natwest.visits,'#a855f7'),
+  ]}, options:{ responsive:true, maintainAspectRatio:false, plugins:{legend:{display:false}},
+    scales:{ y:{ticks:{callback:v=>v+'M'},grid:{color:'rgba(255,255,255,0.05)'}}, x:{grid:{display:false}} } } });
+
+  new Chart('tr-hsbc', { type:'bar', data:{ labels:months, datasets:[{ label:'Visits',
+    data:data.hsbc.visits, backgroundColor:months.map((m,i)=>i===4?'#DB0011':'rgba(219,0,17,0.4)'), borderRadius:4 }]},
+    options:{ responsive:true, maintainAspectRatio:false, plugins:{legend:{display:false}},
+      scales:{ y:{ticks:{callback:v=>v+'M'},grid:{color:'rgba(255,255,255,0.05)'}}, x:{grid:{display:false}} } } });
+
+  new Chart('tr-uniq', { type:'line', data:{ labels:months, datasets:[
+    lineDataset('Unique visitors',data.hsbc.uniq,'#14b8a6',true)
+  ]}, options:{ responsive:true, maintainAspectRatio:false, plugins:{legend:{display:false}},
+    scales:{ y:{ticks:{callback:v=>v+'M'},grid:{color:'rgba(255,255,255,0.05)'}}, x:{grid:{display:false}} } } });
+
+  // Benchmark
+  new Chart('bm-visits', { type:'bar', data:{ labels:bankLabels,
+    datasets:[{ data:[7.73,8.70,9.61,12.82], backgroundColor:bankColors, borderRadius:6 }]},
+    options:{ responsive:true, maintainAspectRatio:false, plugins:{legend:{display:false}},
+      scales:{ y:{ticks:{callback:v=>v+'M'},grid:{color:'rgba(255,255,255,0.05)'}}, x:{grid:{display:false}} } } });
+
+  new Chart('bm-radar', { type:'radar', data:{ labels:['Visits','Pages/Visit','Duration','Low Bounce','Paid Search'],
+    datasets:[
+      { label:'HSBC', data:[48,78,79,72,16], borderColor:'#DB0011', backgroundColor:'rgba(219,0,17,0.15)', pointBackgroundColor:'#DB0011', borderWidth:2 },
+      { label:'Barclays', data:[54,100,90,75,100], borderColor:'#3b82f6', backgroundColor:'rgba(59,130,246,0.1)', pointBackgroundColor:'#3b82f6', borderWidth:1.5 },
+      { label:'NatWest', data:[100,78,100,71,60], borderColor:'#a855f7', backgroundColor:'rgba(168,85,247,0.1)', pointBackgroundColor:'#a855f7', borderWidth:1.5 },
+    ]}, options:{ responsive:true, maintainAspectRatio:false,
+      plugins:{ legend:{ labels:{ color:'#8888aa', font:{size:10}, boxWidth:8 } } },
+      scales:{ r:{ angleLines:{color:'rgba(255,255,255,0.07)'}, grid:{color:'rgba(255,255,255,0.07)'},
+        pointLabels:{color:'#8888aa',font:{size:9}}, ticks:{display:false}, min:0, max:100 } } } });
+
+  // Channels
+  new Chart('ch-donut', { type:'doughnut', data:{ labels:sources.map(s=>s.label),
+    datasets:[{ data:sources.map(s=>s.value), backgroundColor:sources.map(s=>s.color), borderWidth:0, hoverOffset:8 }]
+  }, options:{ responsive:true, maintainAspectRatio:false, cutout:'60%',
+    plugins:{ legend:{ position:'bottom', labels:{ boxWidth:8, font:{size:10}, padding:8, color:'#8888aa' } } } } });
+
+  const chBarsEl = document.getElementById('ch-bars');
+  const maxSrc = sources[0].value;
+  sources.forEach(s => {
+    const pct = Math.max((s.value/maxSrc)*100, 1);
+    chBarsEl.innerHTML += `<div class="bar-row"><div class="bl">${s.label}</div>
+      <div class="bt"><div class="bf" style="width:${pct.toFixed(1)}%;background:${s.color}">
+        ${(s.value/1000).toFixed(0)}K</div></div></div>`;
+  });
+
+  new Chart('ch-gap', { type:'bar', data:{ labels:['Direct','Organic','Referrals','Paid Search','Display','Email','Social'],
+    datasets:[
+      { label:'HSBC', data:sources.map(s=>s.value/1000), backgroundColor:'rgba(219,0,17,0.7)', borderRadius:3 },
+      { label:'Barclays', data:barclaySources.map(s=>s.value/1000), backgroundColor:'rgba(59,130,246,0.7)', borderRadius:3 },
+    ]}, options:{ responsive:true, maintainAspectRatio:false, plugins:{legend:{display:false}},
+      scales:{ y:{ticks:{callback:v=>v+'K'},grid:{color:'rgba(255,255,255,0.05)'}}, x:{grid:{display:false}} } } });
+
+  // Channel trend
+  const chTrendLabels = ['Sep','Oct','Nov','Dec','Jan'];
+  const directData = [2475984,2421900,2174788,2066289,2411430];
+  const organicData = [1329228,1346469,1263471,1261560,1351293];
+  const referralData = [363718,342623,312353,293662,335321];
+  const paidData = [37381,24948,28001,37974,30753];
+  new Chart('ch-trendchart', { type:'line', data:{ labels:chTrendLabels, datasets:[
+    lineDataset('Direct',directData.map(v=>v/1000),'#a855f7'),
+    lineDataset('Organic',organicData.map(v=>v/1000),'#22c55e'),
+    lineDataset('Referrals',referralData.map(v=>v/1000),'#3b82f6'),
+    lineDataset('Paid',paidData.map(v=>v/1000),'#DB0011'),
+  ]}, options:{ responsive:true, maintainAspectRatio:false, plugins:{legend:{display:false}},
+    scales:{ y:{ticks:{callback:v=>v+'K'},grid:{color:'rgba(255,255,255,0.05)'}}, x:{grid:{display:false}} } } });
+
+  // Levers bubble
+  new Chart('lv-bubble', { type:'bubble', data:{ datasets:[
+    { label:'Paid Search', data:[{x:8,y:9,r:22}], backgroundColor:'rgba(219,0,17,0.7)', borderColor:'#DB0011', borderWidth:1 },
+    { label:'Email Programme', data:[{x:5,y:8,r:12}], backgroundColor:'rgba(20,184,166,0.7)', borderColor:'#14b8a6', borderWidth:1 },
+    { label:'Mortgage Content', data:[{x:6,y:7,r:14}], backgroundColor:'rgba(34,197,94,0.7)', borderColor:'#22c55e', borderWidth:1 },
+    { label:'Engagement Fix', data:[{x:3,y:8.5,r:10}], backgroundColor:'rgba(245,158,11,0.7)', borderColor:'#f59e0b', borderWidth:1 },
+    { label:'AI Optimisation', data:[{x:2,y:7,r:6}], backgroundColor:'rgba(168,85,247,0.7)', borderColor:'#a855f7', borderWidth:1 },
+    { label:'Social Activation', data:[{x:7,y:4,r:7}], backgroundColor:'rgba(236,72,153,0.7)', borderColor:'#ec4899', borderWidth:1 },
+  ]}, options:{ responsive:true, maintainAspectRatio:false,
+    plugins:{ legend:{ labels:{ color:'#8888aa', font:{size:10}, boxWidth:8 } },
+      tooltip:{ callbacks:{ label:(c)=>`${c.dataset.label}: Impact ${c.raw.y}/10, Effort ${c.raw.x}/10` } } },
+    scales:{
+      x:{ min:0, max:11, title:{ display:true, text:'Implementation effort →', color:'#8888aa', font:{size:10} }, grid:{color:'rgba(255,255,255,0.05)'} },
+      y:{ min:0, max:11, title:{ display:true, text:'ROI impact ↑', color:'#8888aa', font:{size:10} }, grid:{color:'rgba(255,255,255,0.05)'} }
+    } } });
+
+  // Projection
+  const projMonths = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+  const base = [7.73,7.80,7.78,7.82,7.85,7.88,7.90,7.93,7.92,7.95,7.98,8.00];
+  const proj = [7.73,7.95,8.20,8.55,8.90,9.30,9.70,10.10,10.50,10.90,11.30,11.70];
+  new Chart('rc-projection', { type:'line', data:{ labels:projMonths, datasets:[
+    lineDataset('Current trajectory',base,'#8888aa'),
+    lineDataset('With ROI levers',proj,'#22c55e',true),
+  ]}, options:{ responsive:true, maintainAspectRatio:false, plugins:{legend:{labels:{color:'#8888aa',font:{size:10},boxWidth:8}}},
+    scales:{ y:{ticks:{callback:v=>v+'M'},grid:{color:'rgba(255,255,255,0.05)'}}, x:{grid:{display:false}} } } });
+
+  // Pages table
+  const tbody = document.getElementById('pages-tbody');
+  pages.forEach((p,i) => {
+    tbody.innerHTML += `<tr>
+      <td>${i+1}</td>
+      <td style="max-width:200px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-size:11px;color:var(--muted)">${p.url}</td>
+      <td><strong>${(p.clicks/1000).toFixed(1)}K</strong></td>
+      <td>${p.share}</td>
+      <td><span style="background:rgba(255,255,255,0.06);padding:2px 7px;border-radius:5px;font-size:10px;">${p.kw}</span></td>
+      <td>${p.mobile}</td>
+      <td style="font-size:10px;color:var(--muted)">${p.serp.split(',')[0]}${p.serp.includes(',') ? ' +more' : ''}</td>
+    </tr>`;
+  });
+
+  new Chart('pg-chart', { type:'bar',
+    data:{ labels:pages.map(p=>p.url.split('/').slice(-1)[0]||'home'),
+      datasets:[{ data:pages.map(p=>p.clicks/1000),
+        backgroundColor: pages.map((_,i)=>`hsl(${i*22+0},${70-i*3}%,${50+i*2}%)`), borderRadius:4 }]},
+    options:{ indexAxis:'y', responsive:true, maintainAspectRatio:false, plugins:{legend:{display:false}},
+      scales:{ x:{ticks:{callback:v=>v+'K'},grid:{color:'rgba(255,255,255,0.05)'}}, y:{grid:{display:false},ticks:{font:{size:10}}} } } });
+}
+
+// ==============================
+// NAVIGATION
+// ==============================
+function showPage(id, el) {
+  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+  document.getElementById('page-'+id).classList.add('active');
+  if(el) el.classList.add('active');
+  const titles = { overview:'Dashboard', traffic:'Traffic Analysis', benchmark:'Competitive Benchmarks',
+    channels:'Channel Analysis', levers:'ROI Levers', recommendations:'Recommendations', pages:'Top Pages' };
+  document.getElementById('page-title').textContent = titles[id] || id;
+}
+
+function showTab(id, el) {
+  const parent = el.closest('.page');
+  parent.querySelectorAll('.tab').forEach(t=>t.classList.remove('active'));
+  parent.querySelectorAll('.tab-content').forEach(t=>t.classList.remove('active'));
+  el.classList.add('active');
+  document.getElementById(id).classList.add('active');
+}
+
+// ==============================
+// METRIC SWITCHER
+// ==============================
+const metricMap = {
+  visits: { title:'Monthly visits — all banks', datasets:[
+    {label:'HSBC',data:data.hsbc.visits,color:'#DB0011'},{label:'Barclays',data:data.barclays.visits,color:'#3b82f6'},
+    {label:'Lloyds',data:data.lloyds.visits,color:'#22c55e'},{label:'NatWest',data:data.natwest.visits,color:'#a855f7'}], fmt:v=>v+'M' },
+  duration: { title:'Avg visit duration (minutes) — all banks', datasets:[
+    {label:'HSBC',data:data.hsbc.dur,color:'#DB0011'},{label:'Barclays',data:data.barclays.dur,color:'#3b82f6'},
+    {label:'Lloyds',data:data.lloyds.dur,color:'#22c55e'},{label:'NatWest',data:data.natwest.dur,color:'#a855f7'}], fmt:v=>v+'m' },
+  ppv: { title:'Pages per visit — all banks', datasets:[
+    {label:'HSBC',data:data.hsbc.ppv,color:'#DB0011'},{label:'Barclays',data:data.barclays.ppv,color:'#3b82f6'},
+    {label:'Lloyds',data:data.lloyds.ppv,color:'#22c55e'},{label:'NatWest',data:data.natwest.ppv,color:'#a855f7'}], fmt:v=>v },
+  bounce: { title:'Bounce rate (%) — all banks', datasets:[
+    {label:'HSBC',data:data.hsbc.bounce,color:'#DB0011'},{label:'Barclays',data:data.barclays.bounce,color:'#3b82f6'},
+    {label:'Lloyds',data:data.lloyds.bounce,color:'#22c55e'},{label:'NatWest',data:data.natwest.bounce,color:'#a855f7'}], fmt:v=>v+'%' },
+};
+function setMetric(key, btn) {
+  document.querySelectorAll('.filter-btn').forEach(b=>b.classList.remove('active'));
+  btn.classList.add('active');
+  const m = metricMap[key];
+  document.getElementById('metric-title').textContent = m.title;
+  window.trMain.data.datasets = m.datasets.map(d=>({ label:d.label, data:d.data, borderColor:d.color,
+    backgroundColor:d.color+'22', tension:0.4, pointRadius:3, borderWidth:2, fill:d.label==='HSBC' }));
+  window.trMain.options.scales.y.ticks.callback = m.fmt;
+  window.trMain.update();
+}
+
+// ==============================
+// EXPORT
+// ==============================
+function exportData() {
+  let csv = 'HSBC UK Marketing Intelligence — Similarweb Data Export\n\n';
+  csv += 'Month,HSBC Visits (M),Barclays Visits (M),Lloyds Visits (M),NatWest Visits (M)\n';
+  months.forEach((m,i) => {
+    csv += `${m} 2024/25,${data.hsbc.visits[i]},${data.barclays.visits[i]},${data.lloyds.visits[i]},${data.natwest.visits[i]}\n`;
+  });
+  csv += '\nChannel,HSBC Visits (Jan 2025)\n';
+  sources.forEach(s => { csv += `${s.label},${s.value}\n`; });
+  const blob = new Blob([csv], {type:'text/csv'});
+  const a = document.createElement('a'); a.href = URL.createObjectURL(blob);
+  a.download = 'hsbc_marketing_intelligence.csv'; a.click();
+}
+
+// Init
+window.addEventListener('load', initCharts);
+</script>
+</body>
+</html>

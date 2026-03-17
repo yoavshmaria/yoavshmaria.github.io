@@ -1,0 +1,1178 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Quince Marketing Intelligence Dashboard</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.js"></script>
+<style>
+  :root {
+    /* Quince brand palette */
+    --q-ivory:   #F5F0E8;
+    --q-cream:   #EDE8DC;
+    --q-sand:    #D6CDB8;
+    --q-stone:   #B8AC96;
+    --q-taupe:   #8C7E6A;
+    --q-espresso:#3D3228;
+    --q-ink:     #1E1812;
+    --q-sage:    #7A8C6E;
+    --q-rust:    #A0522D;
+    --q-terracotta: #C4714A;
+    --q-warm-white: #FAF8F4;
+
+    --text-primary:   #1E1812;
+    --text-secondary: #5C4F3D;
+    --text-muted:     #8C7E6A;
+    --border:         #D6CDB8;
+    --surface:        #FAF8F4;
+    --surface-2:      #F5F0E8;
+    --surface-3:      #EDE8DC;
+
+    --positive: #4A6741;
+    --negative: #A0522D;
+    --neutral:  #7A8C6E;
+
+    --shadow: 0 2px 16px rgba(61,50,40,0.08);
+    --radius: 6px;
+    --radius-lg: 10px;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: 'Georgia', 'Times New Roman', serif;
+    background: var(--q-cream);
+    color: var(--text-primary);
+    font-size: 14px;
+    line-height: 1.6;
+  }
+
+  /* ── HEADER ── */
+  .header {
+    background: var(--q-ink);
+    color: var(--q-ivory);
+    border-bottom: 1px solid var(--q-espresso);
+  }
+  .header-inner {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 20px 28px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 20px;
+  }
+  .logo-area { display: flex; align-items: center; gap: 18px; }
+  /* Quince wordmark — clean geometric Q */
+  .q-logo {
+    width: 48px; height: 48px;
+    border: 1.5px solid var(--q-sand);
+    border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    font-family: 'Georgia', serif;
+    font-size: 22px;
+    font-weight: 400;
+    color: var(--q-ivory);
+    letter-spacing: -1px;
+    flex-shrink: 0;
+  }
+  .brand-name {
+    font-family: 'Georgia', serif;
+    font-size: 20px;
+    font-weight: 400;
+    letter-spacing: 4px;
+    text-transform: uppercase;
+    color: var(--q-ivory);
+  }
+  .brand-sub {
+    font-family: 'Arial', sans-serif;
+    font-size: 10px;
+    color: var(--q-stone);
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+    margin-top: 3px;
+  }
+  .header-meta {
+    text-align: right;
+    font-family: sans-serif;
+  }
+  .header-meta .report-title {
+    font-family: 'Georgia', serif;
+    font-size: 15px;
+    color: var(--q-sand);
+    letter-spacing: 0.5px;
+  }
+  .header-meta .report-sub {
+    font-size: 11px;
+    color: var(--q-taupe);
+    letter-spacing: 0.8px;
+    margin-top: 3px;
+  }
+
+  /* ── NAV ── */
+  .nav-bar {
+    background: var(--q-espresso);
+    position: sticky;
+    top: 0;
+    z-index: 100;
+  }
+  .nav-inner {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 28px;
+    display: flex;
+    overflow-x: auto;
+  }
+  .nav-btn {
+    padding: 13px 16px;
+    background: none;
+    border: none;
+    border-bottom: 2px solid transparent;
+    cursor: pointer;
+    font-family: sans-serif;
+    font-size: 10px;
+    font-weight: 500;
+    letter-spacing: 1.2px;
+    color: var(--q-stone);
+    white-space: nowrap;
+    transition: all 0.2s;
+    text-transform: uppercase;
+  }
+  .nav-btn:hover { color: var(--q-ivory); }
+  .nav-btn.active { color: var(--q-ivory); border-bottom-color: var(--q-sand); }
+
+  /* ── MAIN ── */
+  .main { max-width: 1200px; margin: 0 auto; padding: 28px; }
+
+  .section { display: none; }
+  .section.active { display: block; }
+
+  /* ── SECTION HEADER ── */
+  .section-header {
+    display: flex;
+    align-items: flex-end;
+    justify-content: space-between;
+    margin-bottom: 24px;
+    padding-bottom: 14px;
+    border-bottom: 1px solid var(--q-sand);
+  }
+  .section-title {
+    font-family: 'Georgia', serif;
+    font-size: 24px;
+    font-weight: 400;
+    color: var(--q-ink);
+    letter-spacing: -0.3px;
+  }
+  .section-sub {
+    font-family: sans-serif;
+    font-size: 11px;
+    color: var(--text-muted);
+    letter-spacing: 0.5px;
+    margin-top: 4px;
+  }
+  .period-badge {
+    background: var(--q-espresso);
+    color: var(--q-sand);
+    padding: 5px 14px;
+    border-radius: 20px;
+    font-family: sans-serif;
+    font-size: 10px;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    white-space: nowrap;
+  }
+
+  /* ── CARDS ── */
+  .card {
+    background: var(--q-warm-white);
+    border-radius: var(--radius-lg);
+    border: 1px solid var(--border);
+    padding: 20px 22px;
+    box-shadow: var(--shadow);
+  }
+  .card-title {
+    font-family: sans-serif;
+    font-size: 10px;
+    font-weight: 600;
+    letter-spacing: 1.2px;
+    text-transform: uppercase;
+    color: var(--text-muted);
+    margin-bottom: 6px;
+  }
+  .card-value {
+    font-family: 'Georgia', serif;
+    font-size: 30px;
+    font-weight: 400;
+    color: var(--q-ink);
+    line-height: 1;
+  }
+  .card-delta {
+    font-family: sans-serif;
+    font-size: 11px;
+    margin-top: 6px;
+    font-weight: 400;
+  }
+  .delta-up   { color: var(--positive); }
+  .delta-down { color: var(--negative); }
+  .delta-neutral { color: var(--neutral); }
+
+  /* ── GRID ── */
+  .grid-4 { display: grid; grid-template-columns: repeat(4, minmax(0,1fr)); gap: 14px; margin-bottom: 22px; }
+  .grid-2 { display: grid; grid-template-columns: repeat(2, minmax(0,1fr)); gap: 16px; margin-bottom: 22px; }
+  .grid-3 { display: grid; grid-template-columns: repeat(3, minmax(0,1fr)); gap: 14px; margin-bottom: 22px; }
+
+  /* ── CHART CONTAINERS ── */
+  .chart-wrap { position: relative; width: 100%; }
+  .ch200 { height: 200px; }
+  .ch250 { height: 250px; }
+  .ch280 { height: 280px; }
+  .ch300 { height: 300px; }
+  .ch320 { height: 320px; }
+  .ch380 { height: 380px; }
+
+  /* ── LEGEND ── */
+  .legend { display: flex; flex-wrap: wrap; gap: 14px; margin-bottom: 12px; font-family: sans-serif; font-size: 11px; color: var(--text-secondary); }
+  .legend-item { display: flex; align-items: center; gap: 5px; }
+  .legend-swatch { width: 10px; height: 10px; border-radius: 2px; flex-shrink: 0; }
+
+  /* ── TABLE ── */
+  .data-table { width: 100%; border-collapse: collapse; font-family: sans-serif; font-size: 12px; }
+  .data-table th {
+    text-align: left; padding: 9px 12px;
+    background: var(--surface-3);
+    font-weight: 600; font-size: 10px; letter-spacing: 0.8px;
+    text-transform: uppercase; color: var(--text-muted);
+    border-bottom: 1px solid var(--border);
+  }
+  .data-table td { padding: 9px 12px; border-bottom: 1px solid var(--surface-3); color: var(--text-primary); }
+  .data-table tr:last-child td { border-bottom: none; }
+  .data-table tr:hover td { background: var(--surface-2); }
+
+  /* ── BADGE ── */
+  .badge { display: inline-block; padding: 2px 8px; border-radius: 10px; font-size: 10px; font-family: sans-serif; font-weight: 500; letter-spacing: 0.3px; }
+  .badge-rust   { background: #f3e5dc; color: #8B3A18; }
+  .badge-sage   { background: #e5ede2; color: #3a5c35; }
+  .badge-taupe  { background: var(--surface-3); color: var(--q-taupe); }
+  .badge-ink    { background: var(--q-espresso); color: var(--q-sand); }
+  .badge-stone  { background: #ede8dc; color: var(--q-espresso); }
+  .badge-warn   { background: #fdf0e5; color: #8B5E1A; }
+
+  /* ── ACTION ITEMS ── */
+  .action-list { list-style: none; }
+  .action-item {
+    display: flex; gap: 14px; align-items: flex-start;
+    padding: 13px 0;
+    border-bottom: 1px solid var(--surface-3);
+  }
+  .action-item:last-child { border-bottom: none; }
+  .action-num {
+    width: 26px; height: 26px;
+    background: var(--q-espresso);
+    color: var(--q-sand);
+    border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    font-family: 'Georgia', serif;
+    font-size: 12px;
+    flex-shrink: 0;
+  }
+  .action-text { font-size: 13px; line-height: 1.6; font-family: sans-serif; color: var(--text-secondary); }
+  .action-text strong { color: var(--q-ink); font-weight: 600; }
+
+  /* ── OPPORTUNITY CARDS ── */
+  .opp-card {
+    background: var(--q-warm-white);
+    border: 1px solid var(--border);
+    border-left: 3px solid var(--q-espresso);
+    border-radius: var(--radius-lg);
+    padding: 16px 18px;
+    box-shadow: var(--shadow);
+  }
+  .opp-card.sage  { border-left-color: var(--q-sage); }
+  .opp-card.taupe { border-left-color: var(--q-taupe); }
+  .opp-card.rust  { border-left-color: var(--q-rust); }
+  .opp-title { font-family: 'Georgia', serif; font-size: 14px; font-weight: 400; color: var(--q-ink); margin-bottom: 6px; }
+  .opp-body  { font-size: 12px; font-family: sans-serif; color: var(--text-secondary); line-height: 1.7; }
+
+  /* ── SWOT ── */
+  .swot-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 0; border-radius: var(--radius-lg); overflow: hidden; border: 1px solid var(--border); margin-bottom: 24px; }
+  .swot-cell { padding: 26px 28px; }
+  .swot-s { background: var(--q-ink); color: var(--q-ivory); }
+  .swot-w { background: var(--q-espresso); color: var(--q-ivory); }
+  .swot-o { background: var(--q-sage); color: white; }
+  .swot-t { background: var(--q-taupe); color: white; }
+  .swot-label { font-family: 'Georgia', serif; font-size: 36px; font-weight: 400; opacity: 0.25; margin-bottom: 6px; letter-spacing: 2px; }
+  .swot-heading { font-family: sans-serif; font-size: 11px; font-weight: 600; letter-spacing: 1.5px; text-transform: uppercase; margin-bottom: 14px; opacity: 0.9; }
+  .swot-list { list-style: none; }
+  .swot-list li { font-size: 12px; font-family: sans-serif; padding: 4px 0; opacity: 0.88; line-height: 1.55; }
+  .swot-list li::before { content: "— "; opacity: 0.5; }
+
+  /* ── COMPETITOR BARS ── */
+  .comp-bar-wrap { margin-bottom: 11px; }
+  .comp-bar-label { display: flex; justify-content: space-between; font-family: sans-serif; font-size: 11px; margin-bottom: 4px; color: var(--text-secondary); }
+  .comp-bar-label span:last-child { font-weight: 600; color: var(--text-primary); }
+  .comp-bar-track { background: var(--surface-3); border-radius: 3px; height: 7px; overflow: hidden; }
+  .comp-bar-fill  { height: 100%; border-radius: 3px; }
+
+  /* ── KW TAGS ── */
+  .kw-tag { display: inline-block; border-radius: 3px; padding: 3px 8px; font-size: 11px; font-family: sans-serif; margin: 2px; }
+  .kw-hot  { background: #f3e5dc; border: 1px solid #dcc4b5; color: #7a3010; }
+  .kw-opp  { background: #e5ede2; border: 1px solid #c0d1bb; color: #2a4c25; }
+  .kw-gold { background: #f5edd8; border: 1px solid #ddd0ad; color: #6b4e10; }
+  .kw-gray { background: var(--surface-2); border: 1px solid var(--border); color: var(--text-secondary); }
+
+  /* ── SOCIAL ── */
+  .social-platform { display: flex; align-items: center; gap: 12px; padding: 11px 0; border-bottom: 1px solid var(--surface-3); }
+  .social-platform:last-child { border-bottom: none; }
+  .platform-icon { width: 36px; height: 36px; border-radius: 8px; display: flex; align-items: center; justify-content: center; font-size: 12px; font-weight: 700; font-family: sans-serif; flex-shrink: 0; }
+  .platform-name { font-size: 13px; font-weight: 600; font-family: sans-serif; color: var(--q-ink); }
+  .platform-sub  { font-size: 11px; font-family: sans-serif; color: var(--text-muted); }
+
+  /* ── REFERRAL PILLS ── */
+  .ref-pill { display: inline-flex; align-items: center; gap: 6px; background: var(--surface-2); border: 1px solid var(--border); border-radius: 16px; padding: 4px 11px; font-family: sans-serif; font-size: 11px; color: var(--text-secondary); margin: 3px; }
+  .ref-pill .dot { width: 7px; height: 7px; border-radius: 50%; }
+
+  /* ── INSIGHT BOX ── */
+  .insight { background: var(--q-ink); color: var(--q-ivory); border-radius: var(--radius-lg); padding: 16px 20px; margin-top: 14px; }
+  .insight-label { font-family: sans-serif; font-size: 9px; font-weight: 600; letter-spacing: 1.5px; text-transform: uppercase; color: var(--q-sand); margin-bottom: 7px; }
+  .insight-text { font-family: sans-serif; font-size: 12px; line-height: 1.7; color: var(--q-ivory); opacity: 0.88; }
+
+  /* ── DIVIDER ── */
+  .divider { border: none; border-top: 1px solid var(--border); margin: 14px 0; }
+
+  /* ── ROADMAP COLUMNS ── */
+  .roadmap-head { font-family: sans-serif; font-size: 10px; font-weight: 600; letter-spacing: 1px; text-transform: uppercase; padding: 10px 14px; border-radius: var(--radius) var(--radius) 0 0; }
+  .roadmap-body { border: 1px solid var(--border); border-top: none; border-radius: 0 0 var(--radius) var(--radius); padding: 12px 14px; background: var(--q-warm-white); }
+
+  /* ── FOOTER ── */
+  .footer {
+    background: var(--q-ink);
+    color: var(--q-taupe);
+    text-align: center;
+    padding: 16px;
+    font-family: sans-serif;
+    font-size: 10px;
+    letter-spacing: 0.8px;
+    margin-top: 32px;
+    border-top: 1px solid var(--q-espresso);
+  }
+
+  @media (max-width: 700px) {
+    .grid-4, .grid-3 { grid-template-columns: repeat(2, 1fr); }
+    .grid-2, .swot-grid { grid-template-columns: 1fr; }
+  }
+</style>
+</head>
+<body>
+
+<!-- HEADER -->
+<div class="header">
+  <div class="header-inner">
+    <div class="logo-area">
+      <div class="q-logo">Q</div>
+      <div>
+        <div class="brand-name">Quince</div>
+        <div class="brand-sub">Marketing Intelligence · Powered by Similarweb</div>
+      </div>
+    </div>
+    <div class="header-meta">
+      <div class="report-title">Digital Marketing ROI Dashboard</div>
+      <div class="report-sub">United States · March 2024 – February 2025</div>
+    </div>
+  </div>
+</div>
+
+<!-- NAV -->
+<div class="nav-bar">
+  <div class="nav-inner">
+    <button class="nav-btn active" onclick="showTab('overview',this)">Overview</button>
+    <button class="nav-btn" onclick="showTab('market',this)">Market Research</button>
+    <button class="nav-btn" onclick="showTab('seo',this)">SEO</button>
+    <button class="nav-btn" onclick="showTab('ppc',this)">PPC</button>
+    <button class="nav-btn" onclick="showTab('referrals',this)">Referrals</button>
+    <button class="nav-btn" onclick="showTab('social',this)">Social</button>
+    <button class="nav-btn" onclick="showTab('swot',this)">SWOT</button>
+  </div>
+</div>
+
+<div class="main">
+
+<!-- ══════════════ 1. OVERVIEW ══════════════ -->
+<div id="tab-overview" class="section active">
+  <div class="section-header">
+    <div>
+      <div class="section-title">Executive Overview</div>
+      <div class="section-sub">Key performance metrics &amp; priority action items · US market</div>
+    </div>
+    <div class="period-badge">Mar 2024 – Feb 2025</div>
+  </div>
+
+  <div class="grid-4">
+    <div class="card">
+      <div class="card-title">Peak Monthly Visits</div>
+      <div class="card-value">31M</div>
+      <div class="card-delta delta-up">↑ Nov 2024 Black Friday peak</div>
+    </div>
+    <div class="card">
+      <div class="card-title">12-Month Traffic Growth</div>
+      <div class="card-value">+110%</div>
+      <div class="card-delta delta-up">↑ 10.8M → 22.8M visits</div>
+    </div>
+    <div class="card">
+      <div class="card-title">Avg Pages per Visit</div>
+      <div class="card-value">6.5</div>
+      <div class="card-delta delta-up">↑ Strong engagement signal</div>
+    </div>
+    <div class="card">
+      <div class="card-title">Avg Bounce Rate</div>
+      <div class="card-value">36.6%</div>
+      <div class="card-delta delta-up">↑ Well below industry ~45%</div>
+    </div>
+  </div>
+
+  <div class="card" style="margin-bottom:22px;">
+    <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:14px;">
+      <div>
+        <div class="card-title">Monthly Visits — 12-Month Trend</div>
+        <div style="font-family:sans-serif;font-size:11px;color:var(--text-muted);margin-top:2px;">Quince vs key competitors · US total web</div>
+      </div>
+    </div>
+    <div class="legend">
+      <div class="legend-item"><div class="legend-swatch" style="background:#3D3228;"></div> Quince.com</div>
+      <div class="legend-item"><div class="legend-swatch" style="background:#B8AC96;"></div> Madewell.com</div>
+      <div class="legend-item"><div class="legend-swatch" style="background:#7A8C6E;"></div> Everlane.com</div>
+    </div>
+    <div class="chart-wrap ch280"><canvas id="trendChart"></canvas></div>
+  </div>
+
+  <div class="grid-2">
+    <div class="card">
+      <div class="card-title" style="margin-bottom:14px;">Traffic Channel Mix · Feb 2025</div>
+      <div class="legend">
+        <div class="legend-item"><div class="legend-swatch" style="background:#1E1812;"></div>Direct 52.6%</div>
+        <div class="legend-item"><div class="legend-swatch" style="background:#A0522D;"></div>Paid Search 20.3%</div>
+        <div class="legend-item"><div class="legend-swatch" style="background:#7A8C6E;"></div>Social 13.7%</div>
+        <div class="legend-item"><div class="legend-swatch" style="background:#8C7E6A;"></div>Organic 10.4%</div>
+        <div class="legend-item"><div class="legend-swatch" style="background:#B8AC96;"></div>Referrals 2.4%</div>
+        <div class="legend-item"><div class="legend-swatch" style="background:#D6CDB8;"></div>Other 0.6%</div>
+      </div>
+      <div class="chart-wrap ch250"><canvas id="chanMixChart"></canvas></div>
+    </div>
+    <div class="card">
+      <div class="card-title" style="margin-bottom:14px;">Channel Volume — Monthly Stack</div>
+      <div style="font-family:sans-serif;font-size:12px;color:var(--text-secondary);margin-bottom:14px;">Paid Search grew from 1.3M to 4.6M/month — but organic sits at just 10.4%, roughly half the competitor average of 20–25%.</div>
+      <div class="chart-wrap ch200"><canvas id="channelGrowthChart"></canvas></div>
+      <div class="insight">
+        <div class="insight-label">Strategic Signal</div>
+        <div class="insight-text">Quince is heavily reliant on paid acquisition. SEO is the single highest-ROI investment available — 5–10× behind competitors in organic share.</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-title" style="margin-bottom:16px;">Top 7 Priority Action Items</div>
+    <ul class="action-list">
+      <li class="action-item"><div class="action-num">1</div><div class="action-text"><strong>Scale SEO content strategy.</strong> Organic is only 10.4% of visits vs 20–25% for Madewell. Target non-branded category terms — cashmere sweaters, linen pants, duvet covers — with buying guides and comparison content.</div></li>
+      <li class="action-item"><div class="action-num">2</div><div class="action-text"><strong>Reduce PPC waste on competitor brands.</strong> Quince is paying for "Everlane," "Sezane," and "Brooklinen" searches. Reallocate 25–30% of that spend toward own branded and category terms.</div></li>
+      <li class="action-item"><div class="action-num">3</div><div class="action-text"><strong>Activate editorial affiliate partnerships.</strong> Forbes referrals grew +1,852% YoY; InStyle +291%; theGoodTrade +483%. Gifting and editorial pitching is high-ROI traffic at near-zero CPC equivalent.</div></li>
+      <li class="action-item"><div class="action-num">4</div><div class="action-text"><strong>Launch email capture and nurture.</strong> Email visits are negligible at 5K–15K/month against a 31M peak audience. Building automated welcome and retention flows is the single easiest revenue recovery.</div></li>
+      <li class="action-item"><div class="action-num">5</div><div class="action-text"><strong>Capitalise on Home &amp; Bedding.</strong> Bedding pages rank highest organically and in PPC. Expand content (sheet material guides, comparisons) and increase shopping ad investment in this category.</div></li>
+      <li class="action-item"><div class="action-num">6</div><div class="action-text"><strong>Re-engage Substack partnerships.</strong> Substack is the #2 referral source at 373K visits but collapsed 88% YoY — a lapsed partnership. Sponsor curated newsletters in sustainable fashion and home niches.</div></li>
+      <li class="action-item"><div class="action-num">7</div><div class="action-text"><strong>Smooth post-holiday traffic cliff.</strong> Visits drop 26% Nov → Dec, then another 15% in January. Launch January sale content, loyalty campaigns, and refer-a-friend programmes ahead of Q1.</div></li>
+    </ul>
+  </div>
+</div>
+
+<!-- ══════════════ 2. MARKET RESEARCH ══════════════ -->
+<div id="tab-market" class="section">
+  <div class="section-header">
+    <div>
+      <div class="section-title">Market Research</div>
+      <div class="section-sub">Competitive landscape · top players · channel benchmarks · trends</div>
+    </div>
+    <div class="period-badge">US Market · 2024–2025</div>
+  </div>
+
+  <div class="grid-2">
+    <div class="card">
+      <div class="card-title" style="margin-bottom:14px;">Audience Affinity — Similar Sites</div>
+      <div class="comp-bar-wrap"><div class="comp-bar-label"><span>Everlane.com</span><span>100%</span></div><div class="comp-bar-track"><div class="comp-bar-fill" style="width:100%;background:#3D3228;"></div></div></div>
+      <div class="comp-bar-wrap"><div class="comp-bar-label"><span>LL Bean</span><span>97%</span></div><div class="comp-bar-track"><div class="comp-bar-fill" style="width:97%;background:#5C4F3D;"></div></div></div>
+      <div class="comp-bar-wrap"><div class="comp-bar-label"><span>J.Crew</span><span>93%</span></div><div class="comp-bar-track"><div class="comp-bar-fill" style="width:93%;background:#8C7E6A;"></div></div></div>
+      <div class="comp-bar-wrap"><div class="comp-bar-label"><span>Brooklinen</span><span>91%</span></div><div class="comp-bar-track"><div class="comp-bar-fill" style="width:91%;background:#8C7E6A;"></div></div></div>
+      <div class="comp-bar-wrap"><div class="comp-bar-label"><span>Madewell</span><span>89%</span></div><div class="comp-bar-track"><div class="comp-bar-fill" style="width:89%;background:#A0522D;"></div></div></div>
+      <div class="comp-bar-wrap"><div class="comp-bar-label"><span>Aritzia</span><span>86%</span></div><div class="comp-bar-track"><div class="comp-bar-fill" style="width:86%;background:#B8AC96;"></div></div></div>
+      <div class="comp-bar-wrap"><div class="comp-bar-label"><span>Gap.com</span><span>85%</span></div><div class="comp-bar-track"><div class="comp-bar-fill" style="width:85%;background:#C4C0B0;"></div></div></div>
+      <div class="comp-bar-wrap"><div class="comp-bar-label"><span>Anthropologie</span><span>83%</span></div><div class="comp-bar-track"><div class="comp-bar-fill" style="width:83%;background:#D6CDB8;"></div></div></div>
+    </div>
+    <div class="card">
+      <div class="card-title" style="margin-bottom:14px;">Monthly Visits Comparison (US)</div>
+      <div class="legend">
+        <div class="legend-item"><div class="legend-swatch" style="background:#3D3228;"></div>Quince</div>
+        <div class="legend-item"><div class="legend-swatch" style="background:#B8AC96;"></div>Madewell</div>
+        <div class="legend-item"><div class="legend-swatch" style="background:#7A8C6E;"></div>Everlane</div>
+      </div>
+      <div class="chart-wrap ch280"><canvas id="mktTrendChart"></canvas></div>
+    </div>
+  </div>
+
+  <div class="card" style="margin-bottom:22px;">
+    <div class="card-title" style="margin-bottom:14px;">Competitive Positioning Matrix</div>
+    <div style="overflow-x:auto;">
+      <table class="data-table">
+        <thead><tr><th>Brand</th><th>Positioning</th><th>Feb '25 Traffic</th><th>Key Strength</th><th>Main Channel</th><th>Threat Level</th></tr></thead>
+        <tbody>
+          <tr><td><strong>Everlane</strong></td><td>Sustainable essentials</td><td>3.3M</td><td>Brand authority, ethics storytelling</td><td>Direct, Organic</td><td><span class="badge badge-rust">High</span></td></tr>
+          <tr><td><strong>Madewell</strong></td><td>Premium casual denim</td><td>5.5M</td><td>Denim SEO dominance, loyalty</td><td>Direct, Organic</td><td><span class="badge badge-warn">Medium</span></td></tr>
+          <tr><td><strong>Brooklinen</strong></td><td>Luxury bedding DTC</td><td>~1.5M</td><td>Bedding category SEO</td><td>Direct, Referrals</td><td><span class="badge badge-rust">High</span></td></tr>
+          <tr><td><strong>J.Crew</strong></td><td>Classic American fashion</td><td>~4M</td><td>Brand heritage, multichannel</td><td>Direct, Paid</td><td><span class="badge badge-warn">Medium</span></td></tr>
+          <tr><td><strong>Aritzia</strong></td><td>Premium women's fashion</td><td>~8M</td><td>Viral social, quality perception</td><td>Direct, Social</td><td><span class="badge badge-taupe">Low</span></td></tr>
+          <tr><td><strong>Naadam</strong></td><td>Cashmere specialist</td><td>~0.5M</td><td>Cashmere brand equity</td><td>Direct, SEO</td><td><span class="badge badge-rust">High</span></td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <div class="grid-3">
+    <div class="opp-card sage">
+      <div class="opp-title">Channel Trend: Social Commerce</div>
+      <div class="opp-body">Social traffic grew from 1.6M to 3.1M/month (+94%). TikTok and Instagram Shopping are the primary vectors. Quince is winning here — competitors like Everlane underinvest in TikTok. Opportunity to extend the lead.</div>
+    </div>
+    <div class="opp-card taupe">
+      <div class="opp-title">Trend: AI Chatbot Discovery</div>
+      <div class="opp-body">AI shopping assistants (ChatGPT, Perplexity, Gemini) are increasingly surfacing product categories. Quince should optimise structured data and product descriptions for AI-recommendability — a nascent but fast-growing channel visible in the referrals data.</div>
+    </div>
+    <div class="opp-card rust">
+      <div class="opp-title">Trend: Value-Luxury Positioning</div>
+      <div class="opp-body">The "accessible luxury" segment is growing as consumers seek quality at fair prices. Quince's direct factory model is structurally differentiated. Material education content (Mongolian cashmere, European linen, Italian leather) drives both SEO and conversion.</div>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════ 3. SEO ══════════════ -->
+<div id="tab-seo" class="section">
+  <div class="section-header">
+    <div>
+      <div class="section-title">SEO Intelligence</div>
+      <div class="section-sub">Organic keyword opportunities · landing page performance · content strategy</div>
+    </div>
+    <div class="period-badge">Q1 2026 Data</div>
+  </div>
+
+  <div class="grid-4">
+    <div class="card"><div class="card-title">Organic Traffic</div><div class="card-value">2.4M</div><div class="card-delta delta-up">↑ Feb 2025 (vs 432K Mar '24)</div></div>
+    <div class="card"><div class="card-title">Organic Share</div><div class="card-value">10.4%</div><div class="card-delta delta-neutral">Competitor avg 20%+ — gap to close</div></div>
+    <div class="card"><div class="card-title">Top Organic Page</div><div class="card-value">Bedding</div><div class="card-delta delta-up">↑ 41% of organic category clicks</div></div>
+    <div class="card"><div class="card-title">Organic Growth YoY</div><div class="card-value">+448%</div><div class="card-delta delta-up">↑ 432K → 2.4M visits</div></div>
+  </div>
+
+  <div class="grid-2">
+    <div class="card">
+      <div class="card-title" style="margin-bottom:14px;">Top Organic Landing Pages · Feb 2026</div>
+      <table class="data-table">
+        <thead><tr><th>Page</th><th>Clicks</th><th>Share</th><th>Keywords</th></tr></thead>
+        <tbody>
+          <tr><td><strong>Homepage</strong></td><td>327K</td><td>38.9%</td><td><span class="badge badge-warn">676</span></td></tr>
+          <tr><td>Shipping &amp; Returns</td><td>39.7K</td><td>4.7%</td><td><span class="badge badge-taupe">276</span></td></tr>
+          <tr><td>Bedding Category</td><td>34.6K</td><td>4.1%</td><td><span class="badge badge-sage">683</span></td></tr>
+          <tr><td>Women's Section</td><td>28.5K</td><td>3.4%</td><td><span class="badge badge-taupe">189</span></td></tr>
+          <tr><td>Men's Section</td><td>28.3K</td><td>3.4%</td><td><span class="badge badge-taupe">140</span></td></tr>
+          <tr><td>Quince Offers</td><td>23.4K</td><td>2.8%</td><td><span class="badge badge-stone">133</span></td></tr>
+          <tr><td>Women's Dresses</td><td>21.9K</td><td>2.6%</td><td><span class="badge badge-taupe">236</span></td></tr>
+          <tr><td>Bags &amp; Leather</td><td>21.5K</td><td>2.6%</td><td><span class="badge badge-taupe">334</span></td></tr>
+          <tr><td>Women's Cashmere</td><td>6.3K</td><td>0.7%</td><td><span class="badge badge-sage">308</span></td></tr>
+          <tr><td>Women's Sweaters</td><td>3.6K</td><td>0.4%</td><td><span class="badge badge-sage">386</span></td></tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="card">
+      <div class="card-title" style="margin-bottom:14px;">Organic Traffic Growth</div>
+      <div class="chart-wrap ch300"><canvas id="orgGrowthChart"></canvas></div>
+    </div>
+  </div>
+
+  <div class="card" style="margin-bottom:22px;">
+    <div class="card-title" style="margin-bottom:14px;">Keyword Analysis &amp; Gap Opportunities</div>
+    <div class="grid-2">
+      <div>
+        <table class="data-table">
+          <thead><tr><th>Keyword</th><th>Rank</th><th>Intent</th><th>Comp.</th></tr></thead>
+          <tbody>
+            <tr><td><strong>cashmere</strong></td><td><span class="badge badge-warn">#7</span></td><td>Informational</td><td><span class="badge badge-rust">99</span></td></tr>
+            <tr><td><strong>linen skirt</strong></td><td><span class="badge badge-rust">#35</span></td><td>Transactional</td><td><span class="badge badge-rust">100</span></td></tr>
+            <tr><td><strong>white leather sneakers</strong></td><td><span class="badge badge-sage">#2</span></td><td>Transactional</td><td><span class="badge badge-rust">100</span></td></tr>
+            <tr><td><strong>mongolian cashmere crewneck</strong></td><td><span class="badge badge-sage">#1</span></td><td>Transactional</td><td><span class="badge badge-rust">100</span></td></tr>
+            <tr><td><strong>bella stretch wide leg jeans</strong></td><td><span class="badge badge-sage">#3</span></td><td>Transactional</td><td><span class="badge badge-rust">100</span></td></tr>
+            <tr><td><strong>linen sheets</strong></td><td><span class="badge badge-warn">#18</span></td><td>Transactional</td><td><span class="badge badge-rust">100</span></td></tr>
+          </tbody>
+        </table>
+      </div>
+      <div>
+        <div style="font-family:sans-serif;font-size:11px;font-weight:600;letter-spacing:0.8px;text-transform:uppercase;color:var(--text-muted);margin-bottom:8px;">Keyword Gap Opportunities</div>
+        <div style="font-family:sans-serif;font-size:11px;color:var(--text-secondary);margin-bottom:10px;">High-volume terms where competitors rank top-3 but Quince is absent:</div>
+        <span class="kw-opp">sustainable clothing</span>
+        <span class="kw-opp">ethical fashion brands</span>
+        <span class="kw-opp">cashmere sweater women</span>
+        <span class="kw-opp">linen pants women</span>
+        <span class="kw-opp">duvet cover sets</span>
+        <span class="kw-opp">luxury bedding affordable</span>
+        <span class="kw-opp">silk pillowcase</span>
+        <span class="kw-opp">merino wool sweater</span>
+        <span class="kw-opp">percale sheets</span>
+        <span class="kw-opp">italian leather handbag</span>
+        <span class="kw-opp">affordable cashmere</span>
+        <span class="kw-opp">linen duvet cover</span>
+        <div style="margin-top:14px;font-family:sans-serif;font-size:11px;font-weight:600;letter-spacing:0.8px;text-transform:uppercase;color:var(--text-muted);margin-bottom:8px;">Content Cluster Strategy</div>
+        <span class="kw-hot">Material Guides</span>
+        <span class="kw-hot">Cashmere Care</span>
+        <span class="kw-gold">Best Bedding Comparisons</span>
+        <span class="kw-gold">Linen vs Cotton</span>
+        <span class="kw-opp">Outfit Inspiration</span>
+        <span class="kw-opp">Capsule Wardrobe</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="grid-2">
+    <div class="opp-card sage">
+      <div class="opp-title">SEO Opportunity: Material Education Content</div>
+      <div class="opp-body">Quince ranks #7 for "cashmere" — informational intent, 3M+ monthly searches. A comprehensive cashmere guide could move this to top 3, generating 50–100K additional organic visits/month. Competitors Naadam and Everlane have weak guides.</div>
+    </div>
+    <div class="opp-card taupe">
+      <div class="opp-title">SEO Opportunity: Returns &amp; Discount Pages</div>
+      <div class="opp-body">The shipping-returns page drives 39.7K clicks and already appears in AI Overviews. Optimise for "quince returns policy" and related queries. The offers page ranks for discount codes — expand this cluster for price-sensitive acquisition.</div>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════ 4. PPC ══════════════ -->
+<div id="tab-ppc" class="section">
+  <div class="section-header">
+    <div>
+      <div class="section-title">PPC Intelligence</div>
+      <div class="section-sub">Paid keyword strategy · campaign clusters · landing page ROI · spend analysis</div>
+    </div>
+    <div class="period-badge">Q1 2026 Data</div>
+  </div>
+
+  <div class="grid-4">
+    <div class="card"><div class="card-title">Paid Traffic (Feb '25)</div><div class="card-value">4.6M</div><div class="card-delta delta-up">↑ Grew from 1.3M (Mar '24)</div></div>
+    <div class="card"><div class="card-title">Paid Search Share</div><div class="card-value">20.3%</div><div class="card-delta delta-down">↓ Overly PPC-dependent</div></div>
+    <div class="card"><div class="card-title">Est. Monthly Spend</div><div class="card-value">$2.2M+</div><div class="card-delta delta-neutral">Homepage alone ~$1.6M/mo</div></div>
+    <div class="card"><div class="card-title">PPC Efficiency Risk</div><div class="card-value">High</div><div class="card-delta delta-down">↓ Bidding all competitor brands</div></div>
+  </div>
+
+  <div class="grid-2">
+    <div class="card">
+      <div class="card-title" style="margin-bottom:14px;">Top Paid Keywords by Clicks · Q1 2026</div>
+      <table class="data-table">
+        <thead><tr><th>Keyword</th><th>Clicks</th><th>Type</th><th>Pos.</th></tr></thead>
+        <tbody>
+          <tr><td><strong>everlane</strong></td><td>29.6K</td><td><span class="badge badge-rust">Conquest</span></td><td>#1</td></tr>
+          <tr><td><strong>sezane</strong></td><td>25.9K</td><td><span class="badge badge-rust">Conquest</span></td><td>#1</td></tr>
+          <tr><td><strong>wool coat</strong></td><td>23.2K</td><td><span class="badge badge-sage">Category</span></td><td>#1</td></tr>
+          <tr><td><strong>brooklinen</strong></td><td>23.1K</td><td><span class="badge badge-rust">Conquest</span></td><td>#1</td></tr>
+          <tr><td><strong>cashmere sweater</strong></td><td>23.0K</td><td><span class="badge badge-sage">Category</span></td><td>#1</td></tr>
+          <tr><td><strong>aritzia super puff</strong></td><td>21.9K</td><td><span class="badge badge-rust">Conquest</span></td><td>#1</td></tr>
+          <tr><td><strong>madewell</strong></td><td>21.7K</td><td><span class="badge badge-rust">Conquest</span></td><td>#1</td></tr>
+          <tr><td><strong>linen pants</strong></td><td>20.4K</td><td><span class="badge badge-sage">Category</span></td><td>#1</td></tr>
+          <tr><td><strong>duvet covers</strong></td><td>19.3K</td><td><span class="badge badge-sage">Category</span></td><td>#1</td></tr>
+          <tr><td><strong>linen sheets</strong></td><td>11.8K</td><td><span class="badge badge-sage">Category</span></td><td>#1</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="card">
+      <div class="card-title" style="margin-bottom:14px;">PPC Spend by Landing Page · Feb 2026</div>
+      <div class="chart-wrap ch280"><canvas id="ppcSpendChart"></canvas></div>
+    </div>
+  </div>
+
+  <div class="card" style="margin-bottom:22px;">
+    <div class="card-title" style="margin-bottom:16px;">PPC Campaign Keyword Clusters</div>
+    <div class="grid-3">
+      <div>
+        <div style="font-family:sans-serif;font-size:10px;font-weight:600;letter-spacing:1px;text-transform:uppercase;padding:9px 12px;background:var(--q-espresso);color:var(--q-sand);border-radius:var(--radius) var(--radius) 0 0;">Cluster A — Competitor Conquest</div>
+        <div style="border:1px solid var(--border);border-top:none;border-radius:0 0 var(--radius) var(--radius);padding:12px;background:var(--q-warm-white);">
+          <div style="font-family:sans-serif;font-size:11px;color:var(--text-muted);margin-bottom:8px;">High spend · moderate CTR · brand safety risk</div>
+          <span class="kw-hot">everlane</span><span class="kw-hot">sezane</span><span class="kw-hot">brooklinen</span>
+          <span class="kw-hot">madewell</span><span class="kw-hot">aritzia super puff</span>
+          <span class="kw-hot">pact clothing</span><span class="kw-hot">mejuri</span><span class="kw-hot">vuori</span>
+          <div style="margin-top:10px;font-family:sans-serif;font-size:11px;background:#f3e5dc;border:1px solid #dcc4b5;padding:8px;border-radius:4px;color:#7a3010;">
+            ⚠ Reduce budget by 30%. High CPCs, brand confusion risk. Redirect to category terms.
+          </div>
+        </div>
+      </div>
+      <div>
+        <div style="font-family:sans-serif;font-size:10px;font-weight:600;letter-spacing:1px;text-transform:uppercase;padding:9px 12px;background:var(--q-taupe);color:white;border-radius:var(--radius) var(--radius) 0 0;">Cluster B — Category Terms</div>
+        <div style="border:1px solid var(--border);border-top:none;border-radius:0 0 var(--radius) var(--radius);padding:12px;background:var(--q-warm-white);">
+          <div style="font-family:sans-serif;font-size:11px;color:var(--text-muted);margin-bottom:8px;">Strong ROI · high intent · transactional</div>
+          <span class="kw-gold">wool coat</span><span class="kw-gold">cashmere sweater</span>
+          <span class="kw-gold">linen pants</span><span class="kw-gold">duvet covers</span>
+          <span class="kw-gold">linen sheets</span><span class="kw-gold">sweaters</span><span class="kw-gold">curtains</span>
+          <div style="margin-top:10px;font-family:sans-serif;font-size:11px;background:#f5edd8;border:1px solid #ddd0ad;padding:8px;border-radius:4px;color:#6b4e10;">
+            ✓ Increase budgets 20–40% especially Q4. Best volume-to-quality ratio.
+          </div>
+        </div>
+      </div>
+      <div>
+        <div style="font-family:sans-serif;font-size:10px;font-weight:600;letter-spacing:1px;text-transform:uppercase;padding:9px 12px;background:var(--q-sage);color:white;border-radius:var(--radius) var(--radius) 0 0;">Cluster C — Product Shopping (PLA)</div>
+        <div style="border:1px solid var(--border);border-top:none;border-radius:0 0 var(--radius) var(--radius);padding:12px;background:var(--q-warm-white);">
+          <div style="font-family:sans-serif;font-size:11px;color:var(--text-muted);margin-bottom:8px;">Shopping ads · high ROAS product categories</div>
+          <span class="kw-opp">quarter zip men</span><span class="kw-opp">linen wide leg pant</span>
+          <span class="kw-opp">down comforter</span><span class="kw-opp">carry on luggage</span>
+          <span class="kw-opp">waffle duvet cover</span><span class="kw-opp">cashmere crewneck</span>
+          <div style="margin-top:10px;font-family:sans-serif;font-size:11px;background:#e5ede2;border:1px solid #c0d1bb;padding:8px;border-radius:4px;color:#2a4c25;">
+            ✓ Expand SKU coverage in Shopping. Luggage and home showing strong signals.
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-title" style="margin-bottom:14px;">Top Paid Landing Pages — Performance Analysis</div>
+    <table class="data-table">
+      <thead><tr><th>Landing Page</th><th>Clicks</th><th>Est. Spend</th><th>Keywords</th><th>Ads</th><th>Assessment</th></tr></thead>
+      <tbody>
+        <tr><td><strong>Homepage</strong></td><td>672K</td><td>$1,643K</td><td>1,230</td><td>2,926</td><td><span class="badge badge-warn">Too broad — review</span></td></tr>
+        <tr><td>Bedding Category</td><td>36.1K</td><td>$178K</td><td>680</td><td>1,435</td><td><span class="badge badge-sage">Strong performer</span></td></tr>
+        <tr><td>Men's Quarter Zip</td><td>15.4K</td><td>$141K</td><td>655</td><td>27</td><td><span class="badge badge-sage">High ROI PLA</span></td></tr>
+        <tr><td>Down Comforter</td><td>13.2K</td><td>$101K</td><td>867</td><td>27</td><td><span class="badge badge-sage">Scale up</span></td></tr>
+        <tr><td>Carry-On Suitcase</td><td>12.8K</td><td>$101K</td><td>1,045</td><td>4</td><td><span class="badge badge-stone">High keyword volume</span></td></tr>
+        <tr><td>Linen Wide Leg Pant</td><td>13.6K</td><td>$90K</td><td>601</td><td>17</td><td><span class="badge badge-sage">Seasonal winner</span></td></tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<!-- ══════════════ 5. REFERRALS ══════════════ -->
+<div id="tab-referrals" class="section">
+  <div class="section-header">
+    <div>
+      <div class="section-title">Referrals, Affiliates &amp; AI</div>
+      <div class="section-sub">Incoming referral traffic · partnership opportunities · 3rd-party channel analysis</div>
+    </div>
+    <div class="period-badge">Mar 2024 – Feb 2025</div>
+  </div>
+
+  <div class="grid-4">
+    <div class="card"><div class="card-title">Total Referral Traffic</div><div class="card-value">5.4M</div><div class="card-delta delta-up">↑ 12-month combined visits</div></div>
+    <div class="card"><div class="card-title">Top Referrer</div><div class="card-value">search.app</div><div class="card-delta delta-up">↑ 504K visits · 9.3% share</div></div>
+    <div class="card"><div class="card-title">Forbes Growth</div><div class="card-value">+1,852%</div><div class="card-delta delta-up">↑ Fastest growing partner</div></div>
+    <div class="card"><div class="card-title">Active Editorial Partners</div><div class="card-value">12+</div><div class="card-delta delta-up">↑ Media placements identified</div></div>
+  </div>
+
+  <div class="grid-2">
+    <div class="card">
+      <div class="card-title" style="margin-bottom:14px;">Top 20 Referral Sources</div>
+      <div class="chart-wrap ch380"><canvas id="referralChart"></canvas></div>
+    </div>
+    <div class="card">
+      <div class="card-title" style="margin-bottom:14px;">Partner Category Analysis</div>
+
+      <div style="font-family:sans-serif;font-size:10px;font-weight:600;letter-spacing:1px;text-transform:uppercase;color:var(--text-muted);margin-bottom:8px;">Editorial / Media (High Intent)</div>
+      <div>
+        <span class="ref-pill"><span class="dot" style="background:#7A8C6E;"></span>Travel &amp; Leisure +65%</span>
+        <span class="ref-pill"><span class="dot" style="background:#4A6741;"></span>Forbes +1852%</span>
+        <span class="ref-pill"><span class="dot" style="background:#4A6741;"></span>InStyle +291%</span>
+        <span class="ref-pill"><span class="dot" style="background:#A0522D;"></span>NY Mag −96%</span>
+        <span class="ref-pill"><span class="dot" style="background:#A0522D;"></span>Business Insider −97%</span>
+        <span class="ref-pill"><span class="dot" style="background:#4A6741;"></span>theGoodTrade +483%</span>
+        <span class="ref-pill"><span class="dot" style="background:#4A6741;"></span>People (NEW)</span>
+      </div>
+
+      <hr class="divider">
+      <div style="font-family:sans-serif;font-size:10px;font-weight:600;letter-spacing:1px;text-transform:uppercase;color:var(--text-muted);margin-bottom:8px;">Affiliate / Influencer Networks</div>
+      <div>
+        <span class="ref-pill"><span class="dot" style="background:#8C7E6A;"></span>rstyle.me (LTK) 184K</span>
+        <span class="ref-pill"><span class="dot" style="background:#8C7E6A;"></span>likeshop.me 281K</span>
+        <span class="ref-pill"><span class="dot" style="background:#8C7E6A;"></span>shop.app 93K</span>
+      </div>
+
+      <hr class="divider">
+      <div style="font-family:sans-serif;font-size:10px;font-weight:600;letter-spacing:1px;text-transform:uppercase;color:var(--text-muted);margin-bottom:8px;">AI &amp; Search Discovery</div>
+      <div>
+        <span class="ref-pill"><span class="dot" style="background:#3D3228;"></span>search.app 504K (Google AI)</span>
+        <span class="ref-pill"><span class="dot" style="background:#5C4F3D;"></span>Yahoo.com +222%</span>
+      </div>
+
+      <hr class="divider">
+      <div style="font-family:sans-serif;font-size:10px;font-weight:600;letter-spacing:1px;text-transform:uppercase;color:var(--text-muted);margin-bottom:8px;">Content / Newsletter</div>
+      <div>
+        <span class="ref-pill"><span class="dot" style="background:#A0522D;"></span>Substack 373K (−88% YoY)</span>
+        <span class="ref-pill"><span class="dot" style="background:#4A6741;"></span>Cup of Jo 162K (NEW)</span>
+        <span class="ref-pill"><span class="dot" style="background:#7A8C6E;"></span>thespruce.com 162K</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="grid-3">
+    <div class="opp-card rust">
+      <div class="opp-title">Partnership Opp: Substack Recovery</div>
+      <div class="opp-body">Substack drove 373K visits but dropped 88% YoY — a major signal of a lapsed partnership. Re-engage fashion/home/sustainability newsletters. Consider co-branded editorial content and sponsored posts with 3–5 high-affinity newsletters.</div>
+    </div>
+    <div class="opp-card taupe">
+      <div class="opp-title">Partnership Opp: Expand LTK Affiliate</div>
+      <div class="opp-body">rstyle.me (LTK) delivered 184K visits at stable +5% growth. Deepening LTK partnerships with top fashion creators multiplies this channel. A structured ambassador programme would organise and scale existing influencer traffic significantly.</div>
+    </div>
+    <div class="opp-card sage">
+      <div class="opp-title">AI Discovery: Optimise for Chatbots</div>
+      <div class="opp-body">Google's AI Overviews (search.app) is the #1 referral source. The returns/shipping page already appears in AI Overviews. Add FAQ schema and answer-format content to all category pages to capture more AI-driven referrals across ChatGPT, Perplexity, and Gemini.</div>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════ 6. SOCIAL ══════════════ -->
+<div id="tab-social" class="section">
+  <div class="section-header">
+    <div>
+      <div class="section-title">Social Media Intelligence</div>
+      <div class="section-sub">Social traffic performance · channel benchmarks · competitive social strategy</div>
+    </div>
+    <div class="period-badge">Mar 2024 – Feb 2025</div>
+  </div>
+
+  <div class="grid-4">
+    <div class="card"><div class="card-title">Social Traffic (Feb '25)</div><div class="card-value">3.1M</div><div class="card-delta delta-up">↑ 13.7% of total visits</div></div>
+    <div class="card"><div class="card-title">Social Growth YoY</div><div class="card-value">+100%</div><div class="card-delta delta-up">↑ 1.6M → 3.1M visits</div></div>
+    <div class="card"><div class="card-title">vs Madewell Social Share</div><div class="card-value">13.7%</div><div class="card-delta delta-up">↑ Madewell ~8% — Quince leads</div></div>
+    <div class="card"><div class="card-title">Peak Social Month</div><div class="card-value">Nov 2024</div><div class="card-delta delta-up">↑ 4.1M visits (Black Friday)</div></div>
+  </div>
+
+  <div class="grid-2">
+    <div class="card">
+      <div class="card-title" style="margin-bottom:14px;">Monthly Social Traffic Trend</div>
+      <div class="chart-wrap ch280"><canvas id="socialTrendChart"></canvas></div>
+    </div>
+    <div class="card">
+      <div class="card-title" style="margin-bottom:14px;">Platform Intelligence</div>
+      <div class="social-platform">
+        <div class="platform-icon" style="background:var(--surface-3);color:var(--q-espresso);">TK</div>
+        <div style="flex:1;"><div class="platform-name">TikTok</div><div class="platform-sub">Fastest growing — viral haul content dominates</div></div>
+        <span class="badge badge-rust">Scale Now</span>
+      </div>
+      <div class="social-platform">
+        <div class="platform-icon" style="background:#eae5dd;color:#5C4F3D;">IG</div>
+        <div style="flex:1;"><div class="platform-name">Instagram</div><div class="platform-sub">Core driver — Reels + Shopping + product tags</div></div>
+        <span class="badge badge-sage">Strong</span>
+      </div>
+      <div class="social-platform">
+        <div class="platform-icon" style="background:#e5ede2;color:#3a5c35;">YT</div>
+        <div style="flex:1;"><div class="platform-name">YouTube</div><div class="platform-sub">Long-form haul/review content building</div></div>
+        <span class="badge badge-warn">Grow</span>
+      </div>
+      <div class="social-platform">
+        <div class="platform-icon" style="background:#f3e5dc;color:#7a3010;">Pin</div>
+        <div style="flex:1;"><div class="platform-name">Pinterest</div><div class="platform-sub">High-intent home &amp; fashion discovery</div></div>
+        <span class="badge badge-stone">Opportunity</span>
+      </div>
+      <div class="social-platform">
+        <div class="platform-icon" style="background:var(--surface-2);color:var(--q-taupe);">FB</div>
+        <div style="flex:1;"><div class="platform-name">Facebook</div><div class="platform-sub">Retargeting audience — declining organic reach</div></div>
+        <span class="badge badge-taupe">Maintain</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="card" style="margin-bottom:22px;">
+    <div class="card-title" style="margin-bottom:16px;">Learnable Tactics from Competitors</div>
+    <div class="grid-3">
+      <div>
+        <div style="font-family:'Georgia',serif;font-size:14px;color:var(--q-ink);margin-bottom:8px;">Everlane</div>
+        <div style="font-family:sans-serif;font-size:12px;color:var(--text-secondary);line-height:1.7;">
+          "Radical Transparency" price breakdowns<br>
+          Factory tour Instagram Stories<br>
+          Materials education content<br>
+          Long-form TikTok quality comparisons
+        </div>
+      </div>
+      <div>
+        <div style="font-family:'Georgia',serif;font-size:14px;color:var(--q-ink);margin-bottom:8px;">Madewell</div>
+        <div style="font-family:sans-serif;font-size:12px;color:var(--text-secondary);line-height:1.7;">
+          Denim fit content series (#denimfit)<br>
+          Community-led Instagram campaigns<br>
+          Partnership with influencer stylists<br>
+          "How to style" Reels for hero pieces
+        </div>
+      </div>
+      <div>
+        <div style="font-family:'Georgia',serif;font-size:14px;color:var(--q-ink);margin-bottom:8px;">Aritzia</div>
+        <div style="font-family:sans-serif;font-size:12px;color:var(--text-secondary);line-height:1.7;">
+          Super Puff viral product moment<br>
+          Celebrity sighting organic PR<br>
+          Colour-of-season campaigns<br>
+          Aspirational lifestyle aesthetics
+        </div>
+      </div>
+    </div>
+    <div class="insight">
+      <div class="insight-label">Recommended Quince Social Playbook</div>
+      <div class="insight-text">1. "Factory-to-wardrobe" transparency series — takes Everlane's playbook further. 2. Seasonal cashmere styling guides on TikTok/Reels. 3. "Wear test" content showing quality durability over time. 4. User-generated content campaigns with a branded hashtag. 5. Pinterest boards for Capsule Wardrobe and Bedding Guide — high purchase-intent audience largely untapped.</div>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════ 7. SWOT ══════════════ -->
+<div id="tab-swot" class="section">
+  <div class="section-header">
+    <div>
+      <div class="section-title">Strategic SWOT Analysis</div>
+      <div class="section-sub">Executable recommendations based on 12 months of Similarweb data</div>
+    </div>
+    <div class="period-badge">Strategic Priority Matrix</div>
+  </div>
+
+  <div class="swot-grid">
+    <div class="swot-cell swot-s">
+      <div class="swot-label">S</div>
+      <div class="swot-heading">Strengths</div>
+      <ul class="swot-list">
+        <li>Explosive growth: 10.8M → 31M peak visits (+187% in 12 months)</li>
+        <li>Superior engagement: 36.6% bounce rate vs industry ~45%</li>
+        <li>6.5 pages per visit — exceptional browsing depth</li>
+        <li>Social traffic doubled to 3.1M — strong brand affinity building</li>
+        <li>Direct traffic ~52% — powerful brand recall and loyalty signal</li>
+        <li>Bedding category breakout — 683 keywords ranking organically</li>
+        <li>Premium product positioning at accessible price points</li>
+        <li>Accelerating editorial press momentum (Forbes, InStyle, People)</li>
+      </ul>
+    </div>
+    <div class="swot-cell swot-w">
+      <div class="swot-label">W</div>
+      <div class="swot-heading">Weaknesses</div>
+      <ul class="swot-list">
+        <li>Organic search only 10.4% of traffic vs 20%+ for competitors</li>
+        <li>Email channel near-zero — under 15K visits per month</li>
+        <li>Heavy PPC reliance creates structural margin pressure</li>
+        <li>Bidding on competitor brand terms — expensive and brand-risky</li>
+        <li>Substack partner traffic collapsed 88% YoY</li>
+        <li>Homepage absorbs 26% of PPC spend — poor campaign specificity</li>
+        <li>Organic rankings thin outside branded query set</li>
+        <li>Post-holiday traffic cliff of 26% Nov → Dec</li>
+      </ul>
+    </div>
+    <div class="swot-cell swot-o">
+      <div class="swot-label">O</div>
+      <div class="swot-heading">Opportunities</div>
+      <ul class="swot-list">
+        <li>SEO content investment could 3–5× organic traffic within 18 months</li>
+        <li>AI Overview / chatbot referrals — nascent, fast-growing channel</li>
+        <li>Expand home/bedding SEO — competitors are structurally weak here</li>
+        <li>Email capture and marketing from existing 31M visitor base</li>
+        <li>Structured LTK/Affiliate programme with top fashion creators</li>
+        <li>Pinterest largely untapped — high-intent buyers for home &amp; fashion</li>
+        <li>Substack re-engagement for targeted newsletter sponsorships</li>
+        <li>International expansion — strong US base to replicate in UK/EU</li>
+      </ul>
+    </div>
+    <div class="swot-cell swot-t">
+      <div class="swot-label">T</div>
+      <div class="swot-heading">Threats</div>
+      <ul class="swot-list">
+        <li>Everlane is #1 most similar site — same customer, overlapping products</li>
+        <li>Madewell and J.Crew have deeper SEO moats and domain authority</li>
+        <li>Aritzia's social media flywheel is difficult to outpace</li>
+        <li>Brooklinen dominates bedding SEO — Quince's fastest-growing category</li>
+        <li>Google AI Overviews reducing organic click rates across the industry</li>
+        <li>Rising CPCs in fashion/home — paid search becoming less efficient</li>
+        <li>Platform dependency risk on TikTok (regulatory uncertainty)</li>
+        <li>Brand confusion from onequince.com appearing as SEO competitor</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-title" style="margin-bottom:18px;">Executable 90-Day Priority Roadmap</div>
+    <div class="grid-3">
+      <div>
+        <div class="roadmap-head" style="background:var(--q-ink);color:var(--q-sand);">Month 1 — Stop the Bleed</div>
+        <div class="roadmap-body">
+          <ul class="action-list">
+            <li class="action-item" style="padding:8px 0;"><div class="action-num" style="width:22px;height:22px;font-size:11px;">1</div><div class="action-text" style="font-size:12px;">Reallocate 30% of competitor-brand PPC budget to category and branded terms</div></li>
+            <li class="action-item" style="padding:8px 0;"><div class="action-num" style="width:22px;height:22px;font-size:11px;">2</div><div class="action-text" style="font-size:12px;">Split homepage PPC traffic to specific category landing pages</div></li>
+            <li class="action-item" style="padding:8px 0;border:none;"><div class="action-num" style="width:22px;height:22px;font-size:11px;">3</div><div class="action-text" style="font-size:12px;">Re-engage Substack with 3 targeted newsletter sponsorships</div></li>
+          </ul>
+        </div>
+      </div>
+      <div>
+        <div class="roadmap-head" style="background:var(--q-taupe);color:white;">Month 2 — Build the Foundation</div>
+        <div class="roadmap-body">
+          <ul class="action-list">
+            <li class="action-item" style="padding:8px 0;"><div class="action-num" style="background:var(--q-taupe);width:22px;height:22px;font-size:11px;">4</div><div class="action-text" style="font-size:12px;">Launch 4 SEO pillar guides: Cashmere, Linen, Bedding, Leather</div></li>
+            <li class="action-item" style="padding:8px 0;"><div class="action-num" style="background:var(--q-taupe);width:22px;height:22px;font-size:11px;">5</div><div class="action-text" style="font-size:12px;">Implement email capture and 3-email welcome series for new visitors</div></li>
+            <li class="action-item" style="padding:8px 0;border:none;"><div class="action-num" style="background:var(--q-taupe);width:22px;height:22px;font-size:11px;">6</div><div class="action-text" style="font-size:12px;">Deploy FAQ + schema markup on all category pages for AI Overview visibility</div></li>
+          </ul>
+        </div>
+      </div>
+      <div>
+        <div class="roadmap-head" style="background:var(--q-sage);color:white;">Month 3 — Scale What Works</div>
+        <div class="roadmap-body">
+          <ul class="action-list">
+            <li class="action-item" style="padding:8px 0;"><div class="action-num" style="background:var(--q-sage);width:22px;height:22px;font-size:11px;">7</div><div class="action-text" style="font-size:12px;">Formalise LTK affiliate programme — onboard 20+ fashion/home creators</div></li>
+            <li class="action-item" style="padding:8px 0;"><div class="action-num" style="background:var(--q-sage);width:22px;height:22px;font-size:11px;">8</div><div class="action-text" style="font-size:12px;">Double bedding PPC investment and expand Shopping catalogue for home SKUs</div></li>
+            <li class="action-item" style="padding:8px 0;border:none;"><div class="action-num" style="background:var(--q-sage);width:22px;height:22px;font-size:11px;">9</div><div class="action-text" style="font-size:12px;">Launch Pinterest strategy for home and capsule wardrobe content clusters</div></li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="insight" style="margin-top:16px;">
+    <div class="insight-label">The One Metric That Matters Most</div>
+    <div class="insight-text">Quince grew traffic 187% in 12 months through exceptional paid acquisition — but organic share at 10.4% is the critical structural weakness. Every percentage point gained in organic search reduces CAC and improves LTV. The highest-impact single investment is an SEO content programme targeting cashmere, linen, bedding, and leather — categories where Quince has product authority but no content authority. Estimate: 18 months to reach 20% organic share equals $2–3M per year in reduced paid spend.</div>
+  </div>
+</div>
+
+</div><!-- /main -->
+
+<div class="footer">
+  Quince.com Marketing Intelligence Dashboard &nbsp;·&nbsp; Powered by Similarweb &nbsp;·&nbsp; US Market · March 2024 – February 2025 &nbsp;·&nbsp; Confidential — Internal Use Only
+</div>
+
+<script>
+const months = ['Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec','Jan','Feb'];
+const quinceV  = [10.8,11.4,13.4,13.4,13.6,16.6,19.8,23.5,31.0,26.7,25.8,22.8];
+const madewellV= [8.2,7.1,7.4,7.5,7.5,7.3,7.7,6.6,9.3,8.4,5.8,5.5];
+const everlaneV= [5.1,4.3,4.3,3.8,3.7,4.5,4.8,4.2,5.9,5.3,4.4,3.3];
+const paidS    = [1.3,1.3,1.9,2.1,2.4,2.9,4.1,4.9,6.3,5.1,5.5,4.6];
+const organicS = [0.43,0.56,0.60,0.76,0.66,1.03,1.06,1.61,2.59,2.59,2.28,2.37];
+const socialS  = [1.6,1.7,2.1,2.0,2.1,2.4,2.8,3.2,4.1,3.4,3.4,3.1];
+
+// Quince palette
+const INK    = '#1E1812';
+const ESPR   = '#3D3228';
+const TAUPE  = '#8C7E6A';
+const STONE  = '#B8AC96';
+const SAND   = '#D6CDB8';
+const SAGE   = '#7A8C6E';
+const RUST   = '#A0522D';
+const CREAM  = '#EDE8DC';
+
+let rendered = false;
+
+function showTab(id, btn) {
+  document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
+  document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
+  document.getElementById('tab-' + id).classList.add('active');
+  btn.classList.add('active');
+  if (!rendered) { rendered = true; setTimeout(buildCharts, 80); }
+}
+
+function buildCharts() {
+  const gOpts = (yFmt) => ({
+    responsive: true, maintainAspectRatio: false,
+    plugins: { legend: { display: false } },
+    scales: {
+      x: { ticks: { autoSkip: false, maxRotation: 0, font: { size: 10 }, color: TAUPE }, grid: { color: 'rgba(184,172,150,0.15)' } },
+      y: { ticks: { callback: yFmt, font: { size: 10 }, color: TAUPE }, grid: { color: 'rgba(184,172,150,0.15)' } }
+    }
+  });
+
+  // Trend
+  new Chart('trendChart', {
+    type: 'line',
+    data: { labels: months, datasets: [
+      { label:'Quince',   data: quinceV,  borderColor: ESPR,  backgroundColor:'rgba(61,50,40,0.06)', borderWidth:2.5, tension:0.35, fill:true, pointRadius:3, pointBackgroundColor: ESPR },
+      { label:'Madewell', data: madewellV,borderColor: STONE, backgroundColor:'transparent', borderWidth:1.5, tension:0.35, borderDash:[4,3], pointRadius:2 },
+      { label:'Everlane', data: everlaneV,borderColor: SAGE,  backgroundColor:'transparent', borderWidth:1.5, tension:0.35, borderDash:[2,3], pointRadius:2 }
+    ]},
+    options: gOpts(v => v + 'M')
+  });
+
+  // Channel Mix Doughnut
+  new Chart('chanMixChart', {
+    type: 'doughnut',
+    data: { labels:['Direct','Paid Search','Social','Organic','Referrals','Other'],
+      datasets:[{ data:[52.6,20.3,13.7,10.4,2.4,0.6],
+        backgroundColor:[INK, RUST, SAGE, TAUPE, STONE, SAND], borderWidth:0 }]},
+    options: { responsive:true, maintainAspectRatio:false, cutout:'66%',
+      plugins:{ legend:{display:false}, tooltip:{callbacks:{label:c=>c.label+': '+c.raw+'%'}} } }
+  });
+
+  // Channel growth stacked
+  new Chart('channelGrowthChart', {
+    type: 'bar',
+    data: { labels: months, datasets: [
+      { label:'Paid', data: paidS,   backgroundColor: RUST,  stack:'a' },
+      { label:'Org',  data: organicS,backgroundColor: TAUPE, stack:'a' },
+      { label:'Soc',  data: socialS, backgroundColor: SAGE,  stack:'a' }
+    ]},
+    options: { responsive:true, maintainAspectRatio:false,
+      plugins:{legend:{display:false}},
+      scales:{
+        x:{stacked:true, ticks:{autoSkip:false,maxRotation:0,font:{size:9},color:TAUPE}, grid:{display:false}},
+        y:{stacked:true, ticks:{callback:v=>v+'M',font:{size:9},color:TAUPE}, grid:{color:'rgba(184,172,150,0.15)'}}
+      }
+    }
+  });
+
+  // Market trend (same as overview)
+  new Chart('mktTrendChart', {
+    type: 'line',
+    data: { labels: months, datasets: [
+      { label:'Quince',   data: quinceV,  borderColor: ESPR,  backgroundColor:'rgba(61,50,40,0.06)', borderWidth:2.5, tension:0.35, fill:true, pointRadius:3 },
+      { label:'Madewell', data: madewellV,borderColor: STONE, backgroundColor:'transparent', borderWidth:1.5, tension:0.35, borderDash:[4,3], pointRadius:2 },
+      { label:'Everlane', data: everlaneV,borderColor: SAGE,  backgroundColor:'transparent', borderWidth:1.5, tension:0.35, borderDash:[2,3], pointRadius:2 }
+    ]},
+    options: gOpts(v => v + 'M')
+  });
+
+  // Organic growth
+  new Chart('orgGrowthChart', {
+    type: 'bar',
+    data: { labels: months,
+      datasets:[{ data: organicS,
+        backgroundColor: organicS.map((_,i) => i >= 9 ? ESPR : STONE),
+        borderRadius:3 }]},
+    options: gOpts(v => v.toFixed(1)+'M')
+  });
+
+  // PPC Spend horizontal
+  new Chart('ppcSpendChart', {
+    type: 'bar',
+    data: {
+      labels: ['Homepage','Bedding','Men\'s QZ','Down Comf.','Carry-On','Linen Pant','Waffle Duvet','Cashmere M','Cashmere W'],
+      datasets:[{ label:'Spend ($K)',
+        data: [1643,178,141,101,101,90,93,108,57],
+        backgroundColor:[ESPR, RUST, TAUPE, TAUPE, TAUPE, TAUPE, TAUPE, TAUPE, TAUPE],
+        borderRadius:3 }]
+    },
+    options:{ responsive:true, maintainAspectRatio:false, indexAxis:'y',
+      plugins:{legend:{display:false}},
+      scales:{
+        x:{ticks:{callback:v=>'$'+v+'K',font:{size:10},color:TAUPE}, grid:{color:'rgba(184,172,150,0.15)'}},
+        y:{ticks:{font:{size:10},color:TAUPE}, grid:{display:false}}
+      }
+    }
+  });
+
+  // Referral horizontal
+  const refDomains = ['search.app','substack.com','likeshop.me','travel&leisure','businessinsider','nymag.com','rstyle.me','yahoo.com','cupofjo.com','thespruce.com','amazon.com','pushplanet','instyle.com','force.com','forbes.com','onequince.com','shop.app','thegoodtrade','people.com','nytimes.com'];
+  const refVisits  = [504,373,281,267,218,194,184,173,162,162,161,141,134,126,112,110,93,88,83,69];
+  const refColors  = refVisits.map((_,i) => i < 3 ? ESPR : i < 8 ? RUST : STONE);
+  new Chart('referralChart', {
+    type: 'bar',
+    data: { labels: refDomains, datasets:[{ data: refVisits, backgroundColor: refColors, borderRadius:3 }]},
+    options:{ responsive:true, maintainAspectRatio:false, indexAxis:'y',
+      plugins:{legend:{display:false}},
+      scales:{
+        x:{ticks:{callback:v=>v+'K',font:{size:9},color:TAUPE}, grid:{color:'rgba(184,172,150,0.15)'}},
+        y:{ticks:{font:{size:9},color:TAUPE}, grid:{display:false}}
+      }
+    }
+  });
+
+  // Social trend
+  new Chart('socialTrendChart', {
+    type: 'line',
+    data: { labels: months,
+      datasets:[{ data: socialS, borderColor: ESPR, backgroundColor:'rgba(61,50,40,0.07)',
+        borderWidth:2.5, tension:0.35, fill:true, pointRadius:4, pointBackgroundColor: ESPR }]},
+    options: gOpts(v => v.toFixed(1)+'M')
+  });
+}
+
+// render on load
+setTimeout(() => { rendered = true; buildCharts(); }, 150);
+</script>
+</body>
+</html>

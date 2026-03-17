@@ -1,0 +1,843 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>HSBC UK Marketing Intelligence</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.js"></script>
+<style>
+  :root {
+    --hsbc-red: #DB0011;
+    --hsbc-dark: #1a1a1a;
+    --hsbc-light: #f5f5f5;
+    --hsbc-mid: #333;
+    --hsbc-accent: #b0000c;
+    --card-bg: #ffffff;
+    --border: #e8e8e8;
+    --text: #1a1a1a;
+    --muted: #666;
+    --pill-bg: #fff0f0;
+    --success: #1a7a3c;
+    --warning: #c07a00;
+    --danger: #DB0011;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --card-bg: #1e1e1e;
+      --border: #333;
+      --text: #f0f0f0;
+      --muted: #aaa;
+      --hsbc-light: #111;
+      --pill-bg: #2a1010;
+    }
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; background: var(--hsbc-light); color: var(--text); font-size: 14px; }
+
+  /* NAV */
+  .header { background: var(--hsbc-dark); padding: 0 24px; display: flex; align-items: center; gap: 0; position: sticky; top: 0; z-index: 100; box-shadow: 0 2px 8px rgba(0,0,0,.3); }
+  .logo-area { display: flex; align-items: center; gap: 12px; padding: 14px 0; margin-right: 32px; border-right: 1px solid #333; padding-right: 32px; }
+  .logo-hex { width: 36px; height: 36px; background: var(--hsbc-red); display: flex; align-items: center; justify-content: center; }
+  .logo-hex svg { width: 22px; height: 22px; }
+  .logo-text { color: #fff; font-size: 16px; font-weight: 600; letter-spacing: .5px; }
+  .logo-sub { color: #aaa; font-size: 11px; letter-spacing: 1px; text-transform: uppercase; margin-top: 1px; }
+  nav { display: flex; gap: 2px; overflow-x: auto; padding: 0 0 0 4px; }
+  nav button { background: none; border: none; color: #ccc; padding: 18px 14px; font-size: 12px; font-weight: 500; cursor: pointer; white-space: nowrap; border-bottom: 2px solid transparent; transition: all .2s; letter-spacing: .3px; }
+  nav button:hover { color: #fff; }
+  nav button.active { color: #fff; border-bottom-color: var(--hsbc-red); }
+  .data-badge { background: var(--hsbc-red); color: #fff; font-size: 9px; padding: 2px 5px; border-radius: 3px; margin-left: 5px; }
+
+  /* PAGES */
+  .page { display: none; padding: 24px; max-width: 1200px; margin: 0 auto; }
+  .page.active { display: block; }
+
+  /* CARDS */
+  .card { background: var(--card-bg); border: 1px solid var(--border); border-radius: 8px; padding: 20px; margin-bottom: 16px; }
+  .card-title { font-size: 13px; font-weight: 600; color: var(--muted); text-transform: uppercase; letter-spacing: .8px; margin-bottom: 14px; display: flex; align-items: center; gap: 8px; }
+  .card-title .dot { width: 6px; height: 6px; border-radius: 50%; background: var(--hsbc-red); }
+
+  /* KPI GRID */
+  .kpi-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); gap: 12px; margin-bottom: 16px; }
+  .kpi { background: var(--card-bg); border: 1px solid var(--border); border-radius: 8px; padding: 16px; }
+  .kpi-label { font-size: 11px; color: var(--muted); font-weight: 500; text-transform: uppercase; letter-spacing: .6px; margin-bottom: 6px; }
+  .kpi-value { font-size: 24px; font-weight: 700; color: var(--text); line-height: 1; }
+  .kpi-sub { font-size: 11px; margin-top: 5px; }
+  .up { color: var(--success); } .down { color: var(--danger); }
+
+  /* CHARTS */
+  .chart-wrap { position: relative; width: 100%; }
+  .grid2 { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+  .grid3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 16px; }
+  @media(max-width:700px) { .grid2, .grid3 { grid-template-columns: 1fr; } }
+
+  /* TABLES */
+  table { width: 100%; border-collapse: collapse; font-size: 13px; }
+  th { color: var(--muted); font-weight: 600; text-align: left; padding: 8px 12px; border-bottom: 1px solid var(--border); font-size: 11px; text-transform: uppercase; letter-spacing: .5px; }
+  td { padding: 10px 12px; border-bottom: 1px solid var(--border); }
+  tr:last-child td { border-bottom: none; }
+  tr:hover td { background: rgba(219,0,17,.03); }
+  .tag { display: inline-block; padding: 2px 8px; border-radius: 4px; font-size: 11px; font-weight: 500; }
+  .tag-red { background: #fff0f0; color: var(--hsbc-red); }
+  .tag-green { background: #f0fff4; color: var(--success); }
+  .tag-orange { background: #fff8e6; color: var(--warning); }
+  .tag-blue { background: #e8f4ff; color: #1565c0; }
+  .tag-gray { background: #f5f5f5; color: #555; }
+  .bar { height: 6px; border-radius: 3px; background: var(--border); overflow: hidden; }
+  .bar-fill { height: 100%; border-radius: 3px; background: var(--hsbc-red); }
+
+  /* OVERVIEW */
+  .opportunity-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 14px; margin-bottom: 16px; }
+  .opp-card { background: var(--card-bg); border: 1px solid var(--border); border-radius: 8px; padding: 16px; border-left: 3px solid var(--hsbc-red); }
+  .opp-icon { font-size: 20px; margin-bottom: 8px; }
+  .opp-title { font-size: 13px; font-weight: 700; margin-bottom: 4px; }
+  .opp-desc { font-size: 12px; color: var(--muted); line-height: 1.5; }
+  .action-item { display: flex; align-items: flex-start; gap: 10px; padding: 10px 0; border-bottom: 1px solid var(--border); }
+  .action-item:last-child { border-bottom: none; }
+  .action-num { min-width: 22px; height: 22px; background: var(--hsbc-red); color: #fff; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 11px; font-weight: 700; }
+  .action-text { font-size: 13px; line-height: 1.5; }
+  .priority { font-size: 10px; padding: 1px 6px; border-radius: 3px; font-weight: 600; display: inline-block; margin-left: 6px; }
+  .p-high { background: #fff0f0; color: var(--hsbc-red); }
+  .p-med { background: #fff8e6; color: var(--warning); }
+
+  /* SWOT */
+  .swot-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 2px; border-radius: 8px; overflow: hidden; }
+  .swot-q { padding: 20px; }
+  .swot-q h3 { font-size: 13px; font-weight: 700; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 12px; opacity: .85; }
+  .swot-q ul { list-style: none; padding: 0; }
+  .swot-q ul li { font-size: 12px; line-height: 1.6; padding: 4px 0 4px 14px; position: relative; }
+  .swot-q ul li::before { content: '▸'; position: absolute; left: 0; opacity: .7; }
+  .sq-s { background: #1a4d28; color: #c8ffd4; }
+  .sq-w { background: #4d1a1a; color: #ffd4d4; }
+  .sq-o { background: #1a3a4d; color: #d4efff; }
+  .sq-t { background: #3d3000; color: #ffe8a0; }
+  .swot-label { text-align: center; font-size: 11px; color: var(--muted); margin-bottom: 6px; font-weight: 600; letter-spacing: 1px; text-transform: uppercase; }
+
+  /* COMPETITOR */
+  .comp-row { display: flex; align-items: center; gap: 10px; padding: 8px 0; border-bottom: 1px solid var(--border); }
+  .comp-row:last-child { border-bottom: none; }
+  .comp-name { font-weight: 600; font-size: 13px; min-width: 130px; }
+  .comp-bar { flex: 1; }
+  .comp-val { font-size: 12px; color: var(--muted); min-width: 70px; text-align: right; }
+
+  /* SOCIAL */
+  .social-icon { width: 28px; height: 28px; border-radius: 6px; display: inline-flex; align-items: center; justify-content: center; font-size: 13px; font-weight: 700; color: #fff; margin-right: 8px; }
+
+  /* REFERRAL */
+  .ref-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+  @media(max-width:700px) { .ref-grid { grid-template-columns: 1fr; } }
+
+  /* SECTION DIVIDER */
+  .section-header { display: flex; align-items: center; gap: 12px; margin: 20px 0 14px; }
+  .section-header h2 { font-size: 16px; font-weight: 700; }
+  .section-header .line { flex: 1; height: 1px; background: var(--border); }
+
+  /* INSIGHT BOX */
+  .insight { background: var(--pill-bg); border: 1px solid rgba(219,0,17,.15); border-radius: 6px; padding: 10px 14px; font-size: 12px; color: var(--text); line-height: 1.6; margin-bottom: 12px; }
+  .insight strong { color: var(--hsbc-red); }
+
+  /* LEGEND */
+  .legend { display: flex; flex-wrap: wrap; gap: 12px; margin-bottom: 10px; font-size: 12px; color: var(--muted); }
+  .legend-item { display: flex; align-items: center; gap: 5px; }
+  .legend-dot { width: 10px; height: 10px; border-radius: 2px; }
+
+  /* FOOTER */
+  .footer { text-align: center; padding: 24px; font-size: 11px; color: var(--muted); border-top: 1px solid var(--border); margin-top: 32px; }
+</style>
+</head>
+<body>
+
+<div class="header">
+  <div class="logo-area">
+    <div class="logo-hex">
+      <svg viewBox="0 0 24 24" fill="white"><polygon points="12,2 22,7 22,17 12,22 2,17 2,7"/></svg>
+    </div>
+    <div>
+      <div class="logo-text">HSBC</div>
+      <div class="logo-sub">Marketing Intelligence</div>
+    </div>
+  </div>
+  <nav>
+    <button class="active" onclick="show('overview')">Overview</button>
+    <button onclick="show('market')">Market Research</button>
+    <button onclick="show('seo')">SEO <span class="data-badge">LIVE</span></button>
+    <button onclick="show('ppc')">PPC</button>
+    <button onclick="show('referrals')">Referrals & AI</button>
+    <button onclick="show('social')">Social</button>
+    <button onclick="show('swot')">SWOT</button>
+  </nav>
+</div>
+
+<!-- ═══════════════════════════════ OVERVIEW ═══════════════════════════════ -->
+<div class="page active" id="overview">
+  <div class="kpi-grid">
+    <div class="kpi">
+      <div class="kpi-label">Avg Monthly Visits</div>
+      <div class="kpi-value">6.1M</div>
+      <div class="kpi-sub down">▼ 32% vs Santander</div>
+    </div>
+    <div class="kpi">
+      <div class="kpi-label">Avg Bounce Rate</div>
+      <div class="kpi-value">29.8%</div>
+      <div class="kpi-sub up">✓ Low – strong engagement</div>
+    </div>
+    <div class="kpi">
+      <div class="kpi-label">Pages / Visit</div>
+      <div class="kpi-value">6.4</div>
+      <div class="kpi-sub up">✓ Above industry avg</div>
+    </div>
+    <div class="kpi">
+      <div class="kpi-label">Direct Traffic Share</div>
+      <div class="kpi-value">63%</div>
+      <div class="kpi-sub">Brand loyalty signal</div>
+    </div>
+    <div class="kpi">
+      <div class="kpi-label">Organic Search Share</div>
+      <div class="kpi-value">29%</div>
+      <div class="kpi-sub down">▼ Growth opportunity</div>
+    </div>
+    <div class="kpi">
+      <div class="kpi-label">Paid Search Share</div>
+      <div class="kpi-value">1.1%</div>
+      <div class="kpi-sub down">▼ Under-invested vs peers</div>
+    </div>
+    <div class="kpi">
+      <div class="kpi-label">Category Rank (UK)</div>
+      <div class="kpi-value">#10</div>
+      <div class="kpi-sub down">▼ vs Santander #2</div>
+    </div>
+    <div class="kpi">
+      <div class="kpi-label">ChatGPT Referrals</div>
+      <div class="kpi-value">166K</div>
+      <div class="kpi-sub up">↑ AI presence confirmed</div>
+    </div>
+  </div>
+
+  <div class="insight"><strong>Key Finding:</strong> HSBC is a deeply trusted brand (63% direct traffic, low bounce) but is significantly underperforming competitors in acquisition channels — organic search, paid search, and social. Santander drives 2.2× more traffic with a similar product set. This gap is a clear revenue opportunity.</div>
+
+  <div class="section-header"><h2>Top 6 Opportunities</h2><div class="line"></div></div>
+  <div class="opportunity-grid">
+    <div class="opp-card">
+      <div class="opp-icon">🔍</div>
+      <div class="opp-title">SEO: Mortgage Calculators</div>
+      <div class="opp-desc">Ranking #9 for "mortgage calculator" (71 competitors). NatWest earns 2× more clicks. Push to top 3 with content + Core Web Vitals improvements.</div>
+    </div>
+    <div class="opp-card">
+      <div class="opp-icon">💳</div>
+      <div class="opp-title">PPC: Premier & Credit Card Scale</div>
+      <div class="opp-desc">HSBC Premier page receives strong paid traffic but only 143 keywords. Expand keyword set — competitors use 400+. Spend efficiency is high; scale it.</div>
+    </div>
+    <div class="opp-card">
+      <div class="opp-icon">🤖</div>
+      <div class="opp-title">AI Chatbot Presence</div>
+      <div class="opp-desc">ChatGPT sends 166K visits and Perplexity 18.7K. These are among top referrers. Invest in AI-optimised FAQ content and schema to capture this channel.</div>
+    </div>
+    <div class="opp-card">
+      <div class="opp-icon">🤝</div>
+      <div class="opp-title">MoneySavingExpert Partnership</div>
+      <div class="opp-desc">MSE sends 55K visits with a +131% YoY surge. Barclays also heavily invested here. A structured affiliate/content partnership would 3–5× this channel.</div>
+    </div>
+    <div class="opp-card">
+      <div class="opp-icon">📱</div>
+      <div class="opp-title">Social: YouTube & Instagram</div>
+      <div class="opp-desc">YouTube drives 56% of social referrals but social is only 0.7% of total traffic — far below peers. Competitors investing in LinkedIn and YouTube see acquisition gains.</div>
+    </div>
+    <div class="opp-card">
+      <div class="opp-icon">📊</div>
+      <div class="opp-title">S&P 500 Traffic Asset</div>
+      <div class="opp-desc">HSBC unexpectedly ranks #2 for "S&P 500" — 10K+ clicks/month. A dedicated investment hub could capture 10× more investment-intent traffic organically.</div>
+    </div>
+  </div>
+
+  <div class="section-header"><h2>Priority Action Items</h2><div class="line"></div></div>
+  <div class="card">
+    <div class="action-item"><div class="action-num">1</div><div class="action-text">Push "mortgage calculator" from position #9 to top 3 through page speed optimisation and structured data markup. <span class="priority p-high">High</span></div></div>
+    <div class="action-item"><div class="action-num">2</div><div class="action-text">Scale HSBC Premier paid campaign — expand from 143 to 400+ keywords, model on Barclays' Barclaycard Premier approach. <span class="priority p-high">High</span></div></div>
+    <div class="action-item"><div class="action-num">3</div><div class="action-text">Formalise MoneySavingExpert affiliate programme — this channel grew +131% organically; a structured deal would 3–5× it. <span class="priority p-high">High</span></div></div>
+    <div class="action-item"><div class="action-num">4</div><div class="action-text">Create HSBC AI Answer Content package: FAQ schema, conversational content optimised for ChatGPT/Perplexity citations. <span class="priority p-med">Medium</span></div></div>
+    <div class="action-item"><div class="action-num">5</div><div class="action-text">Build an HSBC Investment Hub targeting S&P 500, ETF, and ISA keywords — current ranking proves authority; expand programmatically. <span class="priority p-med">Medium</span></div></div>
+    <div class="action-item"><div class="action-num">6</div><div class="action-text">Increase YouTube content investment and activate LinkedIn for financial professionals — both channels show competitor growth signals. <span class="priority p-med">Medium</span></div></div>
+  </div>
+
+  <div class="card">
+    <div class="card-title"><span class="dot"></span> Monthly Traffic Trend (Mar 2025 – Feb 2026)</div>
+    <div class="chart-wrap" style="height:220px"><canvas id="c-traffic"></canvas></div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════ MARKET ═══════════════════════════════ -->
+<div class="page" id="market">
+  <div class="card">
+    <div class="card-title"><span class="dot"></span> UK Banking Category Rankings (Finance › Banking)</div>
+    <div class="insight"><strong>HSBC ranks #10</strong> in the UK Banking & Lending category — behind Santander (#2), NatWest (#3), Lloyds (#4), Nationwide (#5), and Barclays (#7). The gap is primarily driven by lower organic search volume and social traffic.</div>
+    <div style="margin-top:8px">
+      <div class="comp-row"><div class="comp-name">#1 PayPal</div><div class="comp-bar"><div class="bar"><div class="bar-fill" style="width:100%;background:#1565c0"></div></div></div><div class="comp-val" style="color:#1565c0">Market leader</div></div>
+      <div class="comp-row"><div class="comp-name">#2 Santander</div><div class="comp-bar"><div class="bar"><div class="bar-fill" style="width:92%;background:#e6002d"></div></div></div><div class="comp-val">13.9M avg/mo</div></div>
+      <div class="comp-row"><div class="comp-name">#3 NatWest</div><div class="comp-bar"><div class="bar"><div class="bar-fill" style="width:82%"></div></div></div><div class="comp-val">11.9M avg/mo</div></div>
+      <div class="comp-row"><div class="comp-name">#4/#6 Lloyds</div><div class="comp-bar"><div class="bar"><div class="bar-fill" style="width:67%"></div></div></div><div class="comp-val">8.7M avg/mo</div></div>
+      <div class="comp-row"><div class="comp-name">#7 Barclays</div><div class="comp-bar"><div class="bar"><div class="bar-fill" style="width:58%"></div></div></div><div class="comp-val">7.3M avg/mo</div></div>
+      <div class="comp-row" style="border-left:2px solid var(--hsbc-red);padding-left:10px"><div class="comp-name">#10 <strong>HSBC</strong></div><div class="comp-bar"><div class="bar"><div class="bar-fill" style="width:40%"></div></div></div><div class="comp-val"><strong>6.1M avg/mo</strong></div></div>
+    </div>
+  </div>
+
+  <div class="grid2">
+    <div class="card">
+      <div class="card-title"><span class="dot"></span> Competitor Traffic Comparison (12-Month Avg)</div>
+      <div class="chart-wrap" style="height:240px"><canvas id="c-comp"></canvas></div>
+    </div>
+    <div class="card">
+      <div class="card-title"><span class="dot"></span> Similar Sites Affinity (Similarweb)</div>
+      <table>
+        <tr><th>Domain</th><th>Affinity</th><th>Type</th></tr>
+        <tr><td>natwest.com</td><td>100%</td><td><span class="tag tag-red">High Street</span></td></tr>
+        <tr><td>lloydsbank.com</td><td>96%</td><td><span class="tag tag-red">High Street</span></td></tr>
+        <tr><td>barclays.co.uk</td><td>92%</td><td><span class="tag tag-red">High Street</span></td></tr>
+        <tr><td>santander.co.uk</td><td>90%</td><td><span class="tag tag-red">High Street</span></td></tr>
+        <tr><td>halifax.co.uk</td><td>88%</td><td><span class="tag tag-orange">Lloyds Group</span></td></tr>
+        <tr><td>firstdirect.com</td><td>85%</td><td><span class="tag tag-blue">HSBC Subsidiary</span></td></tr>
+        <tr><td>starlingbank.com</td><td>78%</td><td><span class="tag tag-green">Challenger</span></td></tr>
+      </table>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-title"><span class="dot"></span> Audience Demographics — HSBC.co.uk</div>
+    <div class="grid2">
+      <div>
+        <div style="font-size:12px;color:var(--muted);margin-bottom:10px">Age distribution (avg 12 months)</div>
+        <div class="chart-wrap" style="height:200px"><canvas id="c-age"></canvas></div>
+      </div>
+      <div>
+        <div style="font-size:12px;color:var(--muted);margin-bottom:10px">Gender split</div>
+        <div class="chart-wrap" style="height:200px"><canvas id="c-gender"></canvas></div>
+        <div class="insight" style="margin-top:12px"><strong>Insight:</strong> 57% male audience skews older (45–64 is largest segment). Opportunity to grow 25–34 female demographic — competitors like Starling index higher here.</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-title"><span class="dot"></span> Key Market Trends & Tactics</div>
+    <div class="grid3" style="gap:12px">
+      <div style="padding:14px;background:var(--hsbc-light);border-radius:6px">
+        <div style="font-weight:700;font-size:13px;margin-bottom:6px">🔢 Calculator-led SEO</div>
+        <div style="font-size:12px;color:var(--muted);line-height:1.6">All top banks drive 20–40% of organic traffic through calculator tools. HSBC's mortgage repayment calculator is top-10 but needs top-3 push.</div>
+      </div>
+      <div style="padding:14px;background:var(--hsbc-light);border-radius:6px">
+        <div style="font-weight:700;font-size:13px;margin-bottom:6px">🤖 AI Referral Growth</div>
+        <div style="font-size:12px;color:var(--muted);line-height:1.6">ChatGPT and Perplexity now visible in all major bank referral profiles. Banks optimising for AI answer engines are gaining first-mover advantage.</div>
+      </div>
+      <div style="padding:14px;background:var(--hsbc-light);border-radius:6px">
+        <div style="font-weight:700;font-size:13px;margin-bottom:6px">🤝 Affiliate/Comparison Sites</div>
+        <div style="font-size:12px;color:var(--muted);line-height:1.6">MoneySavingExpert is a major referrer for Barclays and HSBC alike. Structured programmes (vs organic mentions) could multiply this traffic 3–5×.</div>
+      </div>
+      <div style="padding:14px;background:var(--hsbc-light);border-radius:6px">
+        <div style="font-weight:700;font-size:13px;margin-bottom:6px">📱 Mobile-first Content</div>
+        <div style="font-size:12px;color:var(--muted);line-height:1.6">HSBC mortgage calculator sees 71% mobile traffic. Content not optimised for mobile-first indexing loses rankings. Core Web Vitals are critical.</div>
+      </div>
+      <div style="padding:14px;background:var(--hsbc-light);border-radius:6px">
+        <div style="font-weight:700;font-size:13px;margin-bottom:6px">🌍 International Edge</div>
+        <div style="font-size:12px;color:var(--muted);line-height:1.6">HSBC's global footprint is a unique asset competitors lack. Expat banking, international transfers, and global wealth management are untapped SEO clusters.</div>
+      </div>
+      <div style="padding:14px;background:var(--hsbc-light);border-radius:6px">
+        <div style="font-weight:700;font-size:13px;margin-bottom:6px">📊 Investment Content</div>
+        <div style="font-size:12px;color:var(--muted);line-height:1.6">HSBC accidentally ranks for S&P 500 and investment calculator queries. A deliberate investment hub strategy could capture the wealth-management audience at scale.</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════ SEO ═══════════════════════════════ -->
+<div class="page" id="seo">
+  <div class="kpi-grid">
+    <div class="kpi"><div class="kpi-label">Top Organic Keyword</div><div class="kpi-value" style="font-size:16px">Mortgage Repayment Calc.</div><div class="kpi-sub">18.5K clicks/mo · Pos #3</div></div>
+    <div class="kpi"><div class="kpi-label">Non-Brand Organic Traffic</div><div class="kpi-value">~30%</div><div class="kpi-sub down">Low vs competitors</div></div>
+    <div class="kpi"><div class="kpi-label">Top Organic Page</div><div class="kpi-value" style="font-size:14px">/mortgages/our-rates</div><div class="kpi-sub up">27K clicks · 537 keywords</div></div>
+    <div class="kpi"><div class="kpi-label">AI Overview Presence</div><div class="kpi-value">Yes</div><div class="kpi-sub up">Homepage & rates page</div></div>
+  </div>
+
+  <div class="card">
+    <div class="card-title"><span class="dot"></span> Top Non-Branded Organic Keywords (HSBC)</div>
+    <div class="insight"><strong>Mortgage dominates.</strong> 8 of top 20 organic keywords are mortgage-related. However, "mortgage calculator" (71 competitors) sits at position #9 — a push to #3 could add 30K+ monthly clicks. The S&P 500 ranking is a sleeper asset worth developing.</div>
+    <table>
+      <tr><th>Keyword</th><th>Clicks/mo</th><th>Position</th><th>Competition</th><th>Opportunity</th></tr>
+      <tr><td>mortgage repayment calculator</td><td>18,524</td><td><span class="tag tag-green">#3</span></td><td>19/100</td><td><span class="tag tag-green">Hold & Expand</span></td></tr>
+      <tr><td>mortgage rates uk</td><td>13,099</td><td><span class="tag tag-green">#2</span></td><td>55/100</td><td><span class="tag tag-green">Defend</span></td></tr>
+      <tr><td>mortgage calculator</td><td>12,625</td><td><span class="tag tag-orange">#9</span></td><td>71/100</td><td><span class="tag tag-red">Push to Top 3</span></td></tr>
+      <tr><td>s&p 500</td><td>10,236</td><td><span class="tag tag-green">#2</span></td><td>6/100</td><td><span class="tag tag-blue">Build Investment Hub</span></td></tr>
+      <tr><td>mortgage rates</td><td>9,775</td><td><span class="tag tag-green">#4</span></td><td>61/100</td><td><span class="tag tag-green">Maintain</span></td></tr>
+      <tr><td>mortgage overpayment calculator</td><td>7,006</td><td><span class="tag tag-green">#3</span></td><td>1/100</td><td><span class="tag tag-green">Hold – low comp</span></td></tr>
+      <tr><td>credit card</td><td>4,716</td><td><span class="tag tag-orange">#8</span></td><td>63/100</td><td><span class="tag tag-orange">Improve Page</span></td></tr>
+      <tr><td>investment calculator</td><td>4,642</td><td><span class="tag tag-green">#3</span></td><td>15/100</td><td><span class="tag tag-blue">Expand Category</span></td></tr>
+      <tr><td>current mortgage rates uk</td><td>1,950</td><td><span class="tag tag-green">#1</span></td><td>58/100</td><td><span class="tag tag-green">Featured Snippet</span></td></tr>
+    </table>
+  </div>
+
+  <div class="grid2">
+    <div class="card">
+      <div class="card-title"><span class="dot"></span> Top Organic Landing Pages (Feb 2026)</div>
+      <table>
+        <tr><th>Page</th><th>Traffic Share</th><th>Mobile</th></tr>
+        <tr><td>/mortgages/our-rates</td><td>3.2%</td><td>60%</td></tr>
+        <tr><td>/ways-to-bank/online-banking</td><td>2.6%</td><td>25%</td></tr>
+        <tr><td>/online/dashboard</td><td>2.4%</td><td>39%</td></tr>
+        <tr><td>/contact</td><td>2.4%</td><td>65%</td></tr>
+        <tr><td>/mortgages/repayment-calculator</td><td>1.6%</td><td>71%</td></tr>
+        <tr><td>/security</td><td>1.2%</td><td>12%</td></tr>
+      </table>
+    </div>
+    <div class="card">
+      <div class="card-title"><span class="dot"></span> NatWest SEO Keywords (Competitor Benchmark)</div>
+      <table>
+        <tr><th>Keyword</th><th>Clicks</th><th>Pos</th></tr>
+        <tr><td>mortgage calculator</td><td>22,469</td><td>#7</td></tr>
+        <tr><td>credit card</td><td>18,018</td><td>#3</td></tr>
+        <tr><td>loans</td><td>17,038</td><td>#4</td></tr>
+        <tr><td>mortgage overpayment calc.</td><td>11,546</td><td>#3</td></tr>
+        <tr><td>remortgage calculator</td><td>8,354</td><td>#1</td></tr>
+      </table>
+      <div class="insight" style="margin-top:10px"><strong>Gap:</strong> NatWest earns 22K clicks for "mortgage calculator" vs HSBC's 12.6K — and "loans" / "credit card" head terms are strong NatWest organic earners that HSBC only targets via paid.</div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-title"><span class="dot"></span> SEO Keyword Competitors (Organic Overlap Score)</div>
+    <table>
+      <tr><th>Competitor</th><th>Overlap Score</th><th>Shared Keywords</th><th>Action</th></tr>
+      <tr><td>lloydsbank.com</td><td>19.95</td><td>51%</td><td><span class="tag tag-red">Monitor Closely</span></td></tr>
+      <tr><td>natwest.com</td><td>19.55</td><td>49%</td><td><span class="tag tag-red">Monitor Closely</span></td></tr>
+      <tr><td>nationwide.co.uk</td><td>17.39</td><td>51%</td><td><span class="tag tag-orange">Watch</span></td></tr>
+      <tr><td>barclays.co.uk</td><td>16.08</td><td>49%</td><td><span class="tag tag-orange">Watch</span></td></tr>
+      <tr><td>moneysavingexpert.com</td><td>11.48</td><td>12%</td><td><span class="tag tag-blue">Partnership Opp</span></td></tr>
+    </table>
+
+    <div class="section-header" style="margin-top:16px"><h2>Content Strategy Recommendations</h2><div class="line"></div></div>
+    <div class="grid3" style="gap:10px">
+      <div style="padding:12px;border:1px solid var(--border);border-radius:6px;border-top:2px solid var(--hsbc-red)">
+        <div style="font-weight:700;font-size:12px;margin-bottom:4px">Hub 1: Mortgage Centre</div>
+        <div style="font-size:12px;color:var(--muted);line-height:1.5">Expand calculators (remortgage, stamp duty, affordability). Add rate comparison tables. Target featured snippets for rate queries. Potential: +40K organic clicks/mo.</div>
+      </div>
+      <div style="padding:12px;border:1px solid var(--border);border-radius:6px;border-top:2px solid var(--hsbc-red)">
+        <div style="font-weight:700;font-size:12px;margin-bottom:4px">Hub 2: Investment & Wealth</div>
+        <div style="font-size:12px;color:var(--muted);line-height:1.5">Build on S&P 500 and investment calculator authority. ISA guides, stock market explainers, wealth planning tools. Targets 35–54 high-value segment.</div>
+      </div>
+      <div style="padding:12px;border:1px solid var(--border);border-radius:6px;border-top:2px solid var(--hsbc-red)">
+        <div style="font-weight:700;font-size:12px;margin-bottom:4px">Hub 3: Expat Banking</div>
+        <div style="font-size:12px;color:var(--muted);line-height:1.5">HSBC's unique global edge. "Banking abroad", "international transfer", "expat mortgage UK" — zero competition from purely domestic rivals. Blue ocean SEO opportunity.</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════ PPC ═══════════════════════════════ -->
+<div class="page" id="ppc">
+  <div class="kpi-grid">
+    <div class="kpi"><div class="kpi-label">PPC Traffic Share</div><div class="kpi-value">1.1%</div><div class="kpi-sub down">vs NatWest ~2–3%</div></div>
+    <div class="kpi"><div class="kpi-label">Top Paid Keyword</div><div class="kpi-value" style="font-size:14px">Loan Calculator</div><div class="kpi-sub">7,659 clicks · Pos #1</div></div>
+    <div class="kpi"><div class="kpi-label">Top Paid Landing</div><div class="kpi-value" style="font-size:14px">/loans/personal</div><div class="kpi-sub">£26.5K spend · 9,044 clicks</div></div>
+    <div class="kpi"><div class="kpi-label">Premier Page Spend</div><div class="kpi-value">£21.7K</div><div class="kpi-sub">286 ads · 7,287 clicks</div></div>
+  </div>
+
+  <div class="card">
+    <div class="card-title"><span class="dot"></span> Paid Keyword Clusters & Performance</div>
+    <div class="insight"><strong>PPC is under-invested.</strong> Loan calculator (pos #1, 7.6K clicks) and Premier account dominate spend. Credit cards and savings are barely funded. Barclays and Nationwide share keywords — head-to-head competition at a scale HSBC should match.</div>
+    <table>
+      <tr><th>Keyword Cluster</th><th>Top Keyword</th><th>Clicks</th><th>Traffic Share</th><th>Position</th><th>Action</th></tr>
+      <tr><td><span class="tag tag-blue">Personal Loans</span></td><td>loan calculator</td><td>7,659</td><td>36.7%</td><td>#1</td><td><span class="tag tag-green">Scale Up</span></td></tr>
+      <tr><td><span class="tag tag-blue">Premier Banking</span></td><td>barclays premier*</td><td>2,377</td><td>11.4%</td><td>#23</td><td><span class="tag tag-red">Fix Relevance</span></td></tr>
+      <tr><td><span class="tag tag-blue">Loan Calculators</span></td><td>loan repayment calc.</td><td>817</td><td>3.9%</td><td>#2</td><td><span class="tag tag-green">Expand</span></td></tr>
+      <tr><td><span class="tag tag-blue">Credit Cards</span></td><td>credit card</td><td>639</td><td>3.1%</td><td>#4</td><td><span class="tag tag-orange">Increase Budget</span></td></tr>
+      <tr><td><span class="tag tag-blue">Current Accounts</span></td><td>best current accounts</td><td>357</td><td>1.7%</td><td>#1</td><td><span class="tag tag-green">Strong – Scale</span></td></tr>
+      <tr><td><span class="tag tag-blue">Balance Transfer</span></td><td>balance transfer cc</td><td>356</td><td>1.7%</td><td>#4</td><td><span class="tag tag-orange">Bid Up</span></td></tr>
+      <tr><td><span class="tag tag-blue">Islamic Finance</span></td><td>sukuk</td><td>239</td><td>1.1%</td><td>#1</td><td><span class="tag tag-blue">Unique Advantage</span></td></tr>
+    </table>
+    <div style="font-size:11px;color:var(--muted);margin-top:6px">* "barclays premier" keyword appearing in HSBC's paid data suggests competitor conquest bidding — investigate and realign to relevant terms.</div>
+  </div>
+
+  <div class="grid2">
+    <div class="card">
+      <div class="card-title"><span class="dot"></span> Top Paid Landing Pages (Feb 2026)</div>
+      <table>
+        <tr><th>Page</th><th>Clicks</th><th>Est. Spend</th><th>Mobile%</th></tr>
+        <tr><td>/loans/products/personal</td><td>9,044</td><td>£26,490</td><td>61%</td></tr>
+        <tr><td>/current-accounts/premier</td><td>7,287</td><td>£21,742</td><td>45%</td></tr>
+        <tr><td>/credit-cards/products</td><td>2,278</td><td>£25,255</td><td>53%</td></tr>
+        <tr><td>/savings/online-bonus-saver</td><td>1,414</td><td>£2,842</td><td>33%</td></tr>
+        <tr><td>/loans/car-loan</td><td>648</td><td>£2,513</td><td>31%</td></tr>
+        <tr><td>/credit-cards/balance-transfer</td><td>408</td><td>£6,179</td><td>93%</td></tr>
+      </table>
+      <div class="insight" style="margin-top:10px"><strong>Note:</strong> Credit cards page spends £25K for only 2,278 clicks — high CPC suggests poor landing page Quality Score. Optimise for relevance.</div>
+    </div>
+    <div class="card">
+      <div class="card-title"><span class="dot"></span> PPC Competitor Overlap</div>
+      <table>
+        <tr><th>Competitor</th><th>PPC Score</th><th>Shared KWs</th></tr>
+        <tr><td>nationwide.co.uk</td><td>6.22</td><td>6.4%</td></tr>
+        <tr><td>tescobank.com</td><td>5.76</td><td>2.8%</td></tr>
+        <tr><td>coutts.com</td><td>5.26</td><td>5.7%</td></tr>
+        <tr><td>lloydsbank.com</td><td>4.89</td><td>1.9%</td></tr>
+        <tr><td>barclays.co.uk</td><td>4.08</td><td>3.0%</td></tr>
+      </table>
+      <div class="insight" style="margin-top:10px"><strong>Coutts overlap</strong> signals HSBC Premier is competing in the ultra-premium segment. Reinforce this positioning with dedicated landing pages for high-net-worth keywords.</div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-title"><span class="dot"></span> PPC Traffic Trend (Monthly)</div>
+    <div class="chart-wrap" style="height:200px"><canvas id="c-ppc"></canvas></div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════ REFERRALS ═══════════════════════════════ -->
+<div class="page" id="referrals">
+  <div class="kpi-grid">
+    <div class="kpi"><div class="kpi-label">Referral Traffic Share</div><div class="kpi-value">6.2%</div><div class="kpi-sub down">Declining YoY</div></div>
+    <div class="kpi"><div class="kpi-label">Top Referrer</div><div class="kpi-value" style="font-size:14px">business.hsbc.uk</div><div class="kpi-sub">1.22M visits · 62.5%</div></div>
+    <div class="kpi"><div class="kpi-label">ChatGPT Referrals</div><div class="kpi-value">166K</div><div class="kpi-sub">#3 external referrer</div></div>
+    <div class="kpi"><div class="kpi-label">MoneySavingExpert</div><div class="kpi-value">55K</div><div class="kpi-sub up">+131% YoY growth</div></div>
+  </div>
+
+  <div class="ref-grid">
+    <div class="card">
+      <div class="card-title"><span class="dot"></span> Top Referral Sources</div>
+      <table>
+        <tr><th>Source</th><th>Visits</th><th>Share</th><th>Change</th><th>Type</th></tr>
+        <tr><td>business.hsbc.uk</td><td>1,219,805</td><td>62.5%</td><td class="down">-6.5%</td><td><span class="tag tag-gray">Internal</span></td></tr>
+        <tr><td>hsbc.com</td><td>202,605</td><td>10.4%</td><td class="down">-71.6%</td><td><span class="tag tag-gray">Internal</span></td></tr>
+        <tr><td><strong>chatgpt.com</strong></td><td><strong>166,355</strong></td><td>8.5%</td><td class="down">-11.4%</td><td><span class="tag tag-blue">AI Chatbot</span></td></tr>
+        <tr><td>msn.com</td><td>73,291</td><td>3.8%</td><td class="down">-4.8%</td><td><span class="tag tag-orange">News</span></td></tr>
+        <tr><td><strong>moneysavingexpert.com</strong></td><td><strong>55,350</strong></td><td>2.8%</td><td class="up">+131%</td><td><span class="tag tag-green">Affiliate</span></td></tr>
+        <tr><td>google.com</td><td>34,992</td><td>1.8%</td><td class="down">-88%</td><td><span class="tag tag-gray">Search</span></td></tr>
+        <tr><td><strong>perplexity.ai</strong></td><td><strong>18,696</strong></td><td>1.0%</td><td class="down">-18.4%</td><td><span class="tag tag-blue">AI Chatbot</span></td></tr>
+        <tr><td>tax.service.gov.uk</td><td>16,313</td><td>0.8%</td><td>—</td><td><span class="tag tag-gray">Gov</span></td></tr>
+        <tr><td>moneytothemasses.com</td><td>7,414</td><td>0.4%</td><td>0%</td><td><span class="tag tag-green">Affiliate</span></td></tr>
+        <tr><td>firstdirect.com</td><td>7,269</td><td>0.4%</td><td>—</td><td><span class="tag tag-gray">Internal</span></td></tr>
+      </table>
+    </div>
+
+    <div>
+      <div class="card">
+        <div class="card-title"><span class="dot"></span> AI Chatbot Channel</div>
+        <div class="insight"><strong>ChatGPT is HSBC's #3 external referrer</strong> (166K visits — more than MSN). Combined with Perplexity (18.7K), AI chatbots now drive more traffic than any traditional affiliate. This channel is growing industry-wide and HSBC should invest ahead of the curve.</div>
+        <div class="chart-wrap" style="height:160px"><canvas id="c-ai"></canvas></div>
+      </div>
+      <div class="card" style="margin-top:0">
+        <div class="card-title"><span class="dot"></span> Partnership Opportunities</div>
+        <div class="action-item"><div class="action-num">1</div><div class="action-text"><strong>MoneySavingExpert</strong> — formalise affiliate deal. +131% growth, already 55K visits organically. Barclays has 15.6K — HSBC is outperforming.</div></div>
+        <div class="action-item"><div class="action-num">2</div><div class="action-text"><strong>AI Content Optimisation</strong> — structured FAQ schema, conversational long-tail content to maximise ChatGPT and Perplexity citations.</div></div>
+        <div class="action-item"><div class="action-num">3</div><div class="action-text"><strong>MoneysToTheMasses</strong> — niche money blog, already referring 7.4K visits. Nurture with exclusive product data/rates access.</div></div>
+        <div class="action-item"><div class="action-num">4</div><div class="action-text"><strong>MSN / Microsoft partnership</strong> — 73K referrals but declining -4.8%. Investigate integration with Copilot / Bing as AI-answer content.</div></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-title"><span class="dot"></span> Referral Traffic Trend (2025–2026)</div>
+    <div class="chart-wrap" style="height:200px"><canvas id="c-referral"></canvas></div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════ SOCIAL ═══════════════════════════════ -->
+<div class="page" id="social">
+  <div class="kpi-grid">
+    <div class="kpi"><div class="kpi-label">Social Traffic Share</div><div class="kpi-value">0.7%</div><div class="kpi-sub down">Very low vs peers</div></div>
+    <div class="kpi"><div class="kpi-label">Top Social Platform</div><div class="kpi-value">YouTube</div><div class="kpi-sub">56% of social visits</div></div>
+    <div class="kpi"><div class="kpi-label">LinkedIn Share</div><div class="kpi-value">9.4%</div><div class="kpi-sub">1.4K visits/avg month</div></div>
+    <div class="kpi"><div class="kpi-label">Facebook Share</div><div class="kpi-value">9.2%</div><div class="kpi-sub">+0% growth (flat)</div></div>
+  </div>
+
+  <div class="grid2">
+    <div class="card">
+      <div class="card-title"><span class="dot"></span> Social Platform Distribution</div>
+      <div class="legend">
+        <span class="legend-item"><span class="legend-dot" style="background:#ff0000"></span>YouTube 55.9%</span>
+        <span class="legend-item"><span class="legend-dot" style="background:#0077b5"></span>LinkedIn 9.4%</span>
+        <span class="legend-item"><span class="legend-dot" style="background:#1877f2"></span>Facebook 9.2%</span>
+        <span class="legend-item"><span class="legend-dot" style="background:#25d366"></span>WhatsApp 6.8%</span>
+        <span class="legend-item"><span class="legend-dot" style="background:#ff4500"></span>Reddit 6.3%</span>
+        <span class="legend-item"><span class="legend-dot" style="background:#000"></span>X 2.7%</span>
+        <span class="legend-item"><span class="legend-dot" style="background:#e4405f"></span>Instagram 2.6%</span>
+      </div>
+      <div class="chart-wrap" style="height:240px"><canvas id="c-social-pie"></canvas></div>
+    </div>
+    <div class="card">
+      <div class="card-title"><span class="dot"></span> Growth Signals by Platform</div>
+      <table>
+        <tr><th>Platform</th><th>Visits</th><th>Change</th><th>Priority</th></tr>
+        <tr><td><span class="social-icon" style="background:#ff0000">▶</span>YouTube</td><td>8,358</td><td class="down">-35.7%</td><td><span class="tag tag-red">Urgent — invest</span></td></tr>
+        <tr><td><span class="social-icon" style="background:#0077b5">in</span>LinkedIn</td><td>1,410</td><td class="down">-25.8%</td><td><span class="tag tag-orange">Grow</span></td></tr>
+        <tr><td><span class="social-icon" style="background:#1877f2">f</span>Facebook</td><td>1,376</td><td>0%</td><td><span class="tag tag-gray">Maintain</span></td></tr>
+        <tr><td><span class="social-icon" style="background:#25d366">W</span>WhatsApp</td><td>1,020</td><td class="up">+53%</td><td><span class="tag tag-green">Expand</span></td></tr>
+        <tr><td><span class="social-icon" style="background:#ff4500">R</span>Reddit</td><td>949</td><td class="down">-52.7%</td><td><span class="tag tag-orange">Engage</span></td></tr>
+        <tr><td><span class="social-icon" style="background:#000">X</span>X/Twitter</td><td>407</td><td class="up">+603%</td><td><span class="tag tag-blue">Monitor</span></td></tr>
+        <tr><td><span class="social-icon" style="background:#e4405f">IG</span>Instagram</td><td>392</td><td class="up">+195%</td><td><span class="tag tag-green">Test & Scale</span></td></tr>
+        <tr><td><span class="social-icon" style="background:#010101">TK</span>TikTok</td><td>109</td><td>0%</td><td><span class="tag tag-gray">Pilot</span></td></tr>
+      </table>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-title"><span class="dot"></span> Competitor Social Insights & What to Learn</div>
+    <div class="grid3" style="gap:12px;margin-top:4px">
+      <div style="padding:14px;border:1px solid var(--border);border-radius:6px">
+        <div style="font-weight:700;font-size:13px;margin-bottom:6px">📺 YouTube Strategy</div>
+        <div style="font-size:12px;color:var(--muted);line-height:1.6">YouTube is HSBC's #1 social channel but declining -35.7%. NatWest and Barclays use YouTube for "money explainer" series targeting young audiences. HSBC should commit to a structured series — ISA explained, mortgage guide, global banking tips. Target: 25–34 segment.</div>
+      </div>
+      <div style="padding:14px;border:1px solid var(--border);border-radius:6px">
+        <div style="font-weight:700;font-size:13px;margin-bottom:6px">💼 LinkedIn B2B</div>
+        <div style="font-size:12px;color:var(--muted);line-height:1.6">LinkedIn is -25.8% but critical for HSBC Premier and Business Banking. Competitors in wealth management post thought leadership weekly. HSBC should activate senior economists and wealth advisors as content creators. Barclays Corporate does this well.</div>
+      </div>
+      <div style="padding:14px;border:1px solid var(--border);border-radius:6px">
+        <div style="font-weight:700;font-size:13px;margin-bottom:6px">📸 Instagram & WhatsApp</div>
+        <div style="font-size:12px;color:var(--muted);line-height:1.6">Instagram is up +195% from a low base — test and scale fast. WhatsApp referrals up +53% suggest content is being shared organically. Implement WhatsApp customer service / content notifications for existing customers — a proven Santander play.</div>
+      </div>
+    </div>
+    <div class="insight" style="margin-top:14px"><strong>Key insight:</strong> Social traffic is only 0.7% of total — industry peers are at 1.5–3%. A structured social content programme could add 30–50K monthly visits. The biggest unlock is YouTube: invest in a weekly "HSBC Explains Money" series targeting the 25–44 demographic.</div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════ SWOT ═══════════════════════════════ -->
+<div class="page" id="swot">
+  <div style="text-align:center;margin-bottom:16px">
+    <div style="font-size:18px;font-weight:700;margin-bottom:4px">Strategic SWOT Analysis</div>
+    <div style="font-size:12px;color:var(--muted)">Based on 12 months Similarweb data · UK Market · March 2026</div>
+  </div>
+
+  <div class="swot-grid" style="margin-bottom:20px">
+    <div>
+      <div class="swot-label">Strengths</div>
+      <div class="swot-q sq-s">
+        <h3>Strengths</h3>
+        <ul>
+          <li>Exceptional brand loyalty — 63% direct traffic, among highest in sector</li>
+          <li>Deeply engaged users — 29.8% bounce rate and 6.4 pages/visit (best-in-class)</li>
+          <li>Strong mortgage SEO authority — #1–#4 for multiple rate and calculator terms</li>
+          <li>Unique S&P 500 / investment content rankings — untapped asset</li>
+          <li>First Direct subsidiary drives additional segment coverage</li>
+          <li>Islamic finance (Sukuk) keyword dominance — no competitor match</li>
+          <li>ChatGPT already refers 166K visits — AI presence established</li>
+          <li>Global brand enables expat and international banking content monopoly</li>
+        </ul>
+      </div>
+    </div>
+    <div>
+      <div class="swot-label">Weaknesses</div>
+      <div class="swot-q sq-w">
+        <h3>Weaknesses</h3>
+        <ul>
+          <li>Category rank #10 — Santander 2.2× bigger in UK web traffic</li>
+          <li>PPC share at 1.1% — massively under-invested vs competitors</li>
+          <li>Social traffic at 0.7% — near-invisible in social channels</li>
+          <li>"Mortgage calculator" stuck at position #9 — losing 2–3× potential clicks</li>
+          <li>Credit card PPC spend/click efficiency is poor (high CPC, low quality score)</li>
+          <li>No structured affiliate programme — MSE traffic is organic, not systematic</li>
+          <li>Referral traffic declining YoY across all channels</li>
+          <li>Limited content depth outside mortgages — credit, savings, investments thin</li>
+        </ul>
+      </div>
+    </div>
+    <div>
+      <div class="swot-label">Opportunities</div>
+      <div class="swot-q sq-o">
+        <h3>Opportunities</h3>
+        <ul>
+          <li>Scale MoneySavingExpert — +131% organic growth shows clear demand signal</li>
+          <li>AI answer engine content: ChatGPT/Perplexity optimised FAQ infrastructure</li>
+          <li>Investment Hub: S&P 500 and ISA authority → 10× content expansion</li>
+          <li>Expat Banking SEO hub — zero competition from domestic rivals</li>
+          <li>YouTube "HSBC Explains Money" series to grow 25–34 acquisition</li>
+          <li>Scale Premier PPC — high-value audience, competitor overlap with Coutts</li>
+          <li>WhatsApp customer content distribution — +53% organic growth signal</li>
+          <li>Instagram for younger customer acquisition — currently +195% YoY</li>
+        </ul>
+      </div>
+    </div>
+    <div>
+      <div class="swot-label">Threats</div>
+      <div class="swot-q sq-t">
+        <h3>Threats</h3>
+        <ul>
+          <li>Santander's 2.2× traffic gap widens if no acquisition channel investment</li>
+          <li>NatWest/Lloyds dominate mortgage calculator clicks — risk of further share loss</li>
+          <li>Challenger banks (Starling, Monzo) growing fast with high-engagement social</li>
+          <li>AI search disruption — if HSBC loses ChatGPT/Perplexity citations, referrals drop</li>
+          <li>MoneySavingExpert could de-feature HSBC products if no commercial relationship</li>
+          <li>Credit card market intensely competitive — 63/100 competition score</li>
+          <li>YouTube social referrals declining -35.7% — channel erosion risk</li>
+          <li>Competitor conquest bidding on HSBC branded terms (noted in PPC data)</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-title"><span class="dot"></span> Executive Recommendation Matrix</div>
+    <table>
+      <tr><th>Initiative</th><th>Impact</th><th>Effort</th><th>Timeline</th><th>Channel</th></tr>
+      <tr><td><strong>Scale MSE affiliate programme</strong></td><td><span class="tag tag-red">Very High</span></td><td><span class="tag tag-green">Low</span></td><td>30 days</td><td>Referral</td></tr>
+      <tr><td><strong>Mortgage calculator to top 3</strong></td><td><span class="tag tag-red">Very High</span></td><td><span class="tag tag-orange">Medium</span></td><td>90 days</td><td>SEO</td></tr>
+      <tr><td><strong>Scale Premier PPC + expand keywords</strong></td><td><span class="tag tag-red">Very High</span></td><td><span class="tag tag-green">Low</span></td><td>30 days</td><td>PPC</td></tr>
+      <tr><td><strong>AI Answer Engine content programme</strong></td><td><span class="tag tag-orange">High</span></td><td><span class="tag tag-orange">Medium</span></td><td>60 days</td><td>AI/SEO</td></tr>
+      <tr><td><strong>HSBC Investment Hub launch</strong></td><td><span class="tag tag-orange">High</span></td><td><span class="tag tag-orange">Medium</span></td><td>90 days</td><td>SEO</td></tr>
+      <tr><td><strong>YouTube content series</strong></td><td><span class="tag tag-orange">High</span></td><td><span class="tag tag-red">High</span></td><td>120 days</td><td>Social</td></tr>
+      <tr><td><strong>Expat Banking SEO hub</strong></td><td><span class="tag tag-orange">High</span></td><td><span class="tag tag-orange">Medium</span></td><td>90 days</td><td>SEO</td></tr>
+      <tr><td><strong>Instagram acquisition pilot</strong></td><td><span class="tag tag-blue">Medium</span></td><td><span class="tag tag-green">Low</span></td><td>30 days</td><td>Social</td></tr>
+    </table>
+  </div>
+</div>
+
+<div class="footer">HSBC UK Marketing Intelligence Dashboard · Powered by Similarweb Data · March 2026 · 12-Month Analysis</div>
+
+<script>
+const RED = '#DB0011', DARK = '#1a1a1a', MID = '#888', LIGHT = '#e8e8e8';
+const months = ['Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec','Jan','Feb'];
+
+function show(id) {
+  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('nav button').forEach(b => b.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+  event.target.classList.add('active');
+}
+
+// Traffic Trend
+new Chart(document.getElementById('c-traffic'), {
+  type: 'line',
+  data: {
+    labels: months,
+    datasets: [{
+      label: 'HSBC Visits',
+      data: [7106373,6551794,6504411,6204463,6786743,6776469,6230500,5894731,5116009,5171918,5723728,4829492].map(v=>Math.round(v/1000)),
+      borderColor: RED, backgroundColor: 'rgba(219,0,17,0.08)', fill: true, tension: 0.3, pointRadius: 3
+    }]
+  },
+  options: {
+    responsive: true, maintainAspectRatio: false,
+    plugins: { legend: { display: false } },
+    scales: {
+      y: { ticks: { callback: v => v+'K', font: { size: 11 } }, grid: { color: LIGHT } },
+      x: { ticks: { font: { size: 11 } }, grid: { display: false } }
+    }
+  }
+});
+
+// Competitor comparison
+new Chart(document.getElementById('c-comp'), {
+  type: 'bar',
+  data: {
+    labels: ['Santander','NatWest','Lloyds','Barclays','HSBC'],
+    datasets: [{
+      data: [13900,11900,8700,7300,6100],
+      backgroundColor: ['#e6e6e6','#e6e6e6','#e6e6e6','#e6e6e6', RED]
+    }]
+  },
+  options: {
+    indexAxis: 'y', responsive: true, maintainAspectRatio: false,
+    plugins: { legend: { display: false } },
+    scales: {
+      x: { ticks: { callback: v => v+'K', font: { size: 11 } }, grid: { color: LIGHT } },
+      y: { ticks: { font: { size: 11 } }, grid: { display: false } }
+    }
+  }
+});
+
+// Age chart
+new Chart(document.getElementById('c-age'), {
+  type: 'bar',
+  data: {
+    labels: ['18–24','25–34','35–44','45–54','55–64','65+'],
+    datasets: [{
+      data: [9.7,20.3,16.8,19.9,18.4,14.5],
+      backgroundColor: [LIGHT, RED, LIGHT, RED, LIGHT, LIGHT]
+    }]
+  },
+  options: {
+    responsive: true, maintainAspectRatio: false,
+    plugins: { legend: { display: false } },
+    scales: {
+      y: { ticks: { callback: v => v+'%', font: { size: 10 } }, grid: { color: LIGHT } },
+      x: { ticks: { font: { size: 10 } }, grid: { display: false } }
+    }
+  }
+});
+
+// Gender
+new Chart(document.getElementById('c-gender'), {
+  type: 'doughnut',
+  data: {
+    labels: ['Male 57%','Female 43%'],
+    datasets: [{ data: [57, 43], backgroundColor: [RED, '#e8e8e8'], borderWidth: 0 }]
+  },
+  options: {
+    responsive: true, maintainAspectRatio: false,
+    plugins: { legend: { position: 'bottom', labels: { font: { size: 11 } } } }
+  }
+});
+
+// PPC trend
+new Chart(document.getElementById('c-ppc'), {
+  type: 'bar',
+  data: {
+    labels: months,
+    datasets: [{
+      label: 'Paid Search Visits',
+      data: [81230,69769,58911,64503,72694,80625,67453,64565,65973,57177,62255,58285].map(v=>Math.round(v/1000)),
+      backgroundColor: RED
+    }]
+  },
+  options: {
+    responsive: true, maintainAspectRatio: false,
+    plugins: { legend: { display: false } },
+    scales: {
+      y: { ticks: { callback: v => v+'K', font: { size: 11 } }, grid: { color: LIGHT } },
+      x: { ticks: { font: { size: 11 } }, grid: { display: false } }
+    }
+  }
+});
+
+// AI referral chart
+new Chart(document.getElementById('c-ai'), {
+  type: 'doughnut',
+  data: {
+    labels: ['ChatGPT 166K','Perplexity 18.7K'],
+    datasets: [{ data: [166355, 18696], backgroundColor: [RED, '#888'], borderWidth: 0 }]
+  },
+  options: {
+    responsive: true, maintainAspectRatio: false,
+    plugins: { legend: { position: 'bottom', labels: { font: { size: 11 } } } }
+  }
+});
+
+// Referral trend
+new Chart(document.getElementById('c-referral'), {
+  type: 'line',
+  data: {
+    labels: months,
+    datasets: [{
+      label: 'Referral Visits',
+      data: [455972,370277,345209,296454,300568,267051,235007,209721,176364,175364,186969,155349].map(v=>Math.round(v/1000)),
+      borderColor: RED, backgroundColor: 'rgba(219,0,17,0.07)', fill: true, tension: 0.3, pointRadius: 3
+    }]
+  },
+  options: {
+    responsive: true, maintainAspectRatio: false,
+    plugins: { legend: { display: false } },
+    scales: {
+      y: { ticks: { callback: v => v+'K', font: { size: 11 } }, grid: { color: LIGHT } },
+      x: { ticks: { font: { size: 11 } }, grid: { display: false } }
+    }
+  }
+});
+
+// Social pie
+new Chart(document.getElementById('c-social-pie'), {
+  type: 'doughnut',
+  data: {
+    labels: ['YouTube 55.9%','LinkedIn 9.4%','Facebook 9.2%','WhatsApp 6.8%','Reddit 6.3%','X 2.7%','Instagram 2.6%','Other 7.1%'],
+    datasets: [{ data: [55.9,9.4,9.2,6.8,6.3,2.7,2.6,7.1], backgroundColor: ['#ff0000','#0077b5','#1877f2','#25d366','#ff4500','#111','#e4405f','#ccc'], borderWidth: 0 }]
+  },
+  options: {
+    responsive: true, maintainAspectRatio: false,
+    plugins: { legend: { position: 'right', labels: { font: { size: 10 }, boxWidth: 10, padding: 8 } } }
+  }
+});
+</script>
+</body>
+</html>

@@ -1,0 +1,734 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Monday.com Marketing Intelligence</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.js"></script>
+<style>
+  :root {
+    --mon-orange: #FF7D45;
+    --mon-red: #E04C4C;
+    --mon-blue: #0073EA;
+    --mon-green: #00CA72;
+    --mon-purple: #9B51E0;
+    --mon-yellow: #FFCB00;
+    --mon-dark: #1B2037;
+    --mon-bg: #F5F6F8;
+    --mon-white: #FFFFFF;
+    --mon-text: #2B2B4B;
+    --mon-text-2: #6E6F85;
+    --mon-border: #E6E9EF;
+    --sidebar-w: 200px;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; background: var(--mon-bg); color: var(--mon-text); display: flex; min-height: 100vh; font-size: 14px; }
+  
+  /* Sidebar */
+  .sidebar { width: var(--sidebar-w); background: var(--mon-dark); color: #fff; flex-shrink: 0; display: flex; flex-direction: column; position: sticky; top: 0; height: 100vh; overflow-y: auto; z-index: 100; }
+  .logo { padding: 20px 16px 8px; }
+  .logo-badge { background: var(--mon-orange); color: white; font-weight: 700; font-size: 16px; padding: 6px 10px; border-radius: 8px; display: inline-block; letter-spacing: -0.5px; }
+  .logo-sub { font-size: 10px; color: #8A8DAE; margin-top: 4px; text-transform: uppercase; letter-spacing: 1px; padding-left: 2px; }
+  .sidebar-label { font-size: 10px; text-transform: uppercase; letter-spacing: 1px; color: #6B6F8A; padding: 16px 16px 6px; }
+  .nav-item { display: flex; align-items: center; gap: 10px; padding: 10px 16px; cursor: pointer; border-radius: 0; font-size: 13px; color: #B0B3CC; transition: all 0.15s; border-left: 3px solid transparent; }
+  .nav-item:hover { background: rgba(255,255,255,0.07); color: #fff; }
+  .nav-item.active { background: rgba(255,125,69,0.15); color: var(--mon-orange); border-left-color: var(--mon-orange); }
+  .nav-dot { width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; }
+  
+  /* Main */
+  .main { flex: 1; overflow-y: auto; }
+  .section { display: none; padding: 28px 32px; min-height: 100vh; }
+  .section.active { display: block; }
+  
+  .page-header { margin-bottom: 24px; }
+  .page-header h1 { font-size: 22px; font-weight: 700; color: var(--mon-text); }
+  .page-header p { color: var(--mon-text-2); font-size: 13px; margin-top: 4px; }
+  
+  /* Cards */
+  .card { background: var(--mon-white); border-radius: 12px; padding: 20px; border: 1px solid var(--mon-border); }
+  .card h3 { font-size: 13px; font-weight: 600; color: var(--mon-text-2); text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 14px; }
+  .card-title { font-size: 15px; font-weight: 600; color: var(--mon-text); margin-bottom: 4px; }
+  
+  .grid-2 { display: grid; grid-template-columns: repeat(2, minmax(0,1fr)); gap: 16px; margin-bottom: 16px; }
+  .grid-3 { display: grid; grid-template-columns: repeat(3, minmax(0,1fr)); gap: 16px; margin-bottom: 16px; }
+  .grid-4 { display: grid; grid-template-columns: repeat(4, minmax(0,1fr)); gap: 14px; margin-bottom: 16px; }
+  
+  /* Metric cards */
+  .metric { background: var(--mon-white); border-radius: 10px; padding: 16px; border: 1px solid var(--mon-border); }
+  .metric-label { font-size: 11px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px; color: var(--mon-text-2); margin-bottom: 8px; }
+  .metric-value { font-size: 24px; font-weight: 700; color: var(--mon-text); line-height: 1; }
+  .metric-change { font-size: 12px; margin-top: 6px; font-weight: 500; }
+  .up { color: #00A876; }
+  .down { color: #E04C4C; }
+  .neutral { color: var(--mon-text-2); }
+  
+  /* Tags & badges */
+  .badge { display: inline-flex; align-items: center; gap: 4px; padding: 3px 10px; border-radius: 20px; font-size: 11px; font-weight: 600; }
+  .badge-orange { background: rgba(255,125,69,0.12); color: #C45C20; }
+  .badge-blue { background: rgba(0,115,234,0.1); color: #0055BB; }
+  .badge-green { background: rgba(0,202,114,0.12); color: #00875F; }
+  .badge-red { background: rgba(224,76,76,0.1); color: #B03030; }
+  .badge-purple { background: rgba(155,81,224,0.1); color: #7030B0; }
+  .badge-yellow { background: rgba(255,203,0,0.15); color: #A07800; }
+  .badge-gray { background: rgba(110,111,133,0.1); color: #5C5D70; }
+  
+  /* Tables */
+  table { width: 100%; border-collapse: collapse; }
+  th { font-size: 11px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px; color: var(--mon-text-2); padding: 8px 12px; border-bottom: 1px solid var(--mon-border); text-align: left; }
+  td { padding: 10px 12px; border-bottom: 1px solid rgba(230,233,239,0.5); font-size: 13px; color: var(--mon-text); }
+  tr:last-child td { border-bottom: none; }
+  tr:hover td { background: rgba(245,246,248,0.7); }
+  
+  /* Progress bar */
+  .pbar-wrap { background: rgba(110,111,133,0.1); border-radius: 4px; height: 6px; margin-top: 6px; }
+  .pbar { border-radius: 4px; height: 6px; transition: width 0.4s; }
+  
+  /* Chart container */
+  .chart-wrap { position: relative; width: 100%; }
+  
+  /* Opportunity cards */
+  .opp-card { background: var(--mon-white); border-radius: 10px; padding: 16px; border: 1px solid var(--mon-border); border-left: 4px solid; }
+  .opp-card.orange { border-left-color: var(--mon-orange); }
+  .opp-card.blue { border-left-color: var(--mon-blue); }
+  .opp-card.green { border-left-color: var(--mon-green); }
+  .opp-card.purple { border-left-color: var(--mon-purple); }
+  .opp-card.red { border-left-color: var(--mon-red); }
+  .opp-title { font-size: 13px; font-weight: 600; color: var(--mon-text); margin-bottom: 6px; }
+  .opp-desc { font-size: 12px; color: var(--mon-text-2); line-height: 1.5; }
+  
+  /* SWOT */
+  .swot-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 0; border-radius: 12px; overflow: hidden; border: 1px solid var(--mon-border); }
+  .swot-cell { padding: 20px; }
+  .swot-cell.s { background: rgba(0,202,114,0.08); }
+  .swot-cell.w { background: rgba(224,76,76,0.07); }
+  .swot-cell.o { background: rgba(0,115,234,0.07); }
+  .swot-cell.t { background: rgba(255,203,0,0.1); }
+  .swot-header { font-size: 13px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 12px; display: flex; align-items: center; gap: 8px; }
+  .swot-icon { width: 28px; height: 28px; border-radius: 8px; display: flex; align-items: center; justify-content: center; font-size: 14px; }
+  .swot-item { font-size: 12px; color: var(--mon-text); line-height: 1.5; padding: 6px 0; border-bottom: 1px solid rgba(110,111,133,0.1); }
+  .swot-item:last-child { border-bottom: none; }
+  .swot-item::before { content: '→ '; color: var(--mon-text-2); }
+  
+  /* Comp table */
+  .comp-dot { width: 10px; height: 10px; border-radius: 50%; display: inline-block; margin-right: 6px; }
+  
+  /* Channel bar */
+  .ch-row { display: flex; align-items: center; gap: 12px; margin-bottom: 10px; }
+  .ch-label { width: 120px; font-size: 12px; color: var(--mon-text-2); flex-shrink: 0; text-align: right; }
+  .ch-bar-wrap { flex: 1; background: rgba(110,111,133,0.1); border-radius: 4px; height: 8px; }
+  .ch-bar { border-radius: 4px; height: 8px; }
+  .ch-pct { width: 44px; font-size: 12px; font-weight: 600; text-align: right; }
+  
+  /* Referral pill */
+  .ref-row { display: flex; align-items: center; justify-content: space-between; padding: 8px 0; border-bottom: 1px solid rgba(230,233,239,0.5); }
+  .ref-row:last-child { border-bottom: none; }
+  .ref-domain { font-size: 13px; color: var(--mon-text); font-weight: 500; }
+  .ref-change { font-size: 11px; font-weight: 600; }
+  
+  /* Keyword chip */
+  .kw-chip { display: inline-flex; align-items: center; gap: 6px; background: var(--mon-bg); border: 1px solid var(--mon-border); border-radius: 6px; padding: 5px 10px; font-size: 12px; margin: 3px; }
+  
+  /* Divider */
+  .divider { height: 1px; background: var(--mon-border); margin: 20px 0; }
+  
+  /* Recommendation boxes */
+  .rec { background: linear-gradient(135deg, rgba(255,125,69,0.06), rgba(0,115,234,0.06)); border: 1px solid var(--mon-border); border-radius: 10px; padding: 14px 16px; margin-bottom: 10px; }
+  .rec-num { font-size: 18px; font-weight: 800; color: var(--mon-orange); margin-right: 10px; }
+  .rec-text { font-size: 13px; color: var(--mon-text); line-height: 1.5; }
+  .rec-tag { display: inline-block; font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px; background: var(--mon-orange); color: white; padding: 2px 7px; border-radius: 4px; margin-right: 8px; }
+  
+  /* Social comparison */
+  .social-row { display: grid; grid-template-columns: 140px 1fr 1fr; align-items: center; gap: 8px; padding: 8px 0; border-bottom: 1px solid rgba(230,233,239,0.5); font-size: 13px; }
+  .social-row:last-child { border-bottom: none; }
+  .social-head { font-size: 11px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px; color: var(--mon-text-2); }
+  
+  /* Landing page rows */
+  .lp-row { display: flex; align-items: center; justify-content: space-between; padding: 9px 0; border-bottom: 1px solid rgba(230,233,239,0.5); }
+  .lp-row:last-child { border-bottom: none; }
+  .lp-url { font-size: 12px; color: var(--mon-blue); font-family: monospace; }
+  .spend-bar { width: 80px; height: 6px; border-radius: 3px; background: rgba(0,115,234,0.15); overflow: hidden; display: inline-block; vertical-align: middle; }
+  .spend-fill { height: 6px; border-radius: 3px; background: var(--mon-blue); }
+
+  .section-intro { font-size: 13px; color: var(--mon-text-2); margin-bottom: 20px; line-height: 1.6; background: rgba(255,125,69,0.05); border-left: 3px solid var(--mon-orange); padding: 12px 16px; border-radius: 0 8px 8px 0; }
+  
+  @media (max-width: 768px) {
+    .sidebar { display: none; }
+    .grid-4 { grid-template-columns: 1fr 1fr; }
+  }
+</style>
+</head>
+<body>
+
+<!-- SIDEBAR -->
+<nav class="sidebar">
+  <div class="logo">
+    <div class="logo-badge">monday</div>
+    <div class="logo-sub">Marketing Intelligence</div>
+  </div>
+  <div class="sidebar-label">Analysis</div>
+  <div class="nav-item active" onclick="showSection('overview')"><div class="nav-dot" style="background:#FF7D45"></div> Overview</div>
+  <div class="nav-item" onclick="showSection('market')"><div class="nav-dot" style="background:#9B51E0"></div> Market Research</div>
+  <div class="nav-item" onclick="showSection('seo')"><div class="nav-dot" style="background:#00CA72"></div> SEO</div>
+  <div class="nav-item" onclick="showSection('ppc')"><div class="nav-dot" style="background:#0073EA"></div> PPC</div>
+  <div class="nav-item" onclick="showSection('referrals')"><div class="nav-dot" style="background:#FFCB00"></div> Referrals</div>
+  <div class="nav-item" onclick="showSection('social')"><div class="nav-dot" style="background:#E04C4C"></div> Social</div>
+  <div class="nav-item" onclick="showSection('swot')"><div class="nav-dot" style="background:#FF7D45"></div> SWOT</div>
+  <div style="flex:1"></div>
+  <div style="padding: 16px; font-size: 11px; color: #5C5E75;">US Market · 12 Months<br>Powered by Similarweb</div>
+</nav>
+
+<!-- MAIN CONTENT -->
+<main class="main">
+
+<!-- ===================== OVERVIEW ===================== -->
+<section id="overview" class="section active">
+  <div class="page-header">
+    <h1>📊 Executive Overview — US Market</h1>
+    <p>12-month digital performance snapshot · March 2024 – February 2025 · Powered by Similarweb data</p>
+  </div>
+  
+  <div class="section-intro">
+    monday.com attracts <strong>~12–14M monthly visits</strong> from the US with dominant direct traffic (83%), signaling a strong brand. However, organic search share is declining vs. Asana, social is underutilized, and PPC spend is increasingly targeting competitor brand terms — a pattern that can erode ROI. Six high-impact opportunities are identified below.
+  </div>
+
+  <div class="grid-4">
+    <div class="metric"><div class="metric-label">Avg. Monthly Visits</div><div class="metric-value">12.8M</div><div class="metric-change neutral">US · Total Devices</div></div>
+    <div class="metric"><div class="metric-label">Avg. Unique Visitors</div><div class="metric-value">2.0M</div><div class="metric-change neutral">per month</div></div>
+    <div class="metric"><div class="metric-label">Avg. Bounce Rate</div><div class="metric-value">34.0%</div><div class="metric-change neutral">~6.1 pages / visit</div></div>
+    <div class="metric"><div class="metric-label">Avg. Session Duration</div><div class="metric-value">9.8 min</div><div class="metric-change up">Strong engagement</div></div>
+  </div>
+
+  <div class="grid-2">
+    <div class="card">
+      <h3>Traffic by Channel (Avg. 12M)</h3>
+      <div class="chart-wrap" style="height:220px">
+        <canvas id="overviewDonut"></canvas>
+      </div>
+      <div style="display:flex;flex-wrap:wrap;gap:10px;margin-top:12px;font-size:12px">
+        <span><span style="width:10px;height:10px;border-radius:2px;background:#1B2037;display:inline-block;margin-right:4px"></span>Direct 83%</span>
+        <span><span style="width:10px;height:10px;border-radius:2px;background:#00CA72;display:inline-block;margin-right:4px"></span>Organic 7.5%</span>
+        <span><span style="width:10px;height:10px;border-radius:2px;background:#0073EA;display:inline-block;margin-right:4px"></span>Paid Search 5.1%</span>
+        <span><span style="width:10px;height:10px;border-radius:2px;background:#FFCB00;display:inline-block;margin-right:4px"></span>Referrals 4.7%</span>
+        <span><span style="width:10px;height:10px;border-radius:2px;background:#9B51E0;display:inline-block;margin-right:4px"></span>Social 0.6%</span>
+        <span><span style="width:10px;height:10px;border-radius:2px;background:#E04C4C;display:inline-block;margin-right:4px"></span>Display 0.2%</span>
+      </div>
+    </div>
+    <div class="card">
+      <h3>Monthly Visits Trend (12M)</h3>
+      <div class="chart-wrap" style="height:220px">
+        <canvas id="overviewLine"></canvas>
+      </div>
+    </div>
+  </div>
+
+  <div class="card" style="margin-bottom:16px">
+    <h3>🚀 Top 6 Strategic Opportunities</h3>
+    <div class="grid-2" style="margin-top:8px">
+      <div class="opp-card orange"><div class="opp-title">1. Organic Search Gap vs. Asana</div><div class="opp-desc">Asana generates 2× more organic traffic (1.7M/mo) vs. Monday (869K). Key opportunity in project management informational content, comparison keywords, and CRM landing pages.</div></div>
+      <div class="opp-card blue"><div class="opp-title">2. PPC Competitor Bidding Over-investment</div><div class="opp-desc">Monday bids on Google Calendar, Google Sheets, and generic tools — low-intent keywords. Reallocate toward bottom-funnel "project management software" and vertical-specific terms.</div></div>
+      <div class="opp-card green"><div class="opp-title">3. CRM as Growth Engine</div><div class="opp-desc">monday.com/crm ranks well organically (pos.1 for "crm software"). Scale PPC and content investment here — separate brand narrative from PM competitors.</div></div>
+      <div class="opp-card purple"><div class="opp-title">4. Social is Underutilized</div><div class="opp-desc">Social drives only 0.6% of traffic vs. 0.7% for Asana. January 2025 shows a +90% social spike — replicate whatever worked and build a consistent content calendar.</div></div>
+      <div class="opp-card orange"><div class="opp-title">5. Referral & Affiliate Partnerships</div><div class="opp-desc">Forbes (+77% YoY), Joinhandshake (+60%), and app.process.st (+162%) are high-growth referral sources. Formalize affiliate programs and expand review site presence.</div></div>
+      <div class="opp-card red"><div class="opp-title">6. AI Content as Traffic Driver</div><div class="opp-desc">The blog/ai-agents/ path is already a top-15 organic landing page. Build a dedicated AI content hub — AI tools, comparisons, and use-case guides — to capture emerging search demand.</div></div>
+    </div>
+  </div>
+</section>
+
+<!-- ===================== MARKET RESEARCH ===================== -->
+<section id="market" class="section">
+  <div class="page-header">
+    <h1>🏆 Market Research</h1>
+    <p>Competitive landscape, top players, and channel benchmarks</p>
+  </div>
+  
+  <div class="section-intro">Similarweb identifies Asana, ClickUp, Wrike, Smartsheet, Atlassian, HubSpot, and Airtable as the closest similar sites to monday.com. Asana leads on US traffic volume and organic search share. ClickUp punches above its weight on engagement. The market is bifurcating: pure PM tools vs. work OS / CRM platforms.</div>
+
+  <div class="card" style="margin-bottom:16px">
+    <h3>Competitive Traffic Comparison — US Monthly Visits (Avg. 12M)</h3>
+    <div class="chart-wrap" style="height:280px">
+      <canvas id="compBar"></canvas>
+    </div>
+  </div>
+
+  <div class="grid-2">
+    <div class="card">
+      <h3>Similar Sites by Affinity Score</h3>
+      <table>
+        <thead><tr><th>Domain</th><th>Affinity</th><th>Global Rank</th><th>Category</th></tr></thead>
+        <tbody>
+          <tr><td><strong>asana.com</strong></td><td><span class="badge badge-orange">1.00</span></td><td>#1,002</td><td><span class="badge badge-blue">PM</span></td></tr>
+          <tr><td><strong>clickup.com</strong></td><td><span class="badge badge-orange">0.96</span></td><td>#985</td><td><span class="badge badge-blue">PM</span></td></tr>
+          <tr><td><strong>wrike.com</strong></td><td><span class="badge badge-yellow">0.92</span></td><td>#10,903</td><td><span class="badge badge-blue">PM</span></td></tr>
+          <tr><td><strong>smartsheet.com</strong></td><td><span class="badge badge-yellow">0.90</span></td><td>#2,288</td><td><span class="badge badge-blue">PM</span></td></tr>
+          <tr><td><strong>atlassian.com</strong></td><td><span class="badge badge-gray">0.85</span></td><td>#1,096</td><td><span class="badge badge-purple">Dev</span></td></tr>
+          <tr><td><strong>hubspot.com</strong></td><td><span class="badge badge-gray">0.82</span></td><td>#579</td><td><span class="badge badge-green">CRM</span></td></tr>
+          <tr><td><strong>airtable.com</strong></td><td><span class="badge badge-gray">0.74</span></td><td>#1,385</td><td><span class="badge badge-purple">DB/PM</span></td></tr>
+          <tr><td><strong>trello.com</strong></td><td><span class="badge badge-gray">0.71</span></td><td>#453</td><td><span class="badge badge-blue">PM</span></td></tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="card">
+      <h3>Channel Mix Benchmarks</h3>
+      <div style="margin-bottom:18px">
+        <div style="font-size:12px;font-weight:600;color:var(--mon-text-2);margin-bottom:10px">MONDAY.COM</div>
+        <div class="ch-row"><div class="ch-label">Direct</div><div class="ch-bar-wrap"><div class="ch-bar" style="width:83%;background:#1B2037"></div></div><div class="ch-pct" style="color:#1B2037">83%</div></div>
+        <div class="ch-row"><div class="ch-label">Organic Search</div><div class="ch-bar-wrap"><div class="ch-bar" style="width:7.5%;background:#00CA72"></div></div><div class="ch-pct" style="color:#00CA72">7.5%</div></div>
+        <div class="ch-row"><div class="ch-label">Paid Search</div><div class="ch-bar-wrap"><div class="ch-bar" style="width:5.1%;background:#0073EA"></div></div><div class="ch-pct" style="color:#0073EA">5.1%</div></div>
+        <div class="ch-row"><div class="ch-label">Referrals</div><div class="ch-bar-wrap"><div class="ch-bar" style="width:4.7%;background:#FFCB00"></div></div><div class="ch-pct" style="color:#A07800">4.7%</div></div>
+        <div class="ch-row"><div class="ch-label">Social</div><div class="ch-bar-wrap"><div class="ch-bar" style="width:0.6%;background:#9B51E0"></div></div><div class="ch-pct" style="color:#9B51E0">0.6%</div></div>
+      </div>
+      <div class="divider" style="margin:12px 0"></div>
+      <div>
+        <div style="font-size:12px;font-weight:600;color:var(--mon-text-2);margin-bottom:10px">ASANA.COM (benchmark)</div>
+        <div class="ch-row"><div class="ch-label">Direct</div><div class="ch-bar-wrap"><div class="ch-bar" style="width:83%;background:#1B2037;opacity:0.5"></div></div><div class="ch-pct">83%</div></div>
+        <div class="ch-row"><div class="ch-label">Organic Search</div><div class="ch-bar-wrap"><div class="ch-bar" style="width:13%;background:#00CA72;opacity:0.7"></div></div><div class="ch-pct" style="color:#00875F">13%</div></div>
+        <div class="ch-row"><div class="ch-label">Paid Search</div><div class="ch-bar-wrap"><div class="ch-bar" style="width:2%;background:#0073EA;opacity:0.7"></div></div><div class="ch-pct" style="color:#0055BB">2%</div></div>
+        <div class="ch-row"><div class="ch-label">Referrals</div><div class="ch-bar-wrap"><div class="ch-bar" style="width:3.5%;background:#FFCB00;opacity:0.7"></div></div><div class="ch-pct">3.5%</div></div>
+        <div class="ch-row"><div class="ch-label">Social</div><div class="ch-bar-wrap"><div class="ch-bar" style="width:0.7%;background:#9B51E0;opacity:0.7"></div></div><div class="ch-pct">0.7%</div></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="card">
+    <h3>Market Trends & Tactics</h3>
+    <div class="grid-3" style="margin-top:8px">
+      <div style="padding:12px;background:rgba(0,202,114,0.05);border-radius:8px;border:1px solid rgba(0,202,114,0.2)"><div style="font-size:12px;font-weight:700;color:#00875F;margin-bottom:8px">📈 RISING TACTICS</div><div style="font-size:12px;color:var(--mon-text);line-height:1.6">AI-powered landing pages<br>Competitor comparison pages<br>Use-case vertical pages<br>Free template SEO plays<br>Social-to-trial funnels</div></div>
+      <div style="padding:12px;background:rgba(0,115,234,0.05);border-radius:8px;border:1px solid rgba(0,115,234,0.2)"><div style="font-size:12px;font-weight:700;color:#0055BB;margin-bottom:8px">🎯 DOMINANT INTENT</div><div style="font-size:12px;color:var(--mon-text);line-height:1.6">Category comparison searches<br>Competitor brand bidding (PPC)<br>Template & tool downloads<br>"Best X for Y" informational<br>CRM + PM convergence queries</div></div>
+      <div style="padding:12px;background:rgba(255,125,69,0.05);border-radius:8px;border:1px solid rgba(255,125,69,0.2)"><div style="font-size:12px;font-weight:700;color:#C45C20;margin-bottom:8px">⚡ KEY DIFFERENTIATORS</div><div style="font-size:12px;color:var(--mon-text);line-height:1.6">Monday: Work OS breadth + CRM<br>Asana: Organic content depth<br>ClickUp: Engagement & product depth<br>Wrike: Enterprise depth<br>Airtable: DB flexibility</div></div>
+    </div>
+  </div>
+</section>
+
+<!-- ===================== SEO ===================== -->
+<section id="seo" class="section">
+  <div class="page-header">
+    <h1>🔍 SEO Intelligence</h1>
+    <p>Organic keyword opportunities, landing pages & content strategy</p>
+  </div>
+  
+  <div class="section-intro">Monday.com's organic traffic averages ~950K–1.1M/month in the US, while Asana consistently pulls 1.4M–2.0M. The gap is largely in non-branded informational content. Monday ranks #1 for "crm software" but struggles on broad PM terms and competitor alternatives.</div>
+
+  <div class="grid-4">
+    <div class="metric"><div class="metric-label">Avg. Organic Visits/Mo</div><div class="metric-value">970K</div><div class="metric-change down">vs 1.65M Asana</div></div>
+    <div class="metric"><div class="metric-label">Top Organic Page</div><div class="metric-value">18.3%</div><div class="metric-change neutral">share: homepage</div></div>
+    <div class="metric"><div class="metric-label">CRM Page Rank</div><div class="metric-value">#1</div><div class="metric-change up">"crm software" keyword</div></div>
+    <div class="metric"><div class="metric-label">AI Content Traction</div><div class="metric-value">✅ Hot</div><div class="metric-change up">blog/ai-agents/ rising</div></div>
+  </div>
+
+  <div class="grid-2">
+    <div class="card">
+      <h3>Top Organic Landing Pages (Feb 2026)</h3>
+      <div class="lp-row"><div><div class="lp-url">monday.com/</div><div style="font-size:11px;color:var(--mon-text-2);margin-top:2px">827 keywords · top: "monday"</div></div><span class="badge badge-green">18.3% share</span></div>
+      <div class="lp-row"><div><div class="lp-url">monday.com/pricing</div><div style="font-size:11px;color:var(--mon-text-2);margin-top:2px">192 keywords</div></div><span class="badge badge-blue">5.3% share</span></div>
+      <div class="lp-row"><div><div class="lp-url">monday.com/careers</div><div style="font-size:11px;color:var(--mon-text-2);margin-top:2px">117 keywords</div></div><span class="badge badge-gray">3.5% share</span></div>
+      <div class="lp-row"><div><div class="lp-url">monday.com/crm</div><div style="font-size:11px;color:var(--mon-text-2);margin-top:2px">128 kws · AI overview featured</div></div><span class="badge badge-orange">1.8% share</span></div>
+      <div class="lp-row"><div><div class="lp-url">monday.com/w/work-management</div><div style="font-size:11px;color:var(--mon-text-2);margin-top:2px">70 keywords · AI overview</div></div><span class="badge badge-gray">1.2% share</span></div>
+      <div class="lp-row"><div><div class="lp-url">monday.com/blog/ai-agents/...</div><div style="font-size:11px;color:var(--mon-text-2);margin-top:2px">233 kws · "best ai trading" ↑</div></div><span class="badge badge-purple">1.1% share</span></div>
+      <div class="lp-row"><div><div class="lp-url">monday.com/work-management/pmo</div><div style="font-size:11px;color:var(--mon-text-2);margin-top:2px">48 keywords · PMO vertical</div></div><span class="badge badge-gray">0.8% share</span></div>
+    </div>
+    <div class="card">
+      <h3>Non-Branded Keyword Opportunities</h3>
+      <table>
+        <thead><tr><th>Keyword</th><th>Clicks</th><th>Position</th><th>Comp.</th></tr></thead>
+        <tbody>
+          <tr><td>crm software</td><td>404</td><td><span class="badge badge-green">#1</span></td><td><span class="badge badge-yellow">19</span></td></tr>
+          <tr><td>gantt chart</td><td>997</td><td><span class="badge badge-gray">#11</span></td><td><span class="badge badge-orange">36</span></td></tr>
+          <tr><td>pmo</td><td>327</td><td><span class="badge badge-blue">#10</span></td><td><span class="badge badge-green">1</span></td></tr>
+          <tr><td>crm</td><td>298</td><td><span class="badge badge-blue">#9</span></td><td><span class="badge badge-red">49</span></td></tr>
+          <tr><td>to do list for desktop</td><td>838</td><td>—</td><td><span class="badge badge-red">58</span></td></tr>
+          <tr><td>simple calendar app free</td><td>692</td><td>—</td><td>—</td></tr>
+          <tr><td>project mgmt software</td><td>284</td><td>—</td><td>—</td></tr>
+          <tr><td>online checklist</td><td>307</td><td>—</td><td>—</td></tr>
+        </tbody>
+      </table>
+      <div style="margin-top:12px;padding:10px;background:rgba(0,202,114,0.05);border-radius:8px;border:1px solid rgba(0,202,114,0.2)">
+        <div style="font-size:11px;font-weight:700;color:#00875F;margin-bottom:4px">💡 KEY INSIGHT</div>
+        <div style="font-size:12px;color:var(--mon-text)">monday.com appears for "notion", "airtable", "google tasks" organically — showing users are actively comparing. Build dedicated comparison content: <em>monday vs. notion</em>, <em>monday vs. airtable</em> — these already work in PPC.</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="card">
+    <h3>Content Strategy Recommendations</h3>
+    <div class="grid-3" style="margin-top:8px">
+      <div class="opp-card green">
+        <div class="opp-title">🏆 Double down: CRM hub</div>
+        <div class="opp-desc">Ranking #1 for "crm software" is massive. Build 20+ supporting articles: lead management, pipeline templates, monday vs Salesforce, CRM for agencies, real estate CRM. This is the highest ROI content cluster.</div>
+      </div>
+      <div class="opp-card blue">
+        <div class="opp-title">📄 Comparison pages</div>
+        <div class="opp-desc">Asana owns "project management software" organically. Create in-depth comparison landing pages for every major competitor: Asana, ClickUp, Wrike, Notion, Smartsheet — organically.</div>
+      </div>
+      <div class="opp-card purple">
+        <div class="opp-title">🤖 AI content flywheel</div>
+        <div class="opp-desc">The AI agents blog is already a top organic page (233 keywords, featured snippets). Publish 2–4 AI-tool comparison posts/week. Capture "best AI for X" queries — low comp, high intent.</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ===================== PPC ===================== -->
+<section id="ppc" class="section">
+  <div class="page-header">
+    <h1>💰 PPC & Paid Search</h1>
+    <p>Paid keyword strategy, landing pages & spend allocation</p>
+  </div>
+
+  <div class="section-intro">Monday invests heavily in competitor brand bidding (Asana, Trello, ClickUp, HubSpot, Salesforce). The top paid landing page is /ap/project-management with 3,275 keywords. A dedicated CRM competitor page targets Pipedrive and HubSpot. Spending concentration risk: too many clicks on zero-competition keywords like Google Calendar, Google Sheets.</div>
+
+  <div class="grid-4">
+    <div class="metric"><div class="metric-label">Avg. Paid Visits/Mo</div><div class="metric-value">621K</div><div class="metric-change neutral">12-month avg.</div></div>
+    <div class="metric"><div class="metric-label">Top Paid Keyword</div><div class="metric-value">Google Cal.</div><div class="metric-change down">41.6K clicks · low intent</div></div>
+    <div class="metric"><div class="metric-label">Top Paid LP Spend</div><div class="metric-value">$211K</div><div class="metric-change neutral">/ap/ homepage (est.)</div></div>
+    <div class="metric"><div class="metric-label">Competitor Bidding</div><div class="metric-value">Active</div><div class="metric-change up">Asana, Trello, ClickUp+</div></div>
+  </div>
+
+  <div class="grid-2">
+    <div class="card">
+      <h3>Top Paid Landing Pages by Traffic</h3>
+      <div class="lp-row"><div><div class="lp-url">/ap/project-management</div><div style="font-size:11px;color:var(--mon-text-2)">3,275 kws · top: "google sheets"</div></div><div style="text-align:right"><div style="font-size:12px;font-weight:600">44.4K clicks</div><div style="font-size:11px;color:var(--mon-text-2)">Est. $151K</div></div></div>
+      <div class="lp-row"><div><div class="lp-url">/lp/brandsearch</div><div style="font-size:11px;color:var(--mon-text-2)">117 kws · branded defense</div></div><div style="text-align:right"><div style="font-size:12px;font-weight:600">27.8K clicks</div><div style="font-size:11px;color:var(--mon-text-2)">Est. $93K</div></div></div>
+      <div class="lp-row"><div><div class="lp-url">/ap/comp-crm</div><div style="font-size:11px;color:var(--mon-text-2)">1,107 kws · top: "pipedrive"</div></div><div style="text-align:right"><div style="font-size:12px;font-weight:600">25.9K clicks</div><div style="font-size:11px;color:var(--mon-text-2)">Est. $132K</div></div></div>
+      <div class="lp-row"><div><div class="lp-url">/ap/crm/smb</div><div style="font-size:11px;color:var(--mon-text-2)">4,001 kws · top: "crm"</div></div><div style="text-align:right"><div style="font-size:12px;font-weight:600">18.8K clicks</div><div style="font-size:11px;color:var(--mon-text-2)">Est. $102K</div></div></div>
+      <div class="lp-row"><div><div class="lp-url">/ap/comp (general)</div><div style="font-size:11px;color:var(--mon-text-2)">735 kws · top: "airtable"</div></div><div style="text-align:right"><div style="font-size:12px;font-weight:600">21.3K clicks</div><div style="font-size:11px;color:var(--mon-text-2)">Est. $182K</div></div></div>
+      <div class="lp-row"><div><div class="lp-url">/ap/crm/monday-vs-hubspot</div><div style="font-size:11px;color:var(--mon-text-2)">1,273 kws · top: "hubspot"</div></div><div style="text-align:right"><div style="font-size:12px;font-weight:600">14.5K clicks</div><div style="font-size:11px;color:var(--mon-text-2)">Est. $107K</div></div></div>
+    </div>
+    <div class="card">
+      <h3>Paid Keyword Clusters — Top Non-Branded</h3>
+      <table>
+        <thead><tr><th>Keyword</th><th>Clicks</th><th>Competition</th><th>Intent</th></tr></thead>
+        <tbody>
+          <tr><td>google calendar</td><td>41.6K</td><td><span class="badge badge-green">0</span></td><td><span class="badge badge-red">Low</span></td></tr>
+          <tr><td>asana</td><td>35.3K</td><td><span class="badge badge-red">56</span></td><td><span class="badge badge-orange">Comp.</span></td></tr>
+          <tr><td>trello</td><td>35.2K</td><td><span class="badge badge-orange">37</span></td><td><span class="badge badge-orange">Comp.</span></td></tr>
+          <tr><td>google sheets</td><td>30.3K</td><td><span class="badge badge-green">0</span></td><td><span class="badge badge-red">Low</span></td></tr>
+          <tr><td>clickup</td><td>30.1K</td><td><span class="badge badge-red">60</span></td><td><span class="badge badge-orange">Comp.</span></td></tr>
+          <tr><td>airtable</td><td>23.6K</td><td><span class="badge badge-orange">41</span></td><td><span class="badge badge-orange">Comp.</span></td></tr>
+          <tr><td>hubspot</td><td>23.6K</td><td><span class="badge badge-red">60</span></td><td><span class="badge badge-orange">Comp.</span></td></tr>
+          <tr><td>salesforce</td><td>17.1K</td><td><span class="badge badge-yellow">24</span></td><td><span class="badge badge-blue">High</span></td></tr>
+          <tr><td>to do list</td><td>9.0K</td><td><span class="badge badge-red">62</span></td><td><span class="badge badge-yellow">Mid</span></td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <div class="card">
+    <h3>PPC Optimization Recommendations</h3>
+    <div class="grid-2" style="margin-top:8px">
+      <div>
+        <div class="rec"><span class="rec-tag">STOP</span><span class="rec-text">Cut budget on Google Calendar, Google Sheets, Google Keep — zero-competition keywords capture people mid-flow in Google products. These have terrible conversion rates and waste budget.</span></div>
+        <div class="rec"><span class="rec-tag">SHIFT</span><span class="rec-text">Reallocate toward "project management software for [industry]" queries — IT, marketing, construction, HR. Intent is higher, competition lower, and Monday's vertical pages can convert well.</span></div>
+      </div>
+      <div>
+        <div class="rec"><span class="rec-tag">GROW</span><span class="rec-text">Scale the CRM campaign cluster: /ap/crm/smb and /lp/crm/contact-sales show strong keyword breadth (4,001+ keywords each). Build out HubSpot, Zoho, and Pipedrive comparison campaigns.</span></div>
+        <div class="rec"><span class="rec-tag">TEST</span><span class="rec-text">Add Gantt chart paid campaigns (/ap/gantt has 723 keywords and $43K spend) — expand with "gantt chart software for teams" and "online gantt maker" clusters. Low competition, high visual intent.</span></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ===================== REFERRALS ===================== -->
+<section id="referrals" class="section">
+  <div class="page-header">
+    <h1>🔗 Referrals, Affiliates & AI Traffic</h1>
+    <p>Incoming referral sources, partnership opportunities, and 3rd-party optimization</p>
+  </div>
+  
+  <div class="section-intro">Referrals drive ~570–715K monthly visits. Microsoft ecosystem (Teams CDN, SharePoint, Microsoftonline) collectively drives ~15% of referral traffic — a captive enterprise audience. Review sites (Capterra, Forbes) are strong but some are declining. New organic referral channels include Joinhandshake, Forbes (surging +77%), and app.process.st (+162%).</div>
+
+  <div class="grid-4">
+    <div class="metric"><div class="metric-label">Avg. Referral Visits/Mo</div><div class="metric-value">608K</div><div class="metric-change up">+22% Jan'25 spike</div></div>
+    <div class="metric"><div class="metric-label">Top Referrer</div><div class="metric-value">Microsoft</div><div class="metric-change up">Teams CDN +5.8% YoY</div></div>
+    <div class="metric"><div class="metric-label">Forbes Referrals</div><div class="metric-value">156K</div><div class="metric-change up">+77% YoY growth</div></div>
+    <div class="metric"><div class="metric-label">Capterra</div><div class="metric-value">150K</div><div class="metric-change down">-79% YoY declining</div></div>
+  </div>
+
+  <div class="grid-2">
+    <div class="card">
+      <h3>Top Referral Sources (12M Avg.)</h3>
+      <div class="ref-row"><div><div class="ref-domain">statics.teams.cdn.office.net</div><div style="font-size:11px;color:var(--mon-text-2)">Microsoft Teams integration traffic</div></div><div><div style="font-size:13px;font-weight:600">508K</div><div class="ref-change up">+5.8% YoY</div></div></div>
+      <div class="ref-row"><div><div class="ref-domain">familysearch.org</div><div style="font-size:11px;color:var(--mon-text-2)">Genealogy / volunteer project use</div></div><div><div style="font-size:13px;font-weight:600">264K</div><div class="ref-change down">-83% YoY</div></div></div>
+      <div class="ref-row"><div><div class="ref-domain">top10.com</div><div style="font-size:11px;color:var(--mon-text-2)">Software review / comparison</div></div><div><div style="font-size:13px;font-weight:600">222K</div><div class="ref-change down">-49% YoY</div></div></div>
+      <div class="ref-row"><div><div class="ref-domain">sharepoint.com</div><div style="font-size:11px;color:var(--mon-text-2)">Enterprise intranet links</div></div><div><div style="font-size:13px;font-weight:600">185K</div><div class="ref-change up">+9.9% YoY</div></div></div>
+      <div class="ref-row"><div><div class="ref-domain">joinhandshake.com</div><div style="font-size:11px;color:var(--mon-text-2)">Student / early career network</div></div><div><div style="font-size:13px;font-weight:600">178K</div><div class="ref-change up">+60% YoY ⚡</div></div></div>
+      <div class="ref-row"><div><div class="ref-domain">forbes.com</div><div style="font-size:11px;color:var(--mon-text-2)">Review articles & "best of" lists</div></div><div><div style="font-size:13px;font-weight:600">156K</div><div class="ref-change up">+77% YoY 🚀</div></div></div>
+      <div class="ref-row"><div><div class="ref-domain">capterra.com</div><div style="font-size:11px;color:var(--mon-text-2)">B2B software reviews</div></div><div><div style="font-size:13px;font-weight:600">150K</div><div class="ref-change down">-79% YoY ⚠️</div></div></div>
+      <div class="ref-row"><div><div class="ref-domain">app.process.st</div><div style="font-size:11px;color:var(--mon-text-2)">Process automation partner</div></div><div><div style="font-size:13px;font-weight:600">57K</div><div class="ref-change up">+162% YoY 🔥</div></div></div>
+    </div>
+    <div class="card">
+      <h3>Partnership & 3rd-Party Opportunities</h3>
+      <div class="opp-card green" style="margin-bottom:10px">
+        <div class="opp-title">🤝 Formalize the Forbes relationship</div>
+        <div class="opp-desc">Forbes is up 77% YoY. Expand the relationship: sponsored content, co-branded research, or affiliate placement. Target "best project management software 2026" listicles actively.</div>
+      </div>
+      <div class="opp-card blue" style="margin-bottom:10px">
+        <div class="opp-title">🎓 Capture student/entry market via Handshake</div>
+        <div class="opp-desc">Joinhandshake is up 60% — an untapped younger professional demographic. Launch a "monday for students / teams" offer with Handshake co-marketing. Build a freemium funnel for this cohort.</div>
+      </div>
+      <div class="opp-card orange" style="margin-bottom:10px">
+        <div class="opp-title">⚙️ Scale app.process.st integration</div>
+        <div class="opp-desc">Process Street is a workflow automation tool — +162% referral growth signals strong product-led integration. Build deeper API/template integrations and a co-marketing campaign.</div>
+      </div>
+      <div class="opp-card purple">
+        <div class="opp-title">📉 Revive Capterra visibility</div>
+        <div class="opp-desc">Capterra is down 79% — likely from algorithm changes or profile neglect. Invest in G2, Capterra, and GetApp review generation campaigns. A 4.7+ rating with 1,000+ reviews can drive significant referral volume.</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ===================== SOCIAL ===================== -->
+<section id="social" class="section">
+  <div class="page-header">
+    <h1>📱 Social Media Intelligence</h1>
+    <p>Social traffic trends, benchmarks vs. competitors & channel recommendations</p>
+  </div>
+  
+  <div class="section-intro">Social drives only 0.6% of monday.com's traffic — historically flat until January 2025, when it doubled to 133K+ visits. Asana shows a similar pattern (+2.2× from Jul–Feb). Both competitors invested in social around the same time. What's working: LinkedIn thought leadership, YouTube product demos, and Reddit community engagement.</div>
+
+  <div class="grid-4">
+    <div class="metric"><div class="metric-label">Social Traffic (Feb '25)</div><div class="metric-value">135K</div><div class="metric-change up">+91% vs Oct '24</div></div>
+    <div class="metric"><div class="metric-label">Jan'25 Social Spike</div><div class="metric-value">+91%</div><div class="metric-change up">Biggest single jump</div></div>
+    <div class="metric"><div class="metric-label">vs. Asana Social</div><div class="metric-value">+45%</div><div class="metric-change up">Monday now slightly ahead</div></div>
+    <div class="metric"><div class="metric-label">Social % of Total</div><div class="metric-value">0.6%</div><div class="metric-change neutral">vs. 7.5% organic search</div></div>
+  </div>
+
+  <div class="grid-2">
+    <div class="card">
+      <h3>Social Traffic Trend — Monday vs. Asana (US)</h3>
+      <div class="chart-wrap" style="height:240px">
+        <canvas id="socialChart"></canvas>
+      </div>
+    </div>
+    <div class="card">
+      <h3>Social Channel Strategy Guide</h3>
+      <div class="social-row">
+        <div class="social-head">Channel</div>
+        <div class="social-head">What's Working</div>
+        <div class="social-head">Priority</div>
+      </div>
+      <div class="social-row">
+        <div style="font-size:12px;font-weight:600">LinkedIn</div>
+        <div style="font-size:12px;color:var(--mon-text-2)">PM tips, productivity content, customer stories</div>
+        <div><span class="badge badge-orange">🔥 Top</span></div>
+      </div>
+      <div class="social-row">
+        <div style="font-size:12px;font-weight:600">YouTube</div>
+        <div style="font-size:12px;color:var(--mon-text-2)">Tutorial videos, template walkthroughs, comparisons</div>
+        <div><span class="badge badge-orange">🔥 Top</span></div>
+      </div>
+      <div class="social-row">
+        <div style="font-size:12px;font-weight:600">Reddit</div>
+        <div style="font-size:12px;color:var(--mon-text-2)">r/projectmanagement, r/productivity community</div>
+        <div><span class="badge badge-blue">📈 Grow</span></div>
+      </div>
+      <div class="social-row">
+        <div style="font-size:12px;font-weight:600">Instagram</div>
+        <div style="font-size:12px;color:var(--mon-text-2)">Aesthetic dashboards, remote work culture</div>
+        <div><span class="badge badge-yellow">🧪 Test</span></div>
+      </div>
+      <div class="social-row">
+        <div style="font-size:12px;font-weight:600">TikTok</div>
+        <div style="font-size:12px;color:var(--mon-text-2)">30-sec productivity hacks, #WorkHacks</div>
+        <div><span class="badge badge-yellow">🧪 Test</span></div>
+      </div>
+      <div class="social-row">
+        <div style="font-size:12px;font-weight:600">X / Twitter</div>
+        <div style="font-size:12px;color:var(--mon-text-2)">Thought leadership, product updates</div>
+        <div><span class="badge badge-gray">Maintain</span></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="card">
+    <h3>Social Recommendations — What to Steal from Competitors</h3>
+    <div class="grid-3" style="margin-top:8px">
+      <div class="opp-card blue"><div class="opp-title">From Asana: Content depth</div><div class="opp-desc">Asana publishes long-form LinkedIn posts with actual PM frameworks (OKRs, workback schedules). Their educational content drives shares. Monday should publish weekly "Work OS" frameworks.</div></div>
+      <div class="opp-card green"><div class="opp-title">From ClickUp: Reddit/community</div><div class="opp-desc">ClickUp has an active subreddit and community forum. Monday should invest in r/mondaydotcom moderation, weekly AMA posts, and "power user" spotlights to drive organic advocacy.</div></div>
+      <div class="opp-card purple"><div class="opp-title">From Notion: Template virality</div><div class="opp-desc">Notion's "template drops" go viral on Twitter/LinkedIn. Monday should launch a weekly free template campaign with visually beautiful screenshots — designed to be shared and bookmarked.</div></div>
+    </div>
+  </div>
+</section>
+
+<!-- ===================== SWOT ===================== -->
+<section id="swot" class="section">
+  <div class="page-header">
+    <h1>⚡ SWOT Analysis & Executable Recommendations</h1>
+    <p>Data-backed SWOT with 10 prioritized action items</p>
+  </div>
+
+  <div class="swot-grid" style="margin-bottom:20px">
+    <div class="swot-cell s">
+      <div class="swot-header">
+        <div class="swot-icon" style="background:rgba(0,202,114,0.15)">💪</div>
+        <span style="color:#00875F">Strengths</span>
+      </div>
+      <div class="swot-item">Dominant brand recall — 83% direct traffic</div>
+      <div class="swot-item">Strong session engagement: 9.8 min avg, 6.1 pages/visit</div>
+      <div class="swot-item">CRM page ranks #1 for "crm software" — major beachhead</div>
+      <div class="swot-item">Enterprise foothold via Microsoft Teams/SharePoint integration</div>
+      <div class="swot-item">Multi-product "Work OS" positioning creates upsell surface</div>
+      <div class="swot-item">Robust PPC infrastructure (15+ dedicated landing pages)</div>
+      <div class="swot-item">AI content already attracting search traffic (blog/ai-agents)</div>
+    </div>
+    <div class="swot-cell w">
+      <div class="swot-header">
+        <div class="swot-icon" style="background:rgba(224,76,76,0.12)">⚠️</div>
+        <span style="color:#B03030">Weaknesses</span>
+      </div>
+      <div class="swot-item">Organic search 2× behind Asana (970K vs 1.65M/mo)</div>
+      <div class="swot-item">Social drives only 0.6% of traffic — untapped channel</div>
+      <div class="swot-item">PPC spend on zero-intent keywords (Google Calendar, Sheets)</div>
+      <div class="swot-item">Capterra referrals down 79% — review profile neglect</div>
+      <div class="swot-item">Too many broad PPC competitor bids with low conversion rate</div>
+      <div class="swot-item">Organic content depth thin outside CRM and PM pillars</div>
+    </div>
+    <div class="swot-cell o">
+      <div class="swot-header">
+        <div class="swot-icon" style="background:rgba(0,115,234,0.1)">🚀</div>
+        <span style="color:#0055BB">Opportunities</span>
+      </div>
+      <div class="swot-item">CRM market expansion — outrank HubSpot in informational queries</div>
+      <div class="swot-item">AI tools content hub — massive organic demand, low competition</div>
+      <div class="swot-item">Joinhandshake (+60%) — young professional / student market</div>
+      <div class="swot-item">Forbes partnership at scale (+77% YoY) — affiliate program</div>
+      <div class="swot-item">Social media investment — both rivals doubled social in Q1'25</div>
+      <div class="swot-item">Vertical SaaS pages (HR, Marketing, Construction, Legal)</div>
+      <div class="swot-item">Process.st integration (+162%) — workflow automation ecosystem</div>
+    </div>
+    <div class="swot-cell t">
+      <div class="swot-header">
+        <div class="swot-icon" style="background:rgba(255,203,0,0.15)">⚡</div>
+        <span style="color:#A07800">Threats</span>
+      </div>
+      <div class="swot-item">Asana leads organic search with 2× the traffic — compounding</div>
+      <div class="swot-item">ClickUp aggressive on engagement and engagement metrics</div>
+      <div class="swot-item">AI-native competitors (Notion AI, Linear) eroding PM mindshare</div>
+      <div class="swot-item">HubSpot and Salesforce defending CRM territory aggressively</div>
+      <div class="swot-item">Google AI Overviews cannibalizing top-of-funnel organic clicks</div>
+      <div class="swot-item">Seasonal traffic dips (Nov–Dec) without retention campaigns</div>
+    </div>
+  </div>
+
+  <div class="card">
+    <h3>🎯 Top 10 Executable Recommendations — Prioritized by ROI</h3>
+    <div style="margin-top:8px">
+      <div class="rec"><div style="display:flex;align-items:flex-start;gap:4px"><span class="rec-num">1</span><div><span class="rec-tag" style="background:#00CA72">SEO</span><span class="rec-text"><strong>Build a CRM content hub with 20+ articles</strong> — Monday ranks #1 for "crm software". Surround it with: CRM templates, monday vs Salesforce/HubSpot/Pipedrive, "best CRM for [vertical]" guides. This compounds organically and reduces paid reliance.</span></div></div></div>
+      <div class="rec"><div style="display:flex;align-items:flex-start;gap:4px"><span class="rec-num">2</span><div><span class="rec-tag" style="background:#0073EA">PPC</span><span class="rec-text"><strong>Cut Google Workspace keyword spend immediately</strong> — "Google Calendar", "Google Sheets", "Google Keep" have 0 competition scores. Users searching these are inside Google's ecosystem. Redirect budget to "project management software for [industry]" — 5× better intent.</span></div></div></div>
+      <div class="rec"><div style="display:flex;align-items:flex-start;gap:4px"><span class="rec-num">3</span><div><span class="rec-tag" style="background:#9B51E0">SOCIAL</span><span class="rec-text"><strong>Launch a weekly LinkedIn + YouTube content calendar</strong> — The Jan '25 social spike (2×) shows social works. Standardize it: 3 LinkedIn posts/week (frameworks, case studies, templates), 1 YouTube video/week (product feature or comparison). Allocate dedicated social budget.</span></div></div></div>
+      <div class="rec"><div style="display:flex;align-items:flex-start;gap:4px"><span class="rec-num">4</span><div><span class="rec-tag" style="background:#FF7D45">SEO</span><span class="rec-text"><strong>Launch organic competitor comparison pages</strong> — PPC already proves comparison intent (Asana, ClickUp, Notion, HubSpot). Build SEO versions with real feature tables, user testimonials, and migration guides. These rank fast and convert well.</span></div></div></div>
+      <div class="rec"><div style="display:flex;align-items:flex-start;gap:4px"><span class="rec-num">5</span><div><span class="rec-tag" style="background:#FFCB00;color:#5A4500">REFERRAL</span><span class="rec-text"><strong>Formalize a Forbes affiliate partnership</strong> — Forbes referrals up 77%. An affiliate/co-marketing deal converts this to a managed channel with guaranteed placement in "best PM software" roundups.</span></div></div></div>
+      <div class="rec"><div style="display:flex;align-items:flex-start;gap:4px"><span class="rec-num">6</span><div><span class="rec-tag" style="background:#00CA72">SEO</span><span class="rec-text"><strong>Build an AI tools content hub</strong> — blog/ai-agents/ already pulls 233 keywords and featured snippets. Publish 2x/week: "best AI for [use case]" roundups. This is high-growth, low-competition, and perfect for Monday's audience.</span></div></div></div>
+      <div class="rec"><div style="display:flex;align-items:flex-start;gap:4px"><span class="rec-num">7</span><div><span class="rec-tag" style="background:#0073EA">PPC</span><span class="rec-text"><strong>Scale the CRM SMB PPC cluster</strong> — /ap/crm/smb has 4,001 keywords and a solid spend base. Add new ad groups: "CRM for small business", "monday CRM vs Zoho", "best CRM for startups". High-intent, lower competition than PM terms.</span></div></div></div>
+      <div class="rec"><div style="display:flex;align-items:flex-start;gap:4px"><span class="rec-num">8</span><div><span class="rec-tag" style="background:#FFCB00;color:#5A4500">REFERRAL</span><span class="rec-text"><strong>Revive Capterra, G2, and GetApp profiles</strong> — Capterra down 79%. Launch a review generation campaign: in-app NPS prompt → redirect satisfied users to review sites. 500 new G2 reviews in 90 days is achievable and can materially reverse the trend.</span></div></div></div>
+      <div class="rec"><div style="display:flex;align-items:flex-start;gap:4px"><span class="rec-num">9</span><div><span class="rec-tag" style="background:#9B51E0">SOCIAL</span><span class="rec-text"><strong>Partner with Handshake for student/SMB acquisition</strong> — Joinhandshake traffic up 60%. Launch a "monday for student teams" freemium plan with a campus ambassador program. Capture users at career start — lifetime value is enormous.</span></div></div></div>
+      <div class="rec"><div style="display:flex;align-items:flex-start;gap:4px"><span class="rec-num">10</span><div><span class="rec-tag" style="background:#FF7D45">SEO</span><span class="rec-text"><strong>Build vertical landing pages for 5 industries</strong> — Create monday.com/for/marketing, /for/construction, /for/hr, /for/legal, /for/agencies. These rank for "[software] for [industry]" queries — medium competition, very high conversion rates as users see their exact context.</span></div></div></div>
+    </div>
+  </div>
+</section>
+
+</main>
+
+<script>
+function showSection(id) {
+  document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
+  document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+  event.currentTarget.classList.add('active');
+}
+
+const months = ['Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec','Jan','Feb'];
+const mondayVisits = [13.1, 13.3, 13.3, 12.6, 13.7, 13.8, 12.5, 12.9, 11.1, 10.6, 13.5, 11.9];
+
+// Overview donut
+new Chart(document.getElementById('overviewDonut'), {
+  type: 'doughnut',
+  data: {
+    labels: ['Direct','Organic','Paid Search','Referrals','Social','Display'],
+    datasets: [{
+      data: [83, 7.5, 5.1, 4.7, 0.6, 0.1],
+      backgroundColor: ['#1B2037','#00CA72','#0073EA','#FFCB00','#9B51E0','#E04C4C'],
+      borderWidth: 2,
+      borderColor: '#fff'
+    }]
+  },
+  options: {
+    responsive: true, maintainAspectRatio: false, cutout: '65%',
+    plugins: { legend: { display: false } }
+  }
+});
+
+// Overview line
+new Chart(document.getElementById('overviewLine'), {
+  type: 'line',
+  data: {
+    labels: months,
+    datasets: [{
+      label: 'monday.com',
+      data: mondayVisits,
+      borderColor: '#FF7D45',
+      backgroundColor: 'rgba(255,125,69,0.08)',
+      fill: true, tension: 0.35, borderWidth: 2.5, pointRadius: 3, pointBackgroundColor: '#FF7D45'
+    }]
+  },
+  options: {
+    responsive: true, maintainAspectRatio: false,
+    plugins: { legend: { display: false } },
+    scales: {
+      x: { grid: { color: 'rgba(0,0,0,0.05)' }, ticks: { font: { size: 11 } } },
+      y: { grid: { color: 'rgba(0,0,0,0.05)' }, ticks: { font: { size: 11 }, callback: v => v + 'M' } }
+    }
+  }
+});
+
+// Competitive bar
+const asanaV = [13.8,13.2,13.8,13.1,14.1,13.6,12.7,13.2,11.4,10.7,13.2,12.9];
+const clickupV = [6.3,6.1,6.4,6.0,6.5,6.2,5.8,6.1,5.4,5.5,6.3,5.9];
+const avgMon = (mondayVisits.reduce((a,b)=>a+b,0)/12).toFixed(1);
+const avgAsa = (asanaV.reduce((a,b)=>a+b,0)/12).toFixed(1);
+const avgCU = (clickupV.reduce((a,b)=>a+b,0)/12).toFixed(1);
+new Chart(document.getElementById('compBar'), {
+  type: 'bar',
+  data: {
+    labels: ['monday.com', 'asana.com', 'clickup.com', 'wrike.com (est.)', 'smartsheet.com (est.)', 'airtable.com (est.)'],
+    datasets: [{
+      label: 'Avg Monthly Visits (M)',
+      data: [parseFloat(avgMon), parseFloat(avgAsa), parseFloat(avgCU), 2.1, 3.8, 4.2],
+      backgroundColor: ['#FF7D45','#9B51E0','#0073EA','#FFCB00','#00CA72','#E04C4C'],
+      borderRadius: 6, borderSkipped: false
+    }]
+  },
+  options: {
+    responsive: true, maintainAspectRatio: false,
+    plugins: { legend: { display: false } },
+    scales: {
+      x: { grid: { display: false }, ticks: { font: { size: 11 } } },
+      y: { grid: { color: 'rgba(0,0,0,0.05)' }, ticks: { font: { size: 11 }, callback: v => v + 'M' } }
+    }
+  }
+});
+
+// Social chart
+const monSocial = [70.4,67.5,54.9,56.1,66.3,77.1,73.6,71.4,69.5,76.7,133.4,134.7];
+const asaSocial = [29.1,29.7,28.3,33.0,43.3,48.8,44.1,44.7,41.8,46.8,82.3,93.1];
+new Chart(document.getElementById('socialChart'), {
+  type: 'line',
+  data: {
+    labels: months,
+    datasets: [
+      { label: 'monday.com', data: monSocial, borderColor: '#FF7D45', backgroundColor: 'rgba(255,125,69,0.08)', fill: true, tension: 0.35, borderWidth: 2.5, pointRadius: 3, pointBackgroundColor: '#FF7D45' },
+      { label: 'asana.com', data: asaSocial, borderColor: '#9B51E0', backgroundColor: 'rgba(155,81,224,0.05)', fill: true, tension: 0.35, borderWidth: 2, pointRadius: 3, pointBackgroundColor: '#9B51E0', borderDash: [5,3] }
+    ]
+  },
+  options: {
+    responsive: true, maintainAspectRatio: false,
+    plugins: { legend: { display: false } },
+    scales: {
+      x: { grid: { color: 'rgba(0,0,0,0.05)' }, ticks: { font: { size: 11 } } },
+      y: { grid: { color: 'rgba(0,0,0,0.05)' }, ticks: { font: { size: 11 }, callback: v => Math.round(v) + 'K' } }
+    }
+  }
+});
+</script>
+</body>
+</html>

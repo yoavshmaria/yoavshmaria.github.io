@@ -1,0 +1,1224 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>HSBC UK | Marketing ROI Growth Command Center</title>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+  <style>
+    :root{
+      --hsbc-red:#db0011;
+      --hsbc-dark:#121212;
+      --hsbc-black:#000000;
+      --hsbc-grey:#6f7782;
+      --bg:#f5f7fb;
+      --card:#ffffff;
+      --line:#e8ebf0;
+      --green:#0b8f55;
+      --amber:#d98806;
+      --blue:#0f5ef7;
+      --purple:#6e44ff;
+      --shadow:0 16px 40px rgba(9,18,31,.08);
+      --radius:18px;
+    }
+    *{box-sizing:border-box}
+    html{scroll-behavior:smooth}
+    body{
+      margin:0;
+      font-family:Inter, ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, sans-serif;
+      background:
+        radial-gradient(circle at 10% 0%, rgba(219,0,17,.08), transparent 28%),
+        radial-gradient(circle at 90% 10%, rgba(15,94,247,.06), transparent 20%),
+        var(--bg);
+      color:var(--hsbc-dark);
+    }
+    .topbar{
+      position:sticky; top:0; z-index:30;
+      backdrop-filter:blur(10px);
+      background:rgba(255,255,255,.88);
+      border-bottom:1px solid rgba(0,0,0,.06);
+    }
+    .wrap{max-width:1380px;margin:0 auto;padding:0 20px}
+    .nav{
+      display:flex;align-items:center;justify-content:space-between;
+      min-height:72px; gap:16px;
+    }
+    .brand{
+      display:flex;align-items:center;gap:14px;font-weight:800;letter-spacing:.2px
+    }
+    .brand svg{flex:0 0 auto}
+    .brand .sub{font-size:12px;color:var(--hsbc-grey);font-weight:600;letter-spacing:.5px;text-transform:uppercase}
+    .nav-links{
+      display:flex;gap:10px;flex-wrap:wrap
+    }
+    .nav-links a{
+      text-decoration:none;color:var(--hsbc-dark);font-weight:600;font-size:14px;
+      padding:10px 14px;border-radius:999px;border:1px solid transparent;
+    }
+    .nav-links a:hover{background:#fff;border-color:var(--line)}
+    .hero{
+      padding:34px 0 26px;
+      display:grid;grid-template-columns:1.25fr .95fr;gap:22px;align-items:stretch;
+    }
+    .hero-card,.glass{
+      background:linear-gradient(180deg, #fff 0%, #fcfcfe 100%);
+      border:1px solid rgba(0,0,0,.06);
+      border-radius:28px;
+      box-shadow:var(--shadow);
+      overflow:hidden;
+      position:relative;
+    }
+    .hero-card{
+      padding:32px;
+      background:
+        radial-gradient(circle at 88% 15%, rgba(219,0,17,.11), transparent 18%),
+        radial-gradient(circle at 80% 80%, rgba(15,94,247,.07), transparent 18%),
+        linear-gradient(135deg,#fff 0%,#fbfbfd 100%);
+    }
+    .eyebrow{
+      display:inline-flex;align-items:center;gap:8px;
+      padding:8px 12px;border-radius:999px;
+      background:rgba(219,0,17,.08); color:var(--hsbc-red);
+      font-weight:800; font-size:12px; letter-spacing:.6px; text-transform:uppercase;
+    }
+    .hero h1{
+      margin:16px 0 14px;font-size:48px;line-height:.98;letter-spacing:-1.5px;
+      max-width:800px
+    }
+    .hero p.lead{
+      margin:0 0 20px;color:#3b4252;font-size:18px;max-width:780px;line-height:1.5
+    }
+    .hero-actions{display:flex;gap:12px;flex-wrap:wrap;margin-top:20px}
+    .btn{
+      appearance:none;border:none;cursor:pointer;text-decoration:none;
+      display:inline-flex;align-items:center;justify-content:center;gap:10px;
+      padding:14px 18px;border-radius:14px;font-weight:800;font-size:15px;
+      transition:.2s transform,.2s box-shadow,.2s background;
+    }
+    .btn:hover{transform:translateY(-1px)}
+    .btn-primary{background:var(--hsbc-red);color:#fff;box-shadow:0 14px 26px rgba(219,0,17,.22)}
+    .btn-secondary{background:#fff;color:var(--hsbc-dark);border:1px solid var(--line)}
+    .hero-side{
+      display:grid;grid-template-rows:auto 1fr;gap:18px;
+    }
+    .score-panel{padding:22px 22px 18px}
+    .score-head{display:flex;justify-content:space-between;align-items:flex-start;gap:14px}
+    .score-title{font-size:18px;font-weight:800}
+    .score-sub{color:var(--hsbc-grey);font-size:13px;margin-top:4px}
+    .score-badge{
+      background:#111;color:#fff;padding:10px 12px;border-radius:14px;text-align:center;min-width:110px
+    }
+    .score-badge .big{font-size:28px;font-weight:900;line-height:1}
+    .score-badge .small{font-size:11px;color:#cfd3da;margin-top:6px;text-transform:uppercase;letter-spacing:.7px}
+    .priority-list{display:grid;gap:10px;margin-top:18px}
+    .priority{
+      display:flex;align-items:flex-start;gap:12px;padding:13px 14px;border-radius:16px;
+      background:#fafbfe;border:1px solid var(--line)
+    }
+    .pill-dot{
+      width:12px;height:12px;border-radius:999px;margin-top:5px;flex:0 0 auto
+    }
+    .dot-red{background:var(--hsbc-red)} .dot-blue{background:var(--blue)}
+    .dot-green{background:var(--green)} .dot-amber{background:var(--amber)}
+    .priority b{display:block;margin-bottom:2px}
+    .priority span{color:var(--hsbc-grey);font-size:13px;line-height:1.35}
+    .kpi-grid{
+      display:grid;grid-template-columns:repeat(4,1fr);gap:16px;
+      margin:8px 0 26px;
+    }
+    .card{
+      background:var(--card);border:1px solid rgba(0,0,0,.06);border-radius:var(--radius);
+      box-shadow:var(--shadow);
+    }
+    .kpi{
+      padding:20px 20px 18px; position:relative; overflow:hidden;
+    }
+    .kpi:before{
+      content:"";position:absolute;left:0;top:0;right:0;height:4px;background:linear-gradient(90deg,var(--hsbc-red),#ff6070)
+    }
+    .kpi .label{color:var(--hsbc-grey);font-size:12px;font-weight:800;text-transform:uppercase;letter-spacing:.7px}
+    .kpi .value{font-size:34px;line-height:1.05;font-weight:900;margin:8px 0 8px}
+    .kpi .meta{font-size:13px;color:#424a57;line-height:1.35}
+    .chip{
+      display:inline-flex;align-items:center;gap:6px;padding:6px 10px;border-radius:999px;
+      font-size:12px;font-weight:800;margin-top:10px
+    }
+    .chip.good{background:rgba(11,143,85,.1);color:var(--green)}
+    .chip.warn{background:rgba(217,136,6,.12);color:var(--amber)}
+    .chip.bad{background:rgba(219,0,17,.1);color:var(--hsbc-red)}
+    .section-head{
+      display:flex;justify-content:space-between;align-items:flex-end;gap:12px;margin:6px 0 14px
+    }
+    .section-head h2{
+      margin:0;font-size:28px;letter-spacing:-.6px
+    }
+    .section-head p{margin:6px 0 0;color:var(--hsbc-grey)}
+    .grid-2{display:grid;grid-template-columns:1.1fr .9fr;gap:18px}
+    .grid-3{display:grid;grid-template-columns:repeat(3,1fr);gap:18px}
+    .panel{padding:20px}
+    .panel h3{margin:0 0 8px;font-size:18px}
+    .toolbar{display:flex;gap:10px;flex-wrap:wrap;margin-bottom:14px}
+    .toggle{
+      border:1px solid var(--line);background:#fff;color:#1e2430;font-weight:700;
+      border-radius:12px;padding:10px 12px;cursor:pointer
+    }
+    .toggle.active{background:var(--hsbc-red);border-color:var(--hsbc-red);color:#fff}
+    .legend-chips{display:flex;gap:8px;flex-wrap:wrap}
+    .legend-chips button{
+      border:1px solid var(--line); background:#fff; padding:8px 10px; border-radius:999px; cursor:pointer; font-weight:700
+    }
+    .legend-chips button.off{opacity:.45}
+    .mini-note{font-size:12px;color:var(--hsbc-grey);margin-top:10px}
+    .insight-cards{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin-top:18px}
+    .insight{padding:18px;border-radius:18px;background:#fff;border:1px solid rgba(0,0,0,.06);box-shadow:var(--shadow)}
+    .insight .tag{font-size:11px;font-weight:900;letter-spacing:.7px;text-transform:uppercase;color:var(--hsbc-red)}
+    .insight h4{margin:8px 0 6px;font-size:18px}
+    .insight p{margin:0;color:#4a5260;line-height:1.45;font-size:14px}
+    .opp-list{display:grid;gap:12px}
+    .opp{
+      border:1px solid var(--line);background:#fff;border-radius:16px;padding:14px 16px;cursor:pointer;transition:.2s
+    }
+    .opp:hover{transform:translateY(-1px);box-shadow:var(--shadow)}
+    .opp.active{border-color:rgba(219,0,17,.35);box-shadow:0 0 0 3px rgba(219,0,17,.08)}
+    .opp-top{display:flex;justify-content:space-between;align-items:center;gap:10px;margin-bottom:8px}
+    .opp-top b{font-size:16px}
+    .opp-top .impact{font-size:12px;font-weight:900;border-radius:999px;padding:5px 9px;background:rgba(15,94,247,.08);color:var(--blue)}
+    .opp small{display:block;color:var(--hsbc-grey);line-height:1.35}
+    .opp-detail{
+      padding:18px;border-radius:18px;background:linear-gradient(180deg,#ffffff,#fcfdff);
+      border:1px solid var(--line);min-height:100%;
+    }
+    .opp-detail h4{margin:0 0 10px;font-size:21px}
+    .opp-detail ul{margin:12px 0 0 18px;padding:0}
+    .opp-detail li{margin:10px 0;color:#48505c;line-height:1.45}
+    .opp-stat-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-top:16px}
+    .opp-stat{background:#fafbfe;border:1px solid var(--line);border-radius:14px;padding:12px}
+    .opp-stat .big{font-size:22px;font-weight:900}
+    .opp-stat .sub{font-size:12px;color:var(--hsbc-grey)}
+    .sim-grid{display:grid;grid-template-columns:1fr 1fr;gap:18px}
+    .sim-controls{display:grid;gap:16px}
+    .slider-card{padding:16px;border:1px solid var(--line);border-radius:16px;background:#fafbfe}
+    .slider-card label{display:flex;justify-content:space-between;gap:12px;font-weight:800}
+    .slider-card input{width:100%;margin-top:12px}
+    .sim-results{display:grid;gap:14px}
+    .result-card{
+      padding:18px;border-radius:18px;background:#fff;border:1px solid rgba(0,0,0,.06);box-shadow:var(--shadow)
+    }
+    .result-card .big{font-size:30px;font-weight:900}
+    .result-card .sub{font-size:13px;color:var(--hsbc-grey);margin-top:4px}
+    .result-card .tiny{font-size:12px;color:#4a5260;margin-top:8px;line-height:1.4}
+    .playbook{display:grid;grid-template-columns:repeat(3,1fr);gap:16px}
+    .play{padding:18px}
+    .play .num{
+      width:38px;height:38px;border-radius:12px;background:var(--hsbc-red);color:#fff;
+      display:flex;align-items:center;justify-content:center;font-weight:900;margin-bottom:12px
+    }
+    .play h4{margin:0 0 8px}
+    .play ul{margin:10px 0 0 18px;padding:0}
+    .play li{margin:8px 0;color:#4a5260;font-size:14px;line-height:1.4}
+    .pages-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:18px}
+    .page-col{padding:18px}
+    .page-item{padding:14px 0;border-bottom:1px dashed var(--line)}
+    .page-item:last-child{border-bottom:none}
+    .page-item .top{display:flex;justify-content:space-between;gap:8px}
+    .page-item .url{font-weight:800;font-size:14px;word-break:break-word}
+    .page-item .num{font-size:13px;color:var(--hsbc-grey);font-weight:700}
+    .bar{
+      height:8px;background:#edf0f6;border-radius:999px;overflow:hidden;margin-top:10px
+    }
+    .bar > span{display:block;height:100%;background:linear-gradient(90deg,var(--hsbc-red),#ff6376);border-radius:999px}
+    .roadmap{display:grid;grid-template-columns:repeat(3,1fr);gap:16px}
+    .phase{padding:20px;position:relative}
+    .phase:before{
+      content:"";position:absolute;left:20px;top:0;width:56px;height:4px;background:var(--hsbc-red);border-radius:0 0 10px 10px
+    }
+    .phase h4{margin:8px 0 10px}
+    .phase ul{margin:0 0 0 18px;padding:0}
+    .phase li{margin:9px 0;color:#4a5260;font-size:14px;line-height:1.42}
+    footer{
+      padding:30px 0 50px;color:var(--hsbc-grey);font-size:12px
+    }
+    canvas{max-width:100%}
+    .muted{color:var(--hsbc-grey)}
+    @media (max-width:1200px){
+      .kpi-grid,.grid-3,.playbook,.roadmap,.opp-stat-grid{grid-template-columns:repeat(2,1fr)}
+      .grid-2,.sim-grid,.pages-grid,.hero{grid-template-columns:1fr}
+    }
+    @media (max-width:760px){
+      .kpi-grid,.grid-3,.playbook,.roadmap,.pages-grid,.opp-stat-grid{grid-template-columns:1fr}
+      .hero h1{font-size:38px}
+      .section-head h2{font-size:24px}
+      .wrap{padding:0 14px}
+      .nav{align-items:flex-start;padding:10px 0}
+    }
+  </style>
+</head>
+<body>
+  <div class="topbar">
+    <div class="wrap">
+      <div class="nav">
+        <div class="brand">
+          <svg width="54" height="32" viewBox="0 0 54 32" aria-hidden="true">
+            <rect x="0" y="0" width="54" height="32" rx="5" fill="#fff" stroke="#db0011" stroke-width="1.2"/>
+            <polygon points="10,16 16,10 22,16 16,22" fill="#db0011"/>
+            <polygon points="27,16 33,10 39,16 33,22" fill="#db0011"/>
+            <polygon points="16,10 22,16 16,22 10,16" fill="#fff"/>
+            <polygon points="33,10 39,16 33,22 27,16" fill="#fff"/>
+          </svg>
+          <div>
+            <div style="font-size:18px;font-weight:900;line-height:1">HSBC UK</div>
+            <div class="sub">Marketing ROI Growth Command Center</div>
+          </div>
+        </div>
+        <div class="nav-links">
+          <a href="#scorecard">Scorecard</a>
+          <a href="#trends">Trends</a>
+          <a href="#opportunities">Opportunities</a>
+          <a href="#simulator">Simulator</a>
+          <a href="#roadmap">Roadmap</a>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="wrap">
+    <section class="hero">
+      <div class="hero-card">
+        <div class="eyebrow">HSBC UK Competitive Intelligence</div>
+        <h1>Grow ROI by fixing <span style="color:var(--hsbc-red)">search efficiency</span>, winning <span style="color:var(--hsbc-red)">mobile moments</span>, and scaling <span style="color:var(--hsbc-red)">AI + partner demand</span>.</h1>
+        <p class="lead">
+          HSBC is competitive on bounce rate and owns strong mortgage/brand intent, but it trails Barclays and NatWest on scale, mobile intensity, and page depth. The biggest prize is not “more traffic at any cost” — it is <b>higher-quality acquisition at lower cost</b>.
+        </p>
+        <div class="hero-actions">
+          <a class="btn btn-primary" href="#simulator">Launch ROI simulator</a>
+          <a class="btn btn-secondary" href="#opportunities">See growth levers</a>
+        </div>
+      </div>
+
+      <div class="hero-side">
+        <div class="card score-panel">
+          <div class="score-head">
+            <div>
+              <div class="score-title">HSBC Growth Readiness</div>
+              <div class="score-sub">Directional score built from scale, efficiency, engagement and emerging channels.</div>
+            </div>
+            <div class="score-badge">
+              <div class="big">72</div>
+              <div class="small">/ 100 score</div>
+            </div>
+          </div>
+          <div class="priority-list">
+            <div class="priority">
+              <div class="pill-dot dot-red"></div>
+              <div>
+                <b>Highest urgency: Paid search efficiency</b>
+                <span>HSBC gets ~0.62 paid-search visits per £ vs Barclays ~2.05 and NatWest ~2.73 in the overlapping 12-month view.</span>
+              </div>
+            </div>
+            <div class="priority">
+              <div class="pill-dot dot-blue"></div>
+              <div>
+                <b>Biggest scale gap: Mobile demand capture</b>
+                <span>HSBC is 47.4% mobile vs NatWest 60.3% — a major signal that competitors are winning more mobile journeys.</span>
+              </div>
+            </div>
+            <div class="priority">
+              <div class="pill-dot dot-green"></div>
+              <div>
+                <b>Defendable strength: AI referrals</b>
+                <span>HSBC is already strong in GenAI-origin traffic and leads recent ChatGPT share across this peer set.</span>
+              </div>
+            </div>
+            <div class="priority">
+              <div class="pill-dot dot-amber"></div>
+              <div>
+                <b>Quality benchmark: Barclays</b>
+                <span>Lower bounce, more pages per visit, longer sessions. Barclays is the engagement benchmark HSBC should target.</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="card panel">
+          <h3>Executive call</h3>
+          <p class="muted" style="margin-top:0">
+            The smartest route to higher ROI is a three-part move:
+          </p>
+          <div class="priority-list">
+            <div class="priority">
+              <div class="pill-dot dot-red"></div>
+              <div><b>1. Stop paying £1.62 for search visits</b><span>Fix campaign structure, match types, landing pages and funnel leakage before scaling spend.</span></div>
+            </div>
+            <div class="priority">
+              <div class="pill-dot dot-blue"></div>
+              <div><b>2. Build mobile-first journeys</b><span>Especially for mortgages, current accounts, login/help and card pages where intent is high.</span></div>
+            </div>
+            <div class="priority">
+              <div class="pill-dot dot-green"></div>
+              <div><b>3. Expand finance-context demand</b><span>Double down on MSE/MoneySuperMarket-like surfaces and answer-engine content where intent is pre-qualified.</span></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section id="scorecard">
+      <div class="section-head">
+        <div>
+          <h2>ROI scorecard</h2>
+          <p>Where HSBC is strong, where it trails, and what that means commercially.</p>
+        </div>
+      </div>
+
+      <div class="kpi-grid">
+        <div class="card kpi">
+          <div class="label">Avg monthly visits</div>
+          <div class="value">6.84M</div>
+          <div class="meta">HSBC traffic share among these 4 banks is <b>18.5%</b>. NatWest leads at 33.0%.</div>
+          <div class="chip bad">Scale gap vs peers</div>
+        </div>
+        <div class="card kpi">
+          <div class="label">UK site rank</div>
+          <div class="value">#258</div>
+          <div class="meta">Behind NatWest (#128) and Barclays (#196), but ahead of Lloyds (#295).</div>
+          <div class="chip warn">Reachable upside</div>
+        </div>
+        <div class="card kpi">
+          <div class="label">Pages per visit</div>
+          <div class="value">6.82</div>
+          <div class="meta">Barclays reaches <b>8.66</b>. Matching that would create ~<b>12.6M more pageviews/month</b> at current traffic.</div>
+          <div class="chip warn">Depth gap</div>
+        </div>
+        <div class="card kpi">
+          <div class="label">Mobile share</div>
+          <div class="value">47.4%</div>
+          <div class="meta">NatWest is at <b>60.3%</b>. Mobile is HSBC’s clearest journey design battleground.</div>
+          <div class="chip bad">Under-indexing mobile</div>
+        </div>
+
+        <div class="card kpi">
+          <div class="label">Bounce rate</div>
+          <div class="value">26.8%</div>
+          <div class="meta">Close to Barclays’ best-in-class <b>25.0%</b>, much healthier than Lloyds’ 52.1%.</div>
+          <div class="chip good">Acquisition quality is solid</div>
+        </div>
+        <div class="card kpi">
+          <div class="label">Paid search efficiency</div>
+          <div class="value">£1.62</div>
+          <div class="meta">Approx. cost per paid-search visit (12-mo overlap). Barclays ~£0.49, NatWest ~£0.37.</div>
+          <div class="chip bad">Biggest ROI leak</div>
+        </div>
+        <div class="card kpi">
+          <div class="label">GenAI traffic</div>
+          <div class="value">136.6K</div>
+          <div class="meta">2nd in the peer set. Reaching NatWest’s 234.9K level implies ~<b>+98K incremental visits</b>.</div>
+          <div class="chip good">Emerging strength</div>
+        </div>
+        <div class="card kpi">
+          <div class="label">Display efficiency</div>
+          <div class="value">£0.09</div>
+          <div class="meta">Approx. cost per display visit, close to peers. Impressions fell sharply while visits held up — pruning likely improved quality.</div>
+          <div class="chip good">Selective scale opportunity</div>
+        </div>
+      </div>
+    </section>
+
+    <section id="trends" class="grid-2">
+      <div class="card panel">
+        <div class="section-head" style="margin-top:0">
+          <div>
+            <h3>Traffic trend monitor</h3>
+            <p>Toggle between total visits and unique users. Click domains to focus the view.</p>
+          </div>
+        </div>
+        <div class="toolbar">
+          <button class="toggle active" id="metricVisits">Total visits</button>
+          <button class="toggle" id="metricUniques">Unique users</button>
+        </div>
+        <div class="legend-chips" id="domainToggles"></div>
+        <div style="margin-top:16px">
+          <canvas id="trafficChart" height="120"></canvas>
+        </div>
+        <div class="mini-note">Directional Similarweb data. Trend focus: HSBC traffic is declining with the market, but still trails peer leaders on scale.</div>
+      </div>
+
+      <div class="card panel">
+        <div class="section-head" style="margin-top:0">
+          <div>
+            <h3>Engagement benchmark</h3>
+            <p>Compare HSBC against the strongest peer on each quality metric.</p>
+          </div>
+        </div>
+        <div class="toolbar" id="engagementMetricChooser">
+          <button class="toggle active" data-emetric="PagesPerVisit">Pages / visit</button>
+          <button class="toggle" data-emetric="AvgVisitDuration">Visit duration</button>
+          <button class="toggle" data-emetric="BounceRate">Bounce rate</button>
+          <button class="toggle" data-emetric="VisitsPerUser">Visits / user</button>
+        </div>
+        <canvas id="engagementChart" height="160"></canvas>
+        <div class="mini-note" id="engagementNote"></div>
+      </div>
+    </section>
+
+    <div class="insight-cards">
+      <div class="insight">
+        <div class="tag">Scale benchmark</div>
+        <h4>NatWest is the volume benchmark</h4>
+        <p>NatWest leads on average monthly visits, unique users, returning users, UK rank and mobile share. HSBC should use NatWest as the demand-capture benchmark.</p>
+      </div>
+      <div class="insight">
+        <div class="tag">Quality benchmark</div>
+        <h4>Barclays is the experience benchmark</h4>
+        <p>Barclays leads on bounce rate, visit duration and pages per visit. HSBC’s acquisition quality is decent, but it needs deeper sessions to monetise traffic better.</p>
+      </div>
+      <div class="insight">
+        <div class="tag">Warning benchmark</div>
+        <h4>Do not copy Lloyds’ scale-first playbook</h4>
+        <p>Lloyds has high visits per user, but poor session depth and very high bounce. More traffic without quality can hurt ROI rather than improve it.</p>
+      </div>
+    </div>
+
+    <section style="margin-top:18px" class="grid-2">
+      <div class="card panel">
+        <div class="section-head" style="margin-top:0">
+          <div>
+            <h3>Channel mix vs competitors</h3>
+            <p>HSBC is heavily powered by direct and organic, but under-delivers in paid search and email scale.</p>
+          </div>
+        </div>
+        <canvas id="channelChart" height="220"></canvas>
+      </div>
+
+      <div class="card panel">
+        <div class="section-head" style="margin-top:0">
+          <div>
+            <h3>Device and market posture</h3>
+            <p>Mobile under-indexing is one of the clearest commercial growth signals.</p>
+          </div>
+        </div>
+        <div class="grid-2" style="grid-template-columns:.95fr 1.05fr; gap:12px">
+          <div>
+            <canvas id="deviceChart" height="220"></canvas>
+          </div>
+          <div style="display:grid;gap:12px;align-content:start">
+            <div class="opp-stat">
+              <div class="big">+13.0pp</div>
+              <div class="sub">Gap to NatWest mobile mix</div>
+            </div>
+            <div class="opp-stat">
+              <div class="big">124K</div>
+              <div class="sub">Monthly bounces prevented if HSBC matched Barclays bounce rate</div>
+            </div>
+            <div class="opp-stat">
+              <div class="big">+98K</div>
+              <div class="sub">Incremental GenAI visits if HSBC reached NatWest scale</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section id="opportunities" style="margin-top:20px" class="grid-2">
+      <div class="card panel">
+        <div class="section-head" style="margin-top:0">
+          <div>
+            <h3>Opportunity stack</h3>
+            <p>Click an opportunity to see why it matters and what HSBC should do next.</p>
+          </div>
+        </div>
+        <div class="opp-list" id="opportunityList"></div>
+      </div>
+      <div class="card panel" id="opportunityDetail"></div>
+    </section>
+
+    <section id="simulator" style="margin-top:20px">
+      <div class="section-head">
+        <div>
+          <h2>Proxy ROI simulator</h2>
+          <p>Directional model based on traffic efficiency and engagement gaps. Use it to size the prize before deeper attribution work.</p>
+        </div>
+      </div>
+      <div class="sim-grid">
+        <div class="card panel sim-controls">
+          <div class="slider-card">
+            <label>
+              <span>Improve paid-search cost per visit toward peer median</span>
+              <b id="searchFixVal">50%</b>
+            </label>
+            <input id="searchFix" type="range" min="0" max="100" value="50" />
+          </div>
+          <div class="slider-card">
+            <label>
+              <span>Close the GenAI traffic gap to NatWest</span>
+              <b id="aiLiftVal">50%</b>
+            </label>
+            <input id="aiLift" type="range" min="0" max="100" value="50" />
+          </div>
+          <div class="slider-card">
+            <label>
+              <span>Lift MoneySavingExpert partner share toward NatWest</span>
+              <b id="mseLiftVal">50%</b>
+            </label>
+            <input id="mseLift" type="range" min="0" max="100" value="50" />
+          </div>
+          <div class="slider-card">
+            <label>
+              <span>Move pages/visit toward Barclays benchmark</span>
+              <b id="engagementLiftVal">50%</b>
+            </label>
+            <input id="engagementLift" type="range" min="0" max="100" value="50" />
+          </div>
+        </div>
+
+        <div class="sim-results">
+          <div class="result-card">
+            <div class="big" id="extraPaidVisits">+0</div>
+            <div class="sub">Annual paid-search visits unlocked</div>
+            <div class="tiny">If HSBC keeps the same paid-search budget but brings visit economics closer to the peer median.</div>
+          </div>
+          <div class="result-card">
+            <div class="big" id="extraAiVisits">+0</div>
+            <div class="sub">Annual GenAI / answer-engine visits unlocked</div>
+            <div class="tiny">Based on closing part of the current gap to NatWest’s GenAI scale.</div>
+          </div>
+          <div class="result-card">
+            <div class="big" id="extraPartnerVisits">+0</div>
+            <div class="sub">Partner / referral visits unlocked</div>
+            <div class="tiny">Proxy based on MoneySavingExpert traffic share uplift within the tracked comparison flow.</div>
+          </div>
+          <div class="result-card">
+            <div class="big" id="extraPageviews">+0</div>
+            <div class="sub">Monthly pageviews created from deeper sessions</div>
+            <div class="tiny">Proxy only, using the gap between HSBC pages/visit and Barclays pages/visit.</div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section style="margin-top:20px">
+      <div class="section-head">
+        <div>
+          <h2>Keyword battleground</h2>
+          <p>Where HSBC should defend, attack and avoid waste.</p>
+        </div>
+      </div>
+      <div class="playbook">
+        <div class="card play">
+          <div class="num">D</div>
+          <h4>Defend hard</h4>
+          <ul>
+            <li><b>Brand + login:</b> “hsbc login” is growing (+13.0%), and the homepage/auth pages drive the biggest high-intent organic volume.</li>
+            <li><b>Mortgage rates:</b> HSBC is strong on “mortgage rates uk” and repayment calculator intent. Protect with schema, speed and CRO.</li>
+            <li><b>AI-answer content:</b> HSBC is already strong in ChatGPT-sourced traffic. Defend answer authority before peers catch up.</li>
+          </ul>
+        </div>
+        <div class="card play">
+          <div class="num">A</div>
+          <h4>Attack selectively</h4>
+          <ul>
+            <li><b>Mortgage calculator:</b> HSBC captures only ~4.5% of tracked competitor click share on this huge intent pool.</li>
+            <li><b>Generic credit card intent:</b> NatWest dominates. HSBC should only expand where it has sharper product/landing relevance.</li>
+            <li><b>Comparison surfaces:</b> Push refreshed propositions into MSE, MoneySuperMarket, Experian, ClearScore and relevant broker tools.</li>
+          </ul>
+        </div>
+        <div class="card play">
+          <div class="num">C</div>
+          <h4>Cut or constrain</h4>
+          <ul>
+            <li><b>Broad paid search:</b> Current cost-per-visit is far above peers. Stop scaling until query hygiene and landing-page relevance improve.</li>
+            <li><b>Vanity volume:</b> Lloyds shows that traffic volume without depth can create poor ROI.</li>
+            <li><b>Low-context display:</b> Expand only after HSBC confirms high-intent publishers and retargeting segments are outperforming broad open-web inventory.</li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
+    <section style="margin-top:20px" class="pages-grid">
+      <div class="card page-col">
+        <div class="section-head" style="margin-top:0">
+          <div>
+            <h3>Top organic pages to protect</h3>
+            <p>High-intent pages where ranking, UX and speed directly impact ROI.</p>
+          </div>
+        </div>
+
+        <div class="page-item">
+          <div class="top">
+            <div class="url">hsbc.co.uk</div>
+            <div class="num">369.6K clicks</div>
+          </div>
+          <div class="bar"><span style="width:100%"></span></div>
+        </div>
+
+        <div class="page-item">
+          <div class="top">
+            <div class="url">hsbc.co.uk/auth</div>
+            <div class="num">89.9K clicks</div>
+          </div>
+          <div class="bar"><span style="width:24%"></span></div>
+        </div>
+
+        <div class="page-item">
+          <div class="top">
+            <div class="url">hsbc.co.uk/mortgages/our-rates</div>
+            <div class="num">27.3K clicks</div>
+          </div>
+          <div class="bar"><span style="width:7.4%"></span></div>
+        </div>
+
+        <div class="page-item">
+          <div class="top">
+            <div class="url">hsbc.co.uk/ways-to-bank/online-banking</div>
+            <div class="num">22.9K clicks</div>
+          </div>
+          <div class="bar"><span style="width:6.2%"></span></div>
+        </div>
+
+        <div class="page-item">
+          <div class="top">
+            <div class="url">hsbc.co.uk/contact</div>
+            <div class="num">20.4K clicks</div>
+          </div>
+          <div class="bar"><span style="width:5.5%"></span></div>
+        </div>
+      </div>
+
+      <div class="card page-col">
+        <div class="section-head" style="margin-top:0">
+          <div>
+            <h3>Paid pages to re-evaluate and scale smartly</h3>
+            <p>Current spend concentration shows where HSBC is leaning hardest.</p>
+          </div>
+        </div>
+
+        <div class="page-item">
+          <div class="top">
+            <div class="url">hsbc.co.uk/loans/products/personal</div>
+            <div class="num">9.0K paid clicks</div>
+          </div>
+          <div class="bar"><span style="width:100%"></span></div>
+        </div>
+
+        <div class="page-item">
+          <div class="top">
+            <div class="url">hsbc.co.uk/current-accounts/products/premier</div>
+            <div class="num">7.3K paid clicks</div>
+          </div>
+          <div class="bar"><span style="width:81%"></span></div>
+        </div>
+
+        <div class="page-item">
+          <div class="top">
+            <div class="url">hsbc.co.uk/credit-cards/products</div>
+            <div class="num">2.3K paid clicks</div>
+          </div>
+          <div class="bar"><span style="width:25%"></span></div>
+        </div>
+
+        <div class="page-item">
+          <div class="top">
+            <div class="url">hsbc.co.uk/savings/products/online-bonus-saver</div>
+            <div class="num">1.4K paid clicks</div>
+          </div>
+          <div class="bar"><span style="width:16%"></span></div>
+        </div>
+
+        <div class="page-item">
+          <div class="top">
+            <div class="url">hsbc.co.uk/loans/products/car-loan</div>
+            <div class="num">650 paid clicks</div>
+          </div>
+          <div class="bar"><span style="width:7%"></span></div>
+        </div>
+      </div>
+    </section>
+
+    <section id="roadmap" style="margin-top:20px">
+      <div class="section-head">
+        <div>
+          <h2>90-day action roadmap</h2>
+          <p>What HSBC should do now, next and after that to improve ROI fast.</p>
+        </div>
+      </div>
+      <div class="roadmap">
+        <div class="card phase">
+          <h4>Days 1–30: Stop leakage</h4>
+          <ul>
+            <li>Split brand, generic, competitor and product campaigns in paid search.</li>
+            <li>Pause low-intent queries with weak cost-per-visit / low post-click depth.</li>
+            <li>Fix mobile UX on the top 10 traffic pages: homepage, auth, contact, online banking, mortgage pages.</li>
+            <li>Deploy strict display whitelist with finance-led publishers first.</li>
+          </ul>
+        </div>
+        <div class="card phase">
+          <h4>Days 31–60: Rebuild quality demand</h4>
+          <ul>
+            <li>Launch AI-answer content hubs for mortgages, ISAs, cards, security, branch, international payments.</li>
+            <li>Refresh MSE / MoneySuperMarket / comparison copy, tables, offers and landing pages.</li>
+            <li>Improve next-step modules to lift pages/visit: calculators → AIP → product pages → apply.</li>
+            <li>Expand triggered CRM/email journeys where NatWest currently outscales HSBC.</li>
+          </ul>
+        </div>
+        <div class="card phase">
+          <h4>Days 61–90: Scale what works</h4>
+          <ul>
+            <li>Reinvest only in channels proving lower cost-per-visit and stronger engagement.</li>
+            <li>Test mortgage calculator, premier and savings creative variants by audience and device.</li>
+            <li>Scale retargeting and high-intent contextual display once efficiency is proven.</li>
+            <li>Set executive dashboard targets: paid CPV, mobile page depth, GenAI visits, partner-share wins.</li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
+    <footer>
+      <div class="wrap" style="padding:0">
+        <b>Important:</b> This dashboard uses Similarweb competitive intelligence and traffic/engagement proxies. True ROI requires HSBC conversion, CPA, LTV and attribution data. Use this as a prioritisation layer, not a finance-grade performance ledger.
+      </div>
+    </footer>
+  </div>
+
+  <script>
+    const summary = {
+      domains: ["hsbc.co.uk","barclays.co.uk","natwest.com","lloydsbank.com"],
+      colors: {
+        "hsbc.co.uk":"#db0011",
+        "barclays.co.uk":"#00aeef",
+        "natwest.com":"#5b2c83",
+        "lloydsbank.com":"#2e7d32"
+      },
+      dates: [
+        "2024-02","2024-03","2024-04","2024-05","2024-06","2024-07","2024-08","2024-09","2024-10","2024-11","2024-12",
+        "2025-01","2025-02","2025-03","2025-04","2025-05","2025-06","2025-07","2025-08","2025-09","2025-10","2025-11","2025-12","2026-01","2026-02"
+      ],
+      visits: {
+        "hsbc.co.uk":[7732798.63,7764299.88,8006854.57,7817887.98,7308999.87,7936389.45,7744172.86,7851720.61,7628484.05,6951756.4,7065072.81,7734403.1,6449350.52,7106372.91,6551793.59,6504411.19,6204462.82,6786743.4,6776469.41,6230499.82,5894730.68,5116008.92,5171918.31,5723727.58,4829491.85],
+        "barclays.co.uk":[9165976.77,9930913.35,9858378.75,9895297.45,9129137.99,10050700.14,10268790.87,9364057.73,9076618.99,8077223.15,7928408.29,8700999.05,7519123.92,8116393.87,7839621.8,7289354.49,7251889.91,8055548.39,7826319.49,7143972.46,7491913.55,7272247.97,7196417.7,6931094.85,5617591.22],
+        "natwest.com":[13373167.09,13717671.77,13331220.59,12900101.83,11532296.87,12606964.87,12833478.54,13170556.89,12787199.97,12088193.13,11581836.19,12816216.65,10773977.54,11442692.44,11401837.46,11670142.17,11923902.96,12671141.51,12759532.06,12083415.33,12450342.12,11533323.22,11676558.55,11979931.88,10148722.92],
+        "lloydsbank.com":[10776556.22,11257348.1,10872461.7,10861039.61,10817682.33,10844564.32,10767249.51,10775102,11446278.58,10233611.66,10601642.2,9609149.57,8487136.83,8956891,8809826.68,8532071.31,8448403.37,9453185.94,9054231.8,8752509.55,9269747.36,8322105.5,8316123.39,8641356.56,7134903.86]
+      },
+      uniques: {
+        "hsbc.co.uk":[2877904.95,2895086.13,2960976.02,2886507.92,2883233.5,3016176.02,2972650.54,3067998.6,2876101.29,2647857.34,2691967.59,3083110.35,2443286.7,2628449.99,2501957.1,2521925.36,2246722.63,2596052.52,2721658.6,2469406.68,2294067.01,2010383.34,1827386.98,2019592.55,1753762.05],
+        "barclays.co.uk":[3022411.51,3276305.94,3203883.74,3262336.86,3045404.26,3321960.86,3510372.42,3243895.64,3101400.54,2786308.24,2798227.28,3083875,2578861.95,2719878.22,2607992.09,2557981.7,2326521.87,2645303.31,2679740.16,2451084.3,2593764.73,2591398.35,2125300.95,2177634.73,1768209.14],
+        "natwest.com":[4391558.92,4434731.33,4303347.58,4290090.1,3943807.4,4237937.2,4428137.82,4376504.81,4256358,3965421.59,3896344.46,4432467.38,3662896.27,3826361.52,3758692.86,3767866.17,3592718.41,4074857.08,4249841.89,4092199.53,4140755.4,3782889.58,3463150.58,3593968.62,3030147.58],
+        "lloydsbank.com":[3118980.33,3210754.59,3238975.16,3301931.92,3336445.45,3189450,3251334.94,3259474.43,3524369.45,3285519.81,3465233.87,3103061.96,2836655.59,3034535.46,2926737.99,2720974.82,2716810.26,3023149.43,2950381.38,2837271.6,3069037.66,2734725.86,2452217.86,2696258.18,2244731.41]
+      },
+      engagement: {
+        "hsbc.co.uk": { bounce:26.81, unique:2595768.87, visitsPerUser:2.63, avgMonthVisits:6835552.85, duration:347.10, pages:6.82, totalPageViews:46597337.68 },
+        "barclays.co.uk": { bounce:25.00, unique:2779202.15, visitsPerUser:2.98, avgMonthVisits:8279919.69, duration:384.19, pages:8.66, totalPageViews:71679944.73 },
+        "natwest.com": { bounce:29.67, unique:3999722.08, visitsPerUser:3.05, avgMonthVisits:12210176.98, duration:380.13, pages:5.79, totalPageViews:70679494.14 },
+        "lloydsbank.com": { bounce:52.07, unique:3021160.78, visitsPerUser:3.19, avgMonthVisits:9641647.16, duration:119.74, pages:2.03, totalPageViews:19595342.25 }
+      },
+      device: {
+        "hsbc.co.uk": { desktop:52.64, mobile:47.36 },
+        "barclays.co.uk": { desktop:52.45, mobile:47.55 },
+        "natwest.com": { desktop:39.67, mobile:60.33 },
+        "lloydsbank.com": { desktop:49.15, mobile:50.85 }
+      },
+      countryRank: {
+        "hsbc.co.uk":258,
+        "barclays.co.uk":196,
+        "natwest.com":128,
+        "lloydsbank.com":295
+      },
+      channels: {
+        "Direct": {"hsbc.co.uk":94275812.73,"barclays.co.uk":101079180.20,"natwest.com":152707367.66,"lloydsbank.com":134983714.67},
+        "Organic Search": {"hsbc.co.uk":59886618.01,"barclays.co.uk":80905063.83,"natwest.com":106955579.53,"lloydsbank.com":82337420.38},
+        "Paid Search": {"hsbc.co.uk":1535674.09,"barclays.co.uk":8191858.31,"natwest.com":10343861.24,"lloydsbank.com":7812081.24},
+        "Referrals": {"hsbc.co.uk":12136004.01,"barclays.co.uk":13676742.09,"natwest.com":22148737.73,"lloydsbank.com":10079040.83},
+        "Display": {"hsbc.co.uk":2074727.42,"barclays.co.uk":3235344.59,"natwest.com":7204677.98,"lloydsbank.com":3342069.38},
+        "Email": {"hsbc.co.uk":2367658.54,"barclays.co.uk":1873349.57,"natwest.com":4276317.98,"lloydsbank.com":2838950.85},
+        "Organic Social": {"hsbc.co.uk":2033334.58,"barclays.co.uk":2019767.47,"natwest.com":8118335.03,"lloydsbank.com":1362700.30},
+        "Paid Social": {"hsbc.co.uk":119576.94,"barclays.co.uk":223877.25,"natwest.com":778553.40,"lloydsbank.com":3579570.67},
+        "GenAI": {"hsbc.co.uk":136624.35,"barclays.co.uk":88681.63,"natwest.com":234855.72,"lloydsbank.com":96514.41}
+      },
+      paidSearch12m: {
+        "hsbc.co.uk": { visits:767188.92, spend:1241023.76 },
+        "barclays.co.uk": { visits:2993667.59, spend:1463502.81 },
+        "natwest.com": { visits:4365543.78, spend:1597636.13 },
+        "lloydsbank.com": { visits:4410240.79, spend:2441149.56 }
+      },
+      display: {
+        "hsbc.co.uk": { spend:34260, impressions:101383707.99, visits:380175.66 },
+        "barclays.co.uk": { spend:64954, impressions:160584599.46, visits:747331.80 },
+        "natwest.com": { spend:144968, impressions:412136624.72, visits:1796916.63 },
+        "lloydsbank.com": { spend:92799, impressions:315942252.96, visits:1139036.97 }
+      },
+      opportunities: [
+        {
+          key:"search",
+          title:"Fix paid search economics",
+          impact:"Highest ROI",
+          stats:[
+            {label:"HSBC paid CPV", value:"£1.62"},
+            {label:"Barclays paid CPV", value:"£0.49"},
+            {label:"Proxy annual upside", value:"+1.77M visits"}
+          ],
+          body:[
+            "HSBC’s paid-search traffic scale is tiny relative to peers while cost per visit is materially worse in the 12-month overlapping period.",
+            "This usually means keyword mix, match types, Quality Score, landing-page relevance, and post-click journey quality are all diluting efficiency.",
+            "Brand, generic, comparison, and competitor campaigns should be rebuilt separately with tighter intent mapping and stronger calculator/AIP/savings landing pages.",
+            "Do not scale broad search until HSBC can prove a materially lower cost per high-intent session."
+          ]
+        },
+        {
+          key:"mobile",
+          title:"Win the mobile majority",
+          impact:"High impact",
+          stats:[
+            {label:"HSBC mobile share", value:"47.4%"},
+            {label:"NatWest mobile share", value:"60.3%"},
+            {label:"Gap to close", value:"+13.0pp"}
+          ],
+          body:[
+            "NatWest’s mobile-heavy audience signals stronger mobile-first acquisition and/or better mobile journeys.",
+            "HSBC’s top intent pages — homepage, auth, contact, mortgage rates, repayment calculators, cards, branch finder — must be treated as mobile products, not desktop pages made responsive.",
+            "Reduce taps, sharpen page speed, simplify forms, keep sticky CTAs visible, and build thumb-first result pages for calculators and application journeys."
+          ]
+        },
+        {
+          key:"ai",
+          title:"Scale AI discoverability",
+          impact:"Fast-growth channel",
+          stats:[
+            {label:"HSBC GenAI traffic", value:"136.6K"},
+            {label:"NatWest GenAI traffic", value:"234.9K"},
+            {label:"Gap", value:"+98.2K"}
+          ],
+          body:[
+            "HSBC is already second in total GenAI traffic and appears to lead recent ChatGPT share across the tracked set.",
+            "That means the bank has a real chance to dominate answer-engine discovery if it operationalises FAQ content, explainer content and structured summaries.",
+            "Prioritise topics with clear commercial intent: mortgage rates, repayment calculators, branch and sort code help, security, international payments, loans, ISAs and premier benefits."
+          ]
+        },
+        {
+          key:"partner",
+          title:"Capture more comparison/referral demand",
+          impact:"High intent",
+          stats:[
+            {label:"HSBC MSE share", value:"14.3%"},
+            {label:"NatWest MSE share", value:"37.5%"},
+            {label:"Proxy tracked upside", value:"+39.6K visits"}
+          ],
+          body:[
+            "MoneySavingExpert, MoneySuperMarket, Experian and ClearScore are disproportionately valuable because they sit close to decision intent.",
+            "HSBC already shows pockets of strength on partner surfaces, but it still trails the best players on several high-volume comparison environments.",
+            "Refresh propositions, tables, rates, eligibility messaging, trust cues and speed on destination pages. Then negotiate stronger placements and refresh affiliate creative."
+          ]
+        },
+        {
+          key:"engagement",
+          title:"Lift session depth to Barclays levels",
+          impact:"Conversion multiplier",
+          stats:[
+            {label:"HSBC pages/visit", value:"6.82"},
+            {label:"Barclays pages/visit", value:"8.66"},
+            {label:"Monthly upside", value:"+12.6M pageviews"}
+          ],
+          body:[
+            "HSBC’s bounce rate is relatively healthy, so the bigger challenge is not initial relevance — it is what happens after the click.",
+            "Barclays gets deeper journeys and longer sessions. That usually reflects stronger page architecture, more logical next-step journeys, and better in-session merchandising.",
+            "Focus on homepage modules, dashboard/auth next steps, contact journeys, and especially calculator result pages that should naturally route users into product comparison or application."
+          ]
+        },
+        {
+          key:"display",
+          title:"Scale display only where context is strong",
+          impact:"Selective scale",
+          stats:[
+            {label:"HSBC display CPV", value:"£0.09"},
+            {label:"Visits change", value:"-7.1%"},
+            {label:"Impressions change", value:"-78.1%"}
+          ],
+          body:[
+            "HSBC appears to have cut display volume sharply while protecting a reasonable amount of visits, which implies more efficient buying after pruning.",
+            "That is a good sign: restore only contextually relevant finance/news inventory, partner-like placements, and strong retargeting pools.",
+            "Avoid vanity reach unless HSBC can prove it lifts branded search, direct traffic or assisted conversions."
+          ]
+        }
+      ],
+      keywordBattles: {
+        mortgageCalculatorShare: 4.46,
+        mortgageRepaymentLead: true,
+        creditCardShare: 21.70,
+        hsbcLoginGrowth: 13.03,
+        hsbcUkGrowth: 42.59
+      }
+    };
+
+    // helpers
+    const fmtM = n => (n/1e6).toFixed(2).replace(/\.00$/,'') + "M";
+    const fmtK = n => (n/1e3).toFixed(1).replace(/\.0$/,'') + "K";
+    const fmtInt = n => Math.round(n).toLocaleString();
+    const fmtPct = n => `${n.toFixed(1)}%`;
+    const fmtCurrency = n => "£" + n.toFixed(2);
+    const sum = arr => arr.reduce((a,b)=>a+b,0);
+
+    // domain toggles
+    const activeDomains = new Set(summary.domains);
+    const domainToggles = document.getElementById("domainToggles");
+    summary.domains.forEach(d=>{
+      const btn = document.createElement("button");
+      btn.textContent = d.replace(".co.uk","").replace(".com","");
+      btn.style.borderColor = summary.colors[d] + "33";
+      btn.style.boxShadow = `inset 0 0 0 1px ${summary.colors[d]}22`;
+      btn.onclick = ()=>{
+        if(activeDomains.has(d)){ activeDomains.delete(d); btn.classList.add("off"); }
+        else { activeDomains.add(d); btn.classList.remove("off"); }
+        updateTrafficChart();
+      };
+      domainToggles.appendChild(btn);
+    });
+
+    let trafficMetric = "visits";
+    document.getElementById("metricVisits").onclick = ()=>{
+      trafficMetric = "visits";
+      document.getElementById("metricVisits").classList.add("active");
+      document.getElementById("metricUniques").classList.remove("active");
+      updateTrafficChart();
+    };
+    document.getElementById("metricUniques").onclick = ()=>{
+      trafficMetric = "uniques";
+      document.getElementById("metricUniques").classList.add("active");
+      document.getElementById("metricVisits").classList.remove("active");
+      updateTrafficChart();
+    };
+
+    // traffic chart
+    const trafficCtx = document.getElementById("trafficChart");
+    let trafficChart = new Chart(trafficCtx, {
+      type: "line",
+      data: { labels: summary.dates, datasets: [] },
+      options: {
+        responsive:true,
+        maintainAspectRatio:false,
+        interaction:{mode:"index",intersect:false},
+        plugins:{
+          legend:{display:false},
+          tooltip:{
+            callbacks:{
+              label:(ctx)=> `${ctx.dataset.label}: ${fmtM(ctx.raw)}`
+            }
+          }
+        },
+        scales:{
+          x:{ grid:{display:false}, ticks:{maxRotation:0, autoSkip:true, maxTicksLimit:8} },
+          y:{ grid:{color:"#eef1f6"}, ticks:{callback:(v)=> fmtM(v)} }
+        }
+      }
+    });
+
+    function updateTrafficChart(){
+      trafficChart.data.datasets = summary.domains
+        .filter(d=>activeDomains.has(d))
+        .map(d=>({
+          label: d,
+          data: summary[trafficMetric][d],
+          borderColor: summary.colors[d],
+          backgroundColor: summary.colors[d] + "22",
+          borderWidth: d==="hsbc.co.uk" ? 4 : 2.2,
+          pointRadius: 0,
+          tension: .28
+        }));
+      trafficChart.options.plugins.tooltip.callbacks.label = (ctx)=>{
+        const val = ctx.raw;
+        return `${ctx.dataset.label}: ${trafficMetric==="visits" ? fmtM(val) : fmtM(val)}`;
+      };
+      trafficChart.update();
+    }
+    updateTrafficChart();
+
+    // engagement chart
+    const eMap = {
+      PagesPerVisit:{ label:"Pages / Visit", getter:d=>summary.engagement[d].pages, better:"higher", note:"HSBC trails Barclays by 1.84 pages per visit. This is a monetisation and conversion depth issue, not just a traffic issue."},
+      AvgVisitDuration:{ label:"Avg Visit Duration (seconds)", getter:d=>summary.engagement[d].duration, better:"higher", note:"HSBC trails Barclays by ~37 seconds per session. Strengthen page sequencing, in-page navigation and post-click relevance."},
+      BounceRate:{ label:"Bounce Rate (%)", getter:d=>summary.engagement[d].bounce, better:"lower", note:"HSBC is close to Barclays and far better than Lloyds. Acquisition quality is acceptable; depth is the bigger problem."},
+      VisitsPerUser:{ label:"Visits / User", getter:d=>summary.engagement[d].visitsPerUser, better:"higher", note:"Lloyds leads on this metric but with weak quality. Use Barclays/NatWest as the healthier benchmark, not raw frequency alone."}
+    };
+    let currentEMetric = "PagesPerVisit";
+    const engagementCtx = document.getElementById("engagementChart");
+    const engagementChart = new Chart(engagementCtx,{
+      type:"bar",
+      data:{labels:summary.domains,datasets:[{data:[], backgroundColor:summary.domains.map(d=>summary.colors[d])}]},
+      options:{
+        plugins:{
+          legend:{display:false},
+          tooltip:{
+            callbacks:{
+              label:(ctx)=>{
+                const v = ctx.raw;
+                if(currentEMetric==="BounceRate") return `${v.toFixed(1)}%`;
+                if(currentEMetric==="AvgVisitDuration") return `${v.toFixed(0)} sec`;
+                return `${v.toFixed(2)}`;
+              }
+            }
+          }
+        },
+        scales:{
+          x:{grid:{display:false}, ticks:{callback:(v,i)=> summary.domains[i].replace(".co.uk","").replace(".com","")}},
+          y:{grid:{color:"#eef1f6"}}
+        }
+      }
+    });
+
+    function updateEngagementChart(){
+      const metric = eMap[currentEMetric];
+      engagementChart.data.datasets[0].data = summary.domains.map(metric.getter);
+      engagementChart.data.datasets[0].label = metric.label;
+      engagementChart.options.scales.y.ticks = {
+        callback:(v)=>{
+          if(currentEMetric==="BounceRate") return v + "%";
+          if(currentEMetric==="AvgVisitDuration") return v + "s";
+          return v;
+        }
+      };
+      document.getElementById("engagementNote").textContent = metric.note;
+      engagementChart.update();
+    }
+    document.querySelectorAll("[data-emetric]").forEach(btn=>{
+      btn.onclick = ()=>{
+        document.querySelectorAll("[data-emetric]").forEach(b=>b.classList.remove("active"));
+        btn.classList.add("active");
+        currentEMetric = btn.dataset.emetric;
+        updateEngagementChart();
+      };
+    });
+    updateEngagementChart();
+
+    // channel chart
+    const channelLabels = Object.keys(summary.channels);
+    const channelCtx = document.getElementById("channelChart");
+    new Chart(channelCtx,{
+      type:"bar",
+      data:{
+        labels:channelLabels,
+        datasets: summary.domains.map(d=>({
+          label:d,
+          data: channelLabels.map(c=>summary.channels[c][d]/1e6),
+          backgroundColor: summary.colors[d]
+        }))
+      },
+      options:{
+        indexAxis:"y",
+        responsive:true,
+        maintainAspectRatio:false,
+        plugins:{
+          legend:{position:"bottom"},
+          tooltip:{callbacks:{label:(ctx)=>`${ctx.dataset.label}: ${ctx.raw.toFixed(2)}M`}}
+        },
+        scales:{
+          x:{grid:{color:"#eef1f6"}, title:{display:true,text:"Visits (millions)"}},
+          y:{grid:{display:false}}
+        }
+      }
+    });
+
+    // device chart
+    const deviceCtx = document.getElementById("deviceChart");
+    new Chart(deviceCtx,{
+      type:"doughnut",
+      data:{
+        labels:["Desktop","Mobile Web"],
+        datasets:[{
+          data:[summary.device["hsbc.co.uk"].desktop, summary.device["hsbc.co.uk"].mobile],
+          backgroundColor:["#111111","#db0011"],
+          borderWidth:0
+        }]
+      },
+      options:{
+        plugins:{
+          legend:{position:"bottom"},
+          tooltip:{callbacks:{label:(ctx)=>`${ctx.label}: ${ctx.raw.toFixed(1)}%`}}
+        },
+        cutout:"68%"
+      }
+    });
+
+    // opportunities list
+    const oppList = document.getElementById("opportunityList");
+    const oppDetail = document.getElementById("opportunityDetail");
+
+    function renderOppDetail(key){
+      const opp = summary.opportunities.find(o=>o.key===key);
+      document.querySelectorAll(".opp").forEach(el=>el.classList.toggle("active", el.dataset.key===key));
+      oppDetail.innerHTML = `
+        <div class="opp-detail">
+          <div class="eyebrow">${opp.impact}</div>
+          <h4>${opp.title}</h4>
+          <div class="opp-stat-grid">
+            ${opp.stats.map(s=>`
+              <div class="opp-stat">
+                <div class="big">${s.value}</div>
+                <div class="sub">${s.label}</div>
+              </div>
+            `).join("")}
+          </div>
+          <ul>
+            ${opp.body.map(i=>`<li>${i}</li>`).join("")}
+          </ul>
+        </div>
+      `;
+    }
+
+    summary.opportunities.forEach((o,i)=>{
+      const div = document.createElement("div");
+      div.className = "opp" + (i===0 ? " active" : "");
+      div.dataset.key = o.key;
+      div.innerHTML = `
+        <div class="opp-top">
+          <b>${o.title}</b>
+          <div class="impact">${o.impact}</div>
+        </div>
+        <small>${o.body[0]}</small>
+      `;
+      div.onclick = ()=> renderOppDetail(o.key);
+      oppList.appendChild(div);
+    });
+    renderOppDetail("search");
+
+    // simulator
+    const peerMedianCpv = 0.49;
+    const hsbcCurrentCpv = summary.paidSearch12m["hsbc.co.uk"].spend / summary.paidSearch12m["hsbc.co.uk"].visits;
+    const aiGap = summary.channels["GenAI"]["natwest.com"] - summary.channels["GenAI"]["hsbc.co.uk"];
+    const mseTotal = 170579.07;
+    const mseCurrentShare = 0.14266273;
+    const mseLeaderShare = 0.37452649;
+    const mseCurrentVisits = mseTotal * mseCurrentShare;
+    const mseLeaderVisits = mseTotal * mseLeaderShare;
+    const mseGap = mseLeaderVisits - mseCurrentVisits;
+    const pagesGap = summary.engagement["barclays.co.uk"].pages - summary.engagement["hsbc.co.uk"].pages;
+    const avgMonthlyVisits = summary.engagement["hsbc.co.uk"].avgMonthVisits;
+
+    const sliders = ["searchFix","aiLift","mseLift","engagementLift"];
+    sliders.forEach(id=>{
+      document.getElementById(id).addEventListener("input", updateSimulator);
+    });
+
+    function updateSimulator(){
+      const s = +document.getElementById("searchFix").value;
+      const a = +document.getElementById("aiLift").value;
+      const m = +document.getElementById("mseLift").value;
+      const e = +document.getElementById("engagementLift").value;
+
+      document.getElementById("searchFixVal").textContent = s + "%";
+      document.getElementById("aiLiftVal").textContent = a + "%";
+      document.getElementById("mseLiftVal").textContent = m + "%";
+      document.getElementById("engagementLiftVal").textContent = e + "%";
+
+      const effectiveCpv = hsbcCurrentCpv - ((hsbcCurrentCpv - peerMedianCpv) * (s/100));
+      const projectedPaidVisits = summary.paidSearch12m["hsbc.co.uk"].spend / effectiveCpv;
+      const extraPaid = Math.max(0, projectedPaidVisits - summary.paidSearch12m["hsbc.co.uk"].visits);
+
+      const extraAi = aiGap * (a/100);
+      const extraPartner = mseGap * (m/100);
+      const extraPv = avgMonthlyVisits * pagesGap * (e/100);
+
+      document.getElementById("extraPaidVisits").textContent = "+" + fmtM(extraPaid);
+      document.getElementById("extraAiVisits").textContent = "+" + fmtK(extraAi);
+      document.getElementById("extraPartnerVisits").textContent = "+" + fmtK(extraPartner);
+      document.getElementById("extraPageviews").textContent = "+" + fmtM(extraPv);
+    }
+    updateSimulator();
+  </script>
+</body>
+</html>

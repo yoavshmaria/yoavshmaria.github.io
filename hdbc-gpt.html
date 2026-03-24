@@ -46,7 +46,19 @@
     .brand{
       display:flex;align-items:center;gap:14px;font-weight:800;letter-spacing:.2px
     }
-    .brand svg{flex:0 0 auto}
+    /* HSBC hex mark: six-triangle hex ×2, white on brand red (#DB0011) */
+    .brand-mark{
+      flex:0 0 auto;
+      display:inline-flex;
+      align-items:center;
+      justify-content:center;
+      background:var(--hsbc-red);
+      border-radius:8px;
+      padding:6px 10px;
+      line-height:0;
+      box-shadow:0 1px 0 rgba(0,0,0,.06);
+    }
+    .brand-mark svg{display:block;width:48px;height:auto;aspect-ratio:40/32}
     .brand .sub{font-size:12px;color:var(--hsbc-grey);font-weight:600;letter-spacing:.5px;text-transform:uppercase}
     .nav-links{
       display:flex;gap:10px;flex-wrap:wrap
@@ -238,7 +250,18 @@
     footer{
       padding:30px 0 50px;color:var(--hsbc-grey);font-size:12px
     }
-    canvas{max-width:100%}
+    canvas{max-width:100%;display:block}
+    /* Chart.js: maintainAspectRatio:false fills the parent — constrain height or charts stretch in CSS Grid */
+    .chart-wrap{
+      position:relative;
+      width:100%;
+      height:260px;
+    }
+    .chart-wrap--traffic{height:240px}
+    .chart-wrap--engagement{height:280px}
+    .chart-wrap--channel{height:420px}
+    .chart-wrap--device{height:240px;max-width:100%;margin:0 auto}
+    .grid-2 > .card.panel{min-height:0;align-self:start}
     .muted{color:var(--hsbc-grey)}
     @media (max-width:1200px){
       .kpi-grid,.grid-3,.playbook,.roadmap,.opp-stat-grid{grid-template-columns:repeat(2,1fr)}
@@ -258,13 +281,22 @@
     <div class="wrap">
       <div class="nav">
         <div class="brand">
-          <svg width="54" height="32" viewBox="0 0 54 32" aria-hidden="true">
-            <rect x="0" y="0" width="54" height="32" rx="5" fill="#fff" stroke="#db0011" stroke-width="1.2"/>
-            <polygon points="10,16 16,10 22,16 16,22" fill="#db0011"/>
-            <polygon points="27,16 33,10 39,16 33,22" fill="#db0011"/>
-            <polygon points="16,10 22,16 16,22 10,16" fill="#fff"/>
-            <polygon points="33,10 39,16 33,22 27,16" fill="#fff"/>
-          </svg>
+          <div class="brand-mark">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 40 32" role="img" aria-labelledby="hsbc-hex-logo-title" focusable="false">
+              <title id="hsbc-hex-logo-title">HSBC</title>
+              <!-- Two regular hexagons (pointy top/bottom), each = 6 equilateral triangles from centre; only white facets drawn -->
+              <g fill="#ffffff">
+                <!-- Left hexagon, centre (12,16), R=5.5 -->
+                <polygon points="12,10.5 16.76,13.25 12,16"/>
+                <polygon points="16.76,18.75 12,21.5 12,16"/>
+                <polygon points="7.24,18.75 7.24,13.25 12,16"/>
+                <!-- Right hexagon, centre (24,16), R=5.5 -->
+                <polygon points="24,10.5 28.76,13.25 24,16"/>
+                <polygon points="28.76,18.75 24,21.5 24,16"/>
+                <polygon points="19.24,18.75 19.24,13.25 24,16"/>
+              </g>
+            </svg>
+          </div>
           <div>
             <div style="font-size:18px;font-weight:900;line-height:1">HSBC UK</div>
             <div class="sub">Marketing ROI Growth Command Center</div>
@@ -436,8 +468,8 @@
           <button class="toggle" id="metricUniques">Unique users</button>
         </div>
         <div class="legend-chips" id="domainToggles"></div>
-        <div style="margin-top:16px">
-          <canvas id="trafficChart" height="120"></canvas>
+        <div class="chart-wrap chart-wrap--traffic" style="margin-top:16px">
+          <canvas id="trafficChart"></canvas>
         </div>
         <div class="mini-note">Directional Similarweb data. Trend focus: HSBC traffic is declining with the market, but still trails peer leaders on scale.</div>
       </div>
@@ -455,7 +487,9 @@
           <button class="toggle" data-emetric="BounceRate">Bounce rate</button>
           <button class="toggle" data-emetric="VisitsPerUser">Visits / user</button>
         </div>
-        <canvas id="engagementChart" height="160"></canvas>
+        <div class="chart-wrap chart-wrap--engagement">
+          <canvas id="engagementChart"></canvas>
+        </div>
         <div class="mini-note" id="engagementNote"></div>
       </div>
     </section>
@@ -486,7 +520,9 @@
             <p>HSBC is heavily powered by direct and organic, but under-delivers in paid search and email scale.</p>
           </div>
         </div>
-        <canvas id="channelChart" height="220"></canvas>
+        <div class="chart-wrap chart-wrap--channel">
+          <canvas id="channelChart"></canvas>
+        </div>
       </div>
 
       <div class="card panel">
@@ -497,8 +533,8 @@
           </div>
         </div>
         <div class="grid-2" style="grid-template-columns:.95fr 1.05fr; gap:12px">
-          <div>
-            <canvas id="deviceChart" height="220"></canvas>
+          <div class="chart-wrap chart-wrap--device">
+            <canvas id="deviceChart"></canvas>
           </div>
           <div style="display:grid;gap:12px;align-content:start">
             <div class="opp-stat">
@@ -1041,6 +1077,8 @@
       type:"bar",
       data:{labels:summary.domains,datasets:[{data:[], backgroundColor:summary.domains.map(d=>summary.colors[d])}]},
       options:{
+        responsive:true,
+        maintainAspectRatio:false,
         plugins:{
           legend:{display:false},
           tooltip:{
@@ -1126,6 +1164,8 @@
         }]
       },
       options:{
+        responsive:true,
+        maintainAspectRatio:false,
         plugins:{
           legend:{position:"bottom"},
           tooltip:{callbacks:{label:(ctx)=>`${ctx.label}: ${ctx.raw.toFixed(1)}%`}}

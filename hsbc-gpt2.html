@@ -1,0 +1,1344 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>HSBC UK | Marketing ROI Growth Command Center</title>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <style>
+    :root{
+      --hsbc-red:#db0011;
+      --hsbc-dark:#3b3b3b;
+      --hsbc-ink:#1f1f1f;
+      --hsbc-light:#f7f7f8;
+      --hsbc-border:#e5e7eb;
+      --hsbc-success:#0f9d58;
+      --hsbc-warn:#f59e0b;
+      --hsbc-blue:#163d8f;
+      --shadow:0 10px 30px rgba(0,0,0,.08);
+      --radius:18px;
+    }
+    *{box-sizing:border-box}
+    body{
+      margin:0;
+      font-family:Inter,Segoe UI,Arial,sans-serif;
+      color:var(--hsbc-ink);
+      background:
+        radial-gradient(circle at 10% 10%, rgba(219,0,17,.08), transparent 28%),
+        radial-gradient(circle at 90% 20%, rgba(22,61,143,.08), transparent 30%),
+        linear-gradient(180deg,#ffffff 0%,#fbfbfc 100%);
+    }
+    .app{
+      max-width:1440px;
+      margin:0 auto;
+      padding:24px;
+    }
+    .topbar{
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:20px;
+      margin-bottom:18px;
+      flex-wrap:wrap;
+    }
+    .brand{
+      display:flex;
+      align-items:center;
+      gap:14px;
+    }
+    .brand img{
+      width:44px;height:44px;border-radius:10px;box-shadow:var(--shadow);
+      background:#fff;
+    }
+    .brand h1{
+      margin:0;
+      font-size:28px;
+      line-height:1.05;
+      letter-spacing:-.02em;
+    }
+    .brand small{
+      display:block;
+      color:#6b7280;
+      margin-top:4px;
+      font-size:13px;
+    }
+    .badge-row{
+      display:flex;
+      gap:10px;
+      flex-wrap:wrap;
+    }
+    .badge{
+      padding:10px 14px;
+      border-radius:999px;
+      background:#fff;
+      border:1px solid var(--hsbc-border);
+      font-size:12px;
+      color:#555;
+      box-shadow:var(--shadow);
+    }
+    .hero{
+      display:grid;
+      grid-template-columns: 1.4fr .9fr;
+      gap:18px;
+      margin-bottom:20px;
+    }
+    .panel{
+      background:#fff;
+      border:1px solid var(--hsbc-border);
+      border-radius:var(--radius);
+      box-shadow:var(--shadow);
+      overflow:hidden;
+    }
+    .hero-card{
+      padding:28px;
+      position:relative;
+      background:
+        linear-gradient(135deg, rgba(219,0,17,.98) 0%, rgba(165,0,13,.98) 52%, rgba(59,59,59,.98) 100%);
+      color:#fff;
+      min-height:280px;
+    }
+    .hero-card::after{
+      content:"";
+      position:absolute;
+      inset:auto -70px -70px auto;
+      width:260px;height:260px;
+      background:radial-gradient(circle, rgba(255,255,255,.22), transparent 62%);
+      border-radius:50%;
+    }
+    .hero-kicker{
+      display:inline-flex;
+      align-items:center;
+      gap:8px;
+      padding:8px 12px;
+      border-radius:999px;
+      background:rgba(255,255,255,.12);
+      border:1px solid rgba(255,255,255,.18);
+      font-size:12px;
+      margin-bottom:16px;
+    }
+    .hero-card h2{
+      margin:0 0 10px 0;
+      font-size:38px;
+      line-height:1.02;
+      letter-spacing:-.03em;
+      max-width:780px;
+    }
+    .hero-card p{
+      margin:0;
+      font-size:16px;
+      line-height:1.55;
+      color:rgba(255,255,255,.92);
+      max-width:780px;
+    }
+    .hero-actions{
+      margin-top:24px;
+      display:flex;
+      gap:12px;
+      flex-wrap:wrap;
+    }
+    .btn{
+      padding:12px 16px;
+      border-radius:12px;
+      font-weight:700;
+      font-size:14px;
+      border:none;
+      cursor:pointer;
+    }
+    .btn.primary{background:#fff;color:var(--hsbc-red)}
+    .btn.ghost{
+      background:rgba(255,255,255,.08);
+      color:#fff;
+      border:1px solid rgba(255,255,255,.16);
+    }
+    .scorecard{
+      padding:24px;
+      display:grid;
+      grid-template-columns:1fr 1fr;
+      gap:14px;
+      align-content:start;
+    }
+    .kpi{
+      background:linear-gradient(180deg,#fff,#fafafa);
+      border:1px solid var(--hsbc-border);
+      border-radius:16px;
+      padding:16px;
+      min-height:118px;
+    }
+    .kpi .label{
+      font-size:12px;
+      text-transform:uppercase;
+      letter-spacing:.08em;
+      color:#6b7280;
+      margin-bottom:8px;
+    }
+    .kpi .value{
+      font-size:30px;
+      font-weight:800;
+      line-height:1;
+      margin-bottom:8px;
+    }
+    .kpi .sub{
+      font-size:13px;
+      color:#5f6368;
+      line-height:1.35;
+    }
+    .good{color:var(--hsbc-success)}
+    .warn{color:var(--hsbc-warn)}
+    .bad{color:var(--hsbc-red)}
+
+    .tabs{
+      display:flex;
+      gap:10px;
+      flex-wrap:wrap;
+      margin:0 0 18px 0;
+      position:sticky;
+      top:0;
+      z-index:10;
+      background:rgba(251,251,252,.85);
+      backdrop-filter:blur(10px);
+      padding:8px 0 12px;
+    }
+    .tab{
+      border:1px solid var(--hsbc-border);
+      background:#fff;
+      color:#444;
+      padding:10px 14px;
+      border-radius:999px;
+      cursor:pointer;
+      font-weight:700;
+      font-size:13px;
+      box-shadow:var(--shadow);
+    }
+    .tab.active{
+      background:var(--hsbc-red);
+      color:#fff;
+      border-color:var(--hsbc-red);
+    }
+
+    .tab-panel{display:none}
+    .tab-panel.active{display:block}
+
+    .section{
+      display:grid;
+      gap:18px;
+      margin-bottom:20px;
+    }
+    .section-title{
+      padding:22px 24px 0;
+    }
+    .section-title h3{
+      margin:0 0 6px 0;
+      font-size:26px;
+      letter-spacing:-.02em;
+    }
+    .section-title p{
+      margin:0;
+      color:#6b7280;
+      line-height:1.5;
+    }
+    .grid-2{display:grid;grid-template-columns:1fr 1fr;gap:18px}
+    .grid-3{display:grid;grid-template-columns:repeat(3,1fr);gap:18px}
+    .grid-4{display:grid;grid-template-columns:repeat(4,1fr);gap:18px}
+    .content{
+      padding:0 24px 24px;
+    }
+    .card{
+      background:#fff;
+      border:1px solid var(--hsbc-border);
+      border-radius:var(--radius);
+      box-shadow:var(--shadow);
+      overflow:hidden;
+    }
+    .card h4{
+      margin:0;
+      font-size:18px;
+    }
+    .card-head{
+      padding:18px 20px 8px;
+      display:flex;
+      justify-content:space-between;
+      align-items:flex-start;
+      gap:10px;
+    }
+    .card-head p{
+      margin:4px 0 0;
+      color:#6b7280;
+      font-size:13px;
+      line-height:1.45;
+    }
+    .card-body{padding:0 20px 20px}
+    .stat-list{
+      display:grid;
+      gap:12px;
+      margin-top:8px;
+    }
+    .stat{
+      display:flex;justify-content:space-between;gap:12px;
+      padding:12px 0;border-bottom:1px dashed #ececec;
+      font-size:14px;
+    }
+    .stat:last-child{border-bottom:none}
+    .stat b{font-size:15px}
+    .insight-list{
+      display:grid;
+      gap:12px;
+    }
+    .insight{
+      display:flex;
+      gap:12px;
+      align-items:flex-start;
+      padding:14px;
+      border-radius:14px;
+      border:1px solid var(--hsbc-border);
+      background:linear-gradient(180deg,#fff,#fcfcfd);
+    }
+    .insight .icon{
+      width:36px;height:36px;border-radius:10px;
+      display:grid;place-items:center;
+      font-weight:900;
+      color:#fff;
+      background:var(--hsbc-red);
+      flex:0 0 36px;
+    }
+    .insight h5{margin:0 0 4px;font-size:15px}
+    .insight p{margin:0;color:#5f6368;font-size:13px;line-height:1.45}
+    .highlight{
+      padding:16px 18px;
+      background:#fff7f8;
+      border:1px solid #ffd5da;
+      border-radius:14px;
+      color:#6c0f17;
+      font-size:14px;
+      line-height:1.5;
+    }
+    .matrix{
+      display:grid;
+      gap:12px;
+      margin-top:8px;
+    }
+    .matrix-row{
+      display:grid;
+      grid-template-columns:160px 1fr 140px;
+      gap:14px;
+      align-items:center;
+    }
+    .bar{
+      height:12px;border-radius:999px;background:#f1f3f5;overflow:hidden;
+      border:1px solid #eceff3;
+    }
+    .bar > span{
+      display:block;height:100%;
+      background:linear-gradient(90deg,var(--hsbc-red),#ff5a6a);
+      border-radius:999px;
+    }
+    .tag{
+      display:inline-block;padding:6px 10px;border-radius:999px;
+      font-size:11px;font-weight:700;letter-spacing:.04em;
+      background:#f4f4f5;color:#444;
+    }
+    .tag.red{background:#fff0f1;color:#a1000c}
+    .tag.blue{background:#eef4ff;color:#163d8f}
+    .tag.green{background:#edfcf3;color:#0f9d58}
+    .tag.gold{background:#fff8e7;color:#926100}
+
+    .topic-pills{display:flex;gap:8px;flex-wrap:wrap;margin-top:12px}
+    .pill{
+      padding:8px 10px;border-radius:999px;
+      border:1px solid var(--hsbc-border);
+      background:#fff;
+      font-size:12px;
+      color:#444;
+    }
+
+    .creative-grid{
+      display:grid;
+      grid-template-columns:repeat(3,1fr);
+      gap:18px;
+    }
+    .creative{
+      border:1px solid var(--hsbc-border);
+      border-radius:20px;
+      overflow:hidden;
+      background:#fff;
+    }
+    .creative .meta{
+      padding:14px 16px;
+    }
+    .creative .meta h5{margin:0 0 6px;font-size:16px}
+    .creative .meta p{margin:0;color:#6b7280;font-size:13px;line-height:1.45}
+    .search-ad{
+      border:1px solid var(--hsbc-border);
+      border-radius:16px;
+      padding:16px;
+      background:#fff;
+    }
+    .search-ad .url{color:#1a0dab;font-size:12px;margin-bottom:5px}
+    .search-ad .title{color:#1a0dab;font-size:20px;margin-bottom:6px;font-weight:500}
+    .search-ad .desc{color:#4d5156;font-size:14px;line-height:1.45}
+    .cards-scroll{
+      display:grid;
+      grid-template-columns:repeat(4, minmax(260px,1fr));
+      gap:14px;
+    }
+    .publisher-fit{
+      display:grid;gap:12px;
+    }
+    .fit{
+      border:1px solid var(--hsbc-border);
+      border-radius:14px;
+      padding:14px;
+      display:grid;
+      grid-template-columns: 1.2fr 1fr 1fr 1fr;
+      gap:14px;
+      align-items:center;
+      background:#fff;
+    }
+    .fit .name{font-weight:800}
+    .small{
+      font-size:12px;color:#6b7280;
+    }
+    .simulator{
+      display:grid;
+      grid-template-columns:1.2fr .8fr;
+      gap:18px;
+    }
+    .slider-row{
+      margin:14px 0 18px;
+    }
+    .slider-row label{
+      display:flex;justify-content:space-between;gap:10px;
+      font-weight:700;font-size:14px;margin-bottom:8px;
+    }
+    input[type=range]{width:100%}
+    .sim-output{
+      display:grid;
+      gap:12px;
+    }
+    .output-box{
+      padding:16px;border-radius:16px;border:1px solid var(--hsbc-border);
+      background:linear-gradient(180deg,#fff,#fbfbfc);
+    }
+    .output-box .big{
+      font-size:28px;font-weight:800;line-height:1;
+      margin-bottom:6px;
+    }
+    .roadmap{
+      display:grid;grid-template-columns:repeat(3,1fr);gap:18px;
+    }
+    .roadmap .phase{
+      border:1px solid var(--hsbc-border);
+      border-radius:18px;
+      padding:18px;
+      background:#fff;
+    }
+    .phase h5{margin:0 0 12px;font-size:18px}
+    .phase ul{margin:0;padding-left:18px;color:#4f5560;line-height:1.55}
+    .footer-note{
+      font-size:12px;
+      color:#6b7280;
+      padding:8px 2px 24px;
+      line-height:1.5;
+    }
+    canvas{max-height:340px}
+    @media (max-width:1100px){
+      .hero,.simulator,.grid-2,.grid-3,.grid-4,.creative-grid,.roadmap{grid-template-columns:1fr}
+      .cards-scroll{grid-template-columns:1fr 1fr}
+      .fit{grid-template-columns:1fr 1fr}
+      .matrix-row{grid-template-columns:1fr}
+    }
+    @media (max-width:720px){
+      .app{padding:14px}
+      .hero-card h2{font-size:30px}
+      .scorecard{grid-template-columns:1fr}
+      .cards-scroll{grid-template-columns:1fr}
+      .fit{grid-template-columns:1fr}
+    }
+  </style>
+</head>
+<body>
+  <div class="app">
+    <div class="topbar">
+      <div class="brand">
+        <img src="https://site-images.similarcdn.com/image?url=hsbc.co.uk&t=2&s=0&h=176edede8d1df1cbeaa5e736311edf49769db11f1080b62d28f898dd1354e090" alt="HSBC UK logo" />
+        <div>
+          <h1>HSBC UK Growth ROI Command Center</h1>
+          <small>Competitive intelligence platform built from Similarweb data • Focus: actionable marketing ROI growth</small>
+        </div>
+      </div>
+      <div class="badge-row">
+        <div class="badge">Brand: HSBC red / white / charcoal</div>
+        <div class="badge">View: UK banking competitive benchmark</div>
+        <div class="badge">Lens: topics, audiences, channels, creative gaps</div>
+      </div>
+    </div>
+
+    <div class="hero">
+      <div class="panel hero-card">
+        <div class="hero-kicker">HSBC UK • Executive signal</div>
+        <h2>HSBC can grow ROI fastest by fixing its <u>paid search scale gap</u>, building a <u>mobile-first mortgage & switching funnel</u>, and turning its <u>AI/referral strength</u> into assisted acquisition.</h2>
+        <p>
+          HSBC’s engagement quality is solid, but traffic scale trails Barclays and NatWest. The clearest growth gap is not brand defense — it is winning more commercial-intent journeys in home finance, everyday banking switchers, international money, and business startup banking.
+        </p>
+        <div class="hero-actions">
+          <button class="btn primary" onclick="activateTab('summary')">See executive summary</button>
+          <button class="btn ghost" onclick="activateTab('simulator')">Open ROI simulator</button>
+        </div>
+      </div>
+
+      <div class="panel scorecard">
+        <div class="kpi">
+          <div class="label">Avg monthly visits</div>
+          <div class="value">6.84M</div>
+          <div class="sub">vs Barclays <b>8.28M</b> and NatWest <b>12.21M</b></div>
+        </div>
+        <div class="kpi">
+          <div class="label">UK site rank</div>
+          <div class="value">#258</div>
+          <div class="sub">Behind Barclays <b>#196</b> and NatWest <b>#128</b></div>
+        </div>
+        <div class="kpi">
+          <div class="label">Paid search gap</div>
+          <div class="value bad">1.54M</div>
+          <div class="sub">HSBC paid-search visits vs Barclays <b>8.19M</b> and NatWest <b>10.34M</b></div>
+        </div>
+        <div class="kpi">
+          <div class="label">AI referral strength</div>
+          <div class="value good">45%</div>
+          <div class="sub">Peer share from ChatGPT referrals; rose to <b>61%</b> in Feb '26</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="tabs">
+      <button class="tab active" data-tab="summary" onclick="activateTab('summary')">Executive Summary</button>
+      <button class="tab" data-tab="search" onclick="activateTab('search')">Search & SEO</button>
+      <button class="tab" data-tab="display" onclick="activateTab('display')">Display & Creative</button>
+      <button class="tab" data-tab="audience" onclick="activateTab('audience')">Audience, Mobile & AI</button>
+      <button class="tab" data-tab="simulator" onclick="activateTab('simulator')">ROI Simulator</button>
+      <button class="tab" data-tab="roadmap" onclick="activateTab('roadmap')">90-Day Plan</button>
+    </div>
+
+    <!-- SUMMARY -->
+    <div id="summary" class="tab-panel active">
+      <div class="section">
+        <div class="panel">
+          <div class="section-title">
+            <h3>Where HSBC wins, where it leaks</h3>
+            <p>HSBC is not losing on site quality. It is losing on traffic scale and acquisition intensity in the highest-value commercial journeys.</p>
+          </div>
+          <div class="content grid-4">
+            <div class="insight">
+              <div class="icon">1</div>
+              <div>
+                <h5>Engagement is healthy</h5>
+                <p>HSBC bounce rate is low at <b>26.8%</b>; pages per visit <b>6.82</b> beat NatWest and crush Lloyds. This means the site can absorb more qualified acquisition.</p>
+              </div>
+            </div>
+            <div class="insight">
+              <div class="icon">2</div>
+              <div>
+                <h5>Paid search is the biggest structural gap</h5>
+                <p>HSBC generated only <b>1.54M</b> paid-search visits versus Barclays <b>8.19M</b> and NatWest <b>10.34M</b>. That is the largest whitespace in the mix.</p>
+              </div>
+            </div>
+            <div class="insight">
+              <div class="icon">3</div>
+              <div>
+                <h5>Mobile under-index</h5>
+                <p>HSBC traffic is <b>47.4% mobile</b>, while NatWest is <b>60.3%</b>. HSBC needs more mobile-native discovery and landing experiences.</p>
+              </div>
+            </div>
+            <div class="insight">
+              <div class="icon">4</div>
+              <div>
+                <h5>AI referrals are already a strength</h5>
+                <p>HSBC commands the highest recent peer share from <b>ChatGPT</b>. It should be turned from a nice-to-have into a deliberate acquisition channel.</p>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="grid-2">
+          <div class="card">
+            <div class="card-head">
+              <div>
+                <h4>Traffic trend vs competitors</h4>
+                <p>HSBC stays materially below Barclays and far below NatWest across the period.</p>
+              </div>
+              <span class="tag red">Scale issue</span>
+            </div>
+            <div class="card-body"><canvas id="visitsTrend"></canvas></div>
+          </div>
+
+          <div class="card">
+            <div class="card-head">
+              <div>
+                <h4>Channel imbalance</h4>
+                <p>Strong direct + organic base, but much weaker paid search and display volume.</p>
+              </div>
+              <span class="tag blue">Mix issue</span>
+            </div>
+            <div class="card-body"><canvas id="channelBars"></canvas></div>
+          </div>
+        </div>
+
+        <div class="panel">
+          <div class="section-title">
+            <h3>High-confidence strategic bets</h3>
+            <p>If HSBC wants better ROI, it should go where intent is already proven across the category.</p>
+          </div>
+          <div class="content">
+            <div class="highlight">
+              <b>Best immediate growth directions:</b> home-finance calculators and remortgage journeys, current-account switching journeys, international money / global account needs, business startup banking, and answer-led content for AI discovery.
+            </div>
+            <div class="topic-pills">
+              <span class="pill">Home-buying confidence</span>
+              <span class="pill">Remortgaging & rate clarity</span>
+              <span class="pill">Current account switching</span>
+              <span class="pill">International everyday money</span>
+              <span class="pill">Premier / affluent rewards</span>
+              <span class="pill">Business startup banking</span>
+              <span class="pill">Savings certainty & ISA explainers</span>
+              <span class="pill">Fraud reassurance & service recovery</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- SEARCH -->
+    <div id="search" class="tab-panel">
+      <div class="section">
+        <div class="grid-2">
+          <div class="card">
+            <div class="card-head">
+              <div>
+                <h4>Paid search efficiency proxy</h4>
+                <p>Estimated visits per £ of paid-search spend, Mar 2025–Feb 2026.</p>
+              </div>
+              <span class="tag red">Fix now</span>
+            </div>
+            <div class="card-body"><canvas id="efficiencyChart"></canvas></div>
+          </div>
+
+          <div class="card">
+            <div class="card-head">
+              <div>
+                <h4>Search messaging gap</h4>
+                <p>HSBC search ads concentrate on loans and premier, while competitors own broader commercial intent in mortgages and switching.</p>
+              </div>
+              <span class="tag gold">Message gap</span>
+            </div>
+            <div class="card-body">
+              <div class="stat-list">
+                <div class="stat"><span>HSBC paid-search traffic</span><b class="bad">1.54M</b></div>
+                <div class="stat"><span>Barclays paid-search traffic</span><b>8.19M</b></div>
+                <div class="stat"><span>NatWest paid-search traffic</span><b>10.34M</b></div>
+                <div class="stat"><span>HSBC paid-search visits/£</span><b class="bad">0.62</b></div>
+                <div class="stat"><span>Barclays paid-search visits/£</span><b class="good">2.04</b></div>
+                <div class="stat"><span>NatWest paid-search visits/£</span><b class="good">2.73</b></div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="panel">
+          <div class="section-title">
+            <h3>What the topic data says</h3>
+            <p>Brand terms are already mostly captured. Growth will come from adjacent commercial-intent topics, not simply defending navigational demand.</p>
+          </div>
+          <div class="content grid-3">
+            <div class="card">
+              <div class="card-head"><div><h4>Topic cluster to scale</h4><p>Competitors heavily monetize calculator-led mortgage journeys.</p></div></div>
+              <div class="card-body">
+                <div class="matrix">
+                  <div class="matrix-row"><div>Mortgage calculators</div><div class="bar"><span style="width:92%"></span></div><div class="small">Very high intent</div></div>
+                  <div class="matrix-row"><div>Affordability / borrowing</div><div class="bar"><span style="width:88%"></span></div><div class="small">High intent</div></div>
+                  <div class="matrix-row"><div>Remortgage rates</div><div class="bar"><span style="width:84%"></span></div><div class="small">High intent</div></div>
+                  <div class="matrix-row"><div>First-time buyer support</div><div class="bar"><span style="width:78%"></span></div><div class="small">Growth area</div></div>
+                </div>
+              </div>
+            </div>
+
+            <div class="card">
+              <div class="card-head"><div><h4>Topic cluster to build</h4><p>HSBC has lower paid presence where customer switching is most active.</p></div></div>
+              <div class="card-body">
+                <div class="matrix">
+                  <div class="matrix-row"><div>Current account switching</div><div class="bar"><span style="width:86%"></span></div><div class="small">Gap vs peers</div></div>
+                  <div class="matrix-row"><div>Switch offer comparison</div><div class="bar"><span style="width:80%"></span></div><div class="small">Conversion-ready</div></div>
+                  <div class="matrix-row"><div>Joint / student accounts</div><div class="bar"><span style="width:63%"></span></div><div class="small">Selective scale</div></div>
+                  <div class="matrix-row"><div>Rewards-led banking</div><div class="bar"><span style="width:59%"></span></div><div class="small">Affluent crossover</div></div>
+                </div>
+              </div>
+            </div>
+
+            <div class="card">
+              <div class="card-head"><div><h4>Topic cluster to sharpen</h4><p>Loans and cards can perform better with less repetitive copy and clearer propositions.</p></div></div>
+              <div class="card-body">
+                <div class="matrix">
+                  <div class="matrix-row"><div>Loan calculators</div><div class="bar"><span style="width:76%"></span></div><div class="small">Already active</div></div>
+                  <div class="matrix-row"><div>Balance transfer clarity</div><div class="bar"><span style="width:61%"></span></div><div class="small">Needs cleaner copy</div></div>
+                  <div class="matrix-row"><div>Travel / reward cards</div><div class="bar"><span style="width:66%"></span></div><div class="small">Audience fit strong</div></div>
+                  <div class="matrix-row"><div>Savings certainty</div><div class="bar"><span style="width:71%"></span></div><div class="small">Leverage authority</div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="grid-3">
+          <div class="search-ad">
+            <div class="url">hsbc.co.uk/mortgages</div>
+            <div class="title">Mortgage Affordability Calculator | See What You Could Borrow</div>
+            <div class="desc">Get a clearer view of your buying power, rates and next steps in one place. Explore calculators, repayment scenarios and remortgage options.</div>
+          </div>
+          <div class="search-ad">
+            <div class="url">hsbc.co.uk/current-accounts/switching</div>
+            <div class="title">Switch Your Current Account | Global Banking, Everyday Simplicity</div>
+            <div class="desc">Move your banking in a few guided steps. Compare account options, understand the switch process and choose the right fit for daily banking.</div>
+          </div>
+          <div class="search-ad">
+            <div class="url">hsbc.co.uk/global-money</div>
+            <div class="title">Global Money & International Banking | Manage Money Across Borders</div>
+            <div class="desc">Send, spend and manage money internationally with more clarity. Built for people with a cross-border lifestyle, travel or family needs.</div>
+          </div>
+        </div>
+
+        <div class="panel">
+          <div class="section-title">
+            <h3>Search actions HSBC should take</h3>
+            <p>Not more ads everywhere — more ads where intent and topic-fit are highest.</p>
+          </div>
+          <div class="content insight-list">
+            <div class="insight">
+              <div class="icon">A</div>
+              <div>
+                <h5>Rebuild paid search around mortgage-intent topics</h5>
+                <p>Competitors dominate calculators, borrowing amount, remortgage and rate comparison. HSBC already earns organic mortgage traffic; it should convert that authority into more paid + organic-assisted acquisition.</p>
+              </div>
+            </div>
+            <div class="insight">
+              <div class="icon">B</div>
+              <div>
+                <h5>Reduce repetitive loan ad variants</h5>
+                <p>HSBC’s loan ads are heavily calculator-led and near-duplicative. Consolidate copy, test more proposition-led messaging, and free budget for under-covered growth topics.</p>
+              </div>
+            </div>
+            <div class="insight">
+              <div class="icon">C</div>
+              <div>
+                <h5>Turn support and rates pages into next-step engines</h5>
+                <p>High-traffic pages like online banking, contact, mortgage rates and savings guides should carry stronger, compliant next-best-action modules: calculator, compare, apply, book a conversation.</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- DISPLAY -->
+    <div id="display" class="tab-panel">
+      <div class="section">
+        <div class="grid-2">
+          <div class="card">
+            <div class="card-head">
+              <div>
+                <h4>Display scale vs efficiency</h4>
+                <p>HSBC’s display efficiency is not catastrophic — the real issue is insufficient scale and contextual sharpness.</p>
+              </div>
+              <span class="tag blue">Scale up smartly</span>
+            </div>
+            <div class="card-body"><canvas id="displayChart"></canvas></div>
+          </div>
+
+          <div class="card">
+            <div class="card-head">
+              <div>
+                <h4>Current campaign focus</h4>
+                <p>HSBC display leans into advice, premier and generic brand. It needs more product-line breadth.</p>
+              </div>
+              <span class="tag gold">Portfolio imbalance</span>
+            </div>
+            <div class="card-body">
+              <div class="insight-list">
+                <div class="insight"><div class="icon">●</div><div><h5>Current bias: wealth / advice</h5><p>Financial advice and investment creative is prominent, but the biggest category gaps are in mortgages and switching.</p></div></div>
+                <div class="insight"><div class="icon">●</div><div><h5>Context mismatch risk</h5><p>Some HSBC programmatic exposure appears in broad entertainment / utility environments with weak financial context. Tighten whitelists and audience logic.</p></div></div>
+                <div class="insight"><div class="icon">●</div><div><h5>Best contextual fit</h5><p>Scale in home-finance, money-guidance, comparison, travel-affluent, expat/international, and business-startup environments.</p></div></div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="panel">
+          <div class="section-title">
+            <h3>Publisher fit: where to press harder, where to cut waste</h3>
+            <p>Use context to improve quality-adjusted traffic, not just raw impression volume.</p>
+          </div>
+          <div class="content publisher-fit">
+            <div class="fit">
+              <div>
+                <div class="name">MoneySavingExpert / MoneySuperMarket</div>
+                <div class="small">High-intent money guidance & comparison</div>
+              </div>
+              <div><span class="tag green">Keep / scale</span></div>
+              <div class="small">Strong intent, proven category demand</div>
+              <div class="small"><b>HSBC already strong here</b> — expand formats, sequencing, and landing-page specificity</div>
+            </div>
+            <div class="fit">
+              <div>
+                <div class="name">Rightmove + home-buying media</div>
+                <div class="small">House-hunting and mortgage consideration</div>
+              </div>
+              <div><span class="tag green">Scale</span></div>
+              <div class="small">Natural fit for calculators, first-time buyer, remortgage</div>
+              <div class="small">Build context-led home financing creative, not generic brand</div>
+            </div>
+            <div class="fit">
+              <div>
+                <div class="name">Premium news / financial publications</div>
+                <div class="small">Trust, high-income, consideration</div>
+              </div>
+              <div><span class="tag blue">Curate</span></div>
+              <div class="small">Best for Premier, savings certainty, advice, rates</div>
+              <div class="small">Use tighter frequency + sequential creative</div>
+            </div>
+            <div class="fit">
+              <div>
+                <div class="name">Broad utility / entertainment inventory</div>
+                <div class="small">Random reach with weaker money context</div>
+              </div>
+              <div><span class="tag red">Reduce</span></div>
+              <div class="small">Potentially cheap, but weaker topic fit</div>
+              <div class="small">Keep only if audience-qualified and incrementally efficient</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="panel">
+          <div class="section-title">
+            <h3>Creative concepts for the next growth direction</h3>
+            <p>Illustrative concept work only — all financial and regulatory claims should pass compliance review.</p>
+          </div>
+          <div class="content creative-grid">
+            <div class="creative">
+              <svg viewBox="0 0 300 250" width="100%" height="220" preserveAspectRatio="none">
+                <defs>
+                  <linearGradient id="g1" x1="0" x2="1">
+                    <stop offset="0%" stop-color="#db0011"/>
+                    <stop offset="100%" stop-color="#7f0912"/>
+                  </linearGradient>
+                </defs>
+                <rect width="300" height="250" fill="#ffffff"/>
+                <rect x="0" y="0" width="300" height="250" fill="url(#g1)"/>
+                <circle cx="260" cy="35" r="52" fill="rgba(255,255,255,.12)"/>
+                <rect x="28" y="28" width="74" height="74" rx="14" fill="rgba(255,255,255,.13)"/>
+                <path d="M40 88 L65 63 L90 88" stroke="#fff" stroke-width="6" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+                <rect x="50" y="70" width="30" height="22" rx="3" fill="#fff"/>
+                <text x="28" y="138" fill="#fff" font-size="26" font-weight="800">Mortgage</text>
+                <text x="28" y="166" fill="#fff" font-size="26" font-weight="800">confidence,</text>
+                <text x="28" y="194" fill="#fff" font-size="26" font-weight="800">in minutes.</text>
+                <rect x="28" y="210" width="126" height="22" rx="11" fill="#fff"/>
+                <text x="44" y="225" fill="#db0011" font-size="12" font-weight="800">Try the calculator</text>
+              </svg>
+              <div class="meta">
+                <h5>Concept 1: Home financing clarity</h5>
+                <p>Use for mortgage calculators, first-time buyer explainers, remortgage and borrowing scenarios.</p>
+              </div>
+            </div>
+
+            <div class="creative">
+              <svg viewBox="0 0 300 250" width="100%" height="220" preserveAspectRatio="none">
+                <defs>
+                  <linearGradient id="g2" x1="0" x2="1">
+                    <stop offset="0%" stop-color="#1f1f1f"/>
+                    <stop offset="100%" stop-color="#163d8f"/>
+                  </linearGradient>
+                </defs>
+                <rect width="300" height="250" fill="url(#g2)"/>
+                <circle cx="252" cy="52" r="46" fill="rgba(255,255,255,.08)"/>
+                <circle cx="76" cy="58" r="30" fill="none" stroke="#fff" stroke-width="4"/>
+                <path d="M46 58 H106 M76 28 V88 M55 37 C80 50 80 66 55 79 M97 37 C72 50 72 66 97 79" stroke="#fff" stroke-width="3" fill="none"/>
+                <text x="28" y="136" fill="#fff" font-size="24" font-weight="800">Global money.</text>
+                <text x="28" y="164" fill="#fff" font-size="24" font-weight="800">Local control.</text>
+                <text x="28" y="194" fill="rgba(255,255,255,.8)" font-size="15">A cross-border banking story for</text>
+                <text x="28" y="214" fill="rgba(255,255,255,.8)" font-size="15">travel, family and international life.</text>
+              </svg>
+              <div class="meta">
+                <h5>Concept 2: International everyday money</h5>
+                <p>Use for global money, expat / international account journeys, and travel-affluent display placements.</p>
+              </div>
+            </div>
+
+            <div class="creative">
+              <svg viewBox="0 0 300 250" width="100%" height="220" preserveAspectRatio="none">
+                <defs>
+                  <linearGradient id="g3" x1="0" x2="1">
+                    <stop offset="0%" stop-color="#ffffff"/>
+                    <stop offset="100%" stop-color="#f4f4f4"/>
+                  </linearGradient>
+                </defs>
+                <rect width="300" height="250" fill="url(#g3)"/>
+                <rect x="0" y="0" width="8" height="250" fill="#db0011"/>
+                <rect x="212" y="24" width="58" height="58" rx="12" fill="#db0011"/>
+                <path d="M228 52 h26 M241 39 v26" stroke="#fff" stroke-width="5" stroke-linecap="round"/>
+                <text x="24" y="72" fill="#1f1f1f" font-size="24" font-weight="800">Business banking</text>
+                <text x="24" y="100" fill="#1f1f1f" font-size="24" font-weight="800">that keeps moving.</text>
+                <text x="24" y="142" fill="#555" font-size="15">Built for start-up founders,</text>
+                <text x="24" y="162" fill="#555" font-size="15">growing firms and digital-first teams.</text>
+                <rect x="24" y="186" width="132" height="26" rx="13" fill="#db0011"/>
+                <text x="42" y="204" fill="#fff" font-size="12" font-weight="800">Explore business options</text>
+              </svg>
+              <div class="meta">
+                <h5>Concept 3: Startup & growth business</h5>
+                <p>Use in business launch media, accounting-tool ecosystems and SME-focused referral environments.</p>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="grid-3">
+          <div class="search-ad">
+            <div class="url">Display headline idea</div>
+            <div class="title">Your next home move starts with clarity.</div>
+            <div class="desc">Bring together rates, calculators and next steps in one experience instead of splitting intent across separate pages.</div>
+          </div>
+          <div class="search-ad">
+            <div class="url">Display headline idea</div>
+            <div class="title">Premium banking for a life that spans borders.</div>
+            <div class="desc">Shift premier messaging from status alone to practical value: international life, travel, family and money movement.</div>
+          </div>
+          <div class="search-ad">
+            <div class="url">Display headline idea</div>
+            <div class="title">Banking for businesses that don’t stand still.</div>
+            <div class="desc">Move beyond generic business banking into startup momentum, cash visibility and simpler business decision-making.</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- AUDIENCE -->
+    <div id="audience" class="tab-panel">
+      <div class="section">
+        <div class="grid-2">
+          <div class="card">
+            <div class="card-head">
+              <div>
+                <h4>Mobile share gap</h4>
+                <p>HSBC is materially less mobile-heavy than NatWest. Discovery and landing experience should follow where users already are.</p>
+              </div>
+              <span class="tag red">Mobile gap</span>
+            </div>
+            <div class="card-body"><canvas id="deviceChart"></canvas></div>
+          </div>
+
+          <div class="card">
+            <div class="card-head">
+              <div>
+                <h4>AI & referral opportunity</h4>
+                <p>HSBC has proof that answer-led content can travel. It should now be industrialized.</p>
+              </div>
+              <span class="tag green">Emerging edge</span>
+            </div>
+            <div class="card-body"><canvas id="aiReferralChart"></canvas></div>
+          </div>
+        </div>
+
+        <div class="panel">
+          <div class="section-title">
+            <h3>What to do with the AI signal</h3>
+            <p>HSBC already attracts a large peer share of ChatGPT referrals. That is a signal, not a curiosity.</p>
+          </div>
+          <div class="content grid-3">
+            <div class="card">
+              <div class="card-head"><div><h4>Answer-first content</h4><p>Expand concise, structured pages that answer real financial decisions.</p></div></div>
+              <div class="card-body">
+                <div class="topic-pills">
+                  <span class="pill">What can I borrow?</span>
+                  <span class="pill">How remortgaging works</span>
+                  <span class="pill">ISA choices explained</span>
+                  <span class="pill">Global account basics</span>
+                  <span class="pill">Business banking setup</span>
+                </div>
+              </div>
+            </div>
+
+            <div class="card">
+              <div class="card-head"><div><h4>Schema + snippet design</h4><p>Optimize for extraction into AI answers, featured answers and related-question surfaces.</p></div></div>
+              <div class="card-body">
+                <div class="stat-list">
+                  <div class="stat"><span>Concise definitions</span><b>Yes</b></div>
+                  <div class="stat"><span>Step-by-step modules</span><b>Yes</b></div>
+                  <div class="stat"><span>Calculator CTA blocks</span><b>Yes</b></div>
+                  <div class="stat"><span>Compliance-reviewed summaries</span><b>Critical</b></div>
+                </div>
+              </div>
+            </div>
+
+            <div class="card">
+              <div class="card-head"><div><h4>Referral routing</h4><p>Don’t send AI traffic to dead-end explainer pages.</p></div></div>
+              <div class="card-body">
+                <div class="highlight">
+                  Best practice: explainer → calculator / compare → application / conversation. The current strength becomes an acquisition engine only when the next step is obvious.
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="panel">
+          <div class="section-title">
+            <h3>Partner & referral gaps HSBC can close</h3>
+            <p>Some ecosystems already send traffic to competitors at much higher share.</p>
+          </div>
+          <div class="content grid-2">
+            <div class="card">
+              <div class="card-head"><div><h4>Underweighted ecosystems</h4><p>HSBC should grow presence where commercial comparison intent is obvious.</p></div></div>
+              <div class="card-body insight-list">
+                <div class="insight"><div class="icon">£</div><div><h5>Money guidance and comparison</h5><p>NatWest and Lloyds materially outperform HSBC in referral share from MoneySavingExpert-style environments.</p></div></div>
+                <div class="insight"><div class="icon">⌂</div><div><h5>Home-buying broker workflows</h5><p>Build more targeted broker, intermediary, and calculator-led journeys with partner-ready landing pages.</p></div></div>
+                <div class="insight"><div class="icon">↔</div><div><h5>Open banking ecosystems</h5><p>Competitors capture more from account-linking and consent journeys. HSBC should design clearer use cases and partner UX.</p></div></div>
+              </div>
+            </div>
+
+            <div class="card">
+              <div class="card-head"><div><h4>Where HSBC already has leverage</h4><p>Use existing strengths as launchpads, not isolated wins.</p></div></div>
+              <div class="card-body insight-list">
+                <div class="insight"><div class="icon">AI</div><div><h5>ChatGPT / AI referral momentum</h5><p>Strongest recent peer share. Turn that into a structured content and landing-page program.</p></div></div>
+                <div class="insight"><div class="icon">B</div><div><h5>Business HSBC internal network</h5><p>Cross-domain business traffic is a strategic asset. Package business journeys more tightly across retail and SME touchpoints.</p></div></div>
+                <div class="insight"><div class="icon">✓</div><div><h5>Good on-site depth</h5><p>Because users already engage, HSBC can afford to acquire more aggressively if the traffic is topic-fit and mobile-optimized.</p></div></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- SIMULATOR -->
+    <div id="simulator" class="tab-panel">
+      <div class="section">
+        <div class="panel">
+          <div class="section-title">
+            <h3>Interactive ROI proxy simulator</h3>
+            <p>This is a traffic-quality model, not a revenue forecast. It estimates incremental visits and quality-adjusted sessions from budget reallocation.</p>
+          </div>
+          <div class="content simulator">
+            <div class="card" style="box-shadow:none;border:none">
+              <div class="card-body">
+                <div class="slider-row">
+                  <label><span>Mortgage search topics</span><span id="s1v">£35k</span></label>
+                  <input id="s1" type="range" min="0" max="100" step="5" value="35" oninput="updateSim()" />
+                </div>
+                <div class="slider-row">
+                  <label><span>Current account switching topics</span><span id="s2v">£20k</span></label>
+                  <input id="s2" type="range" min="0" max="100" step="5" value="20" oninput="updateSim()" />
+                </div>
+                <div class="slider-row">
+                  <label><span>Contextual display in home / finance media</span><span id="s3v">£25k</span></label>
+                  <input id="s3" type="range" min="0" max="100" step="5" value="25" oninput="updateSim()" />
+                </div>
+                <div class="slider-row">
+                  <label><span>AI-answer content + referral optimization</span><span id="s4v">£20k</span></label>
+                  <input id="s4" type="range" min="0" max="100" step="5" value="20" oninput="updateSim()" />
+                </div>
+                <div class="highlight">
+                  Assumptions (conservative): mortgage search is the highest-quality acquisition gap; contextual display is lower-intent but cheaper at scale; AI-answer content produces fewer visits per £ but stronger quality.
+                </div>
+              </div>
+            </div>
+
+            <div class="sim-output">
+              <div class="output-box">
+                <div class="small">Estimated monthly budget</div>
+                <div class="big" id="budgetOut">£100k</div>
+                <div class="small">Illustrative reallocation envelope</div>
+              </div>
+              <div class="output-box">
+                <div class="small">Estimated incremental visits</div>
+                <div class="big good" id="visitOut">414k</div>
+                <div class="small">Based on channel/topic visit-per-£ proxy</div>
+              </div>
+              <div class="output-box">
+                <div class="small">Quality-adjusted sessions</div>
+                <div class="big" id="qualityOut">447k</div>
+                <div class="small">Visits weighted by expected intent / engagement quality</div>
+              </div>
+              <div class="output-box">
+                <div class="small">Strategic readout</div>
+                <div id="simNarrative" class="small">
+                  The current mix prioritizes a balanced catch-up plan. Mortgage + switching spend delivers the sharpest immediate traffic impact; AI/content improves downstream quality.
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ROADMAP -->
+    <div id="roadmap" class="tab-panel">
+      <div class="section">
+        <div class="panel">
+          <div class="section-title">
+            <h3>90-day action plan</h3>
+            <p>Prioritize fast ROI wins first, then compound with creative and AI/discovery improvements.</p>
+          </div>
+          <div class="content roadmap">
+            <div class="phase">
+              <h5>Days 1–30</h5>
+              <ul>
+                <li>Stand up a dedicated <b>mortgage acquisition program</b>: affordability, borrowing, remortgage, first-time buyer, overpayment.</li>
+                <li>Audit HSBC paid search duplication in loans and consolidate into fewer, clearer ad families.</li>
+                <li>Create <b>switching-topic landing pages</b> with stronger next-step UX.</li>
+                <li>Tighten display placement lists: prioritize finance, comparison, home-buying, premium news, travel-affluent.</li>
+              </ul>
+            </div>
+
+            <div class="phase">
+              <h5>Days 31–60</h5>
+              <ul>
+                <li>Launch <b>mobile-first landing page variants</b> for mortgage calculators, switching and global money.</li>
+                <li>Expand answer-led content for AI discovery with schema, FAQs and calculator jumps.</li>
+                <li>Build partner packages for <b>comparison, broker and open banking ecosystems</b>.</li>
+                <li>Retool display creative by journey: home, switcher, global money, business startup, premier.</li>
+              </ul>
+            </div>
+
+            <div class="phase">
+              <h5>Days 61–90</h5>
+              <ul>
+                <li>Shift budget using measured efficiency, not fixed allocations.</li>
+                <li>Introduce <b>sequential messaging</b>: explainer → calculator → application.</li>
+                <li>Roll out assisted conversion reporting for AI/content and comparison referrals.</li>
+                <li>Scale the strongest winning topic clusters and pause weak-context inventory.</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+
+        <div class="grid-3">
+          <div class="card">
+            <div class="card-head"><div><h4>Priority #1</h4><p>Search rebuild</p></div><span class="tag red">Highest impact</span></div>
+            <div class="card-body">Win more mortgage and switcher intent. This is the clearest volume and efficiency gap.</div>
+          </div>
+          <div class="card">
+            <div class="card-head"><div><h4>Priority #2</h4><p>Contextual display</p></div><span class="tag blue">Fast follow</span></div>
+            <div class="card-body">Shift from generic reach to context-qualified media and stronger journey-matched creative.</div>
+          </div>
+          <div class="card">
+            <div class="card-head"><div><h4>Priority #3</h4><p>AI-assisted acquisition</p></div><span class="tag green">Compounding</span></div>
+            <div class="card-body">HSBC already wins on AI referrals. Build the operational system around that advantage.</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="footer-note">
+      <b>Method note:</b> All figures are based on the Similarweb data supplied in the prompt. “ROI proxy” uses traffic and engagement quality because conversion and revenue data were not provided. Recommendations are directional and should be validated with HSBC’s internal conversion, CPA, LTV, compliance and media cost data before activation.
+    </div>
+  </div>
+
+  <script>
+    const visitsLabels = [
+      "Feb 24","Apr 24","Jun 24","Aug 24","Oct 24","Dec 24",
+      "Feb 25","Apr 25","Jun 25","Aug 25","Oct 25","Dec 25","Feb 26"
+    ];
+
+    const visitSeries = {
+      hsbc: [7.73,8.01,7.31,7.74,7.63,7.07,6.45,6.55,6.20,6.78,5.89,5.17,4.83],
+      barclays:[9.17,9.86,9.13,10.27,9.08,7.93,7.52,7.84,7.25,7.83,7.49,7.20,5.62],
+      natwest:[13.37,13.33,11.53,12.83,12.79,11.58,10.77,11.40,11.92,12.76,12.45,11.68,10.15],
+      lloyds:[10.78,10.87,10.82,10.77,11.45,10.60,8.49,8.81,8.45,9.05,9.27,8.32,7.13]
+    };
+
+    const totalChannels = {
+      hsbc:[94.28,59.89,12.14,2.37,2.07,1.54,2.03,0.12,0.14],
+      barclays:[101.08,80.91,13.68,1.87,3.24,8.19,2.02,0.22,0.09],
+      natwest:[152.71,106.96,22.15,4.28,7.20,10.34,8.12,0.78,0.23],
+      lloyds:[134.98,82.34,10.08,2.84,3.34,7.81,1.36,3.58,0.10]
+    };
+
+    const device = {
+      labels:["HSBC","Barclays","NatWest","Lloyds"],
+      mobile:[47.4,47.5,60.3,50.8],
+      desktop:[52.6,52.5,39.7,49.2]
+    };
+
+    const efficiency = {
+      labels:["HSBC","Barclays","NatWest","Lloyds"],
+      paidVisitsPerPound:[0.62,2.04,2.73,1.81],
+      displayVisitsPerSpend:[11.10,11.50,12.40,12.27]
+    };
+
+    const aiReferrals = {
+      labels:["HSBC","Barclays","NatWest","Lloyds"],
+      genAI:[136.6,88.7,234.9,96.5],
+      chatgptShare:[45.0,13.0,25.2,16.8]
+    };
+
+    function activateTab(id){
+      document.querySelectorAll('.tab').forEach(t => t.classList.toggle('active', t.dataset.tab===id));
+      document.querySelectorAll('.tab-panel').forEach(p => p.classList.toggle('active', p.id===id));
+      window.scrollTo({top:0,behavior:'smooth'});
+    }
+
+    function createCharts(){
+      new Chart(document.getElementById('visitsTrend'),{
+        type:'line',
+        data:{
+          labels:visitsLabels,
+          datasets:[
+            {label:'HSBC', data:visitSeries.hsbc, borderColor:'#db0011', backgroundColor:'rgba(219,0,17,.12)', tension:.35, borderWidth:3},
+            {label:'Barclays', data:visitSeries.barclays, borderColor:'#163d8f', tension:.3, borderWidth:2},
+            {label:'NatWest', data:visitSeries.natwest, borderColor:'#6a1b9a', tension:.3, borderWidth:2},
+            {label:'Lloyds', data:visitSeries.lloyds, borderColor:'#0f9d58', tension:.3, borderWidth:2}
+          ]
+        },
+        options:{
+          responsive:true,
+          plugins:{legend:{position:'bottom'}},
+          scales:{
+            y:{title:{display:true,text:'Visits (millions)'}},
+            x:{grid:{display:false}}
+          }
+        }
+      });
+
+      new Chart(document.getElementById('channelBars'),{
+        type:'bar',
+        data:{
+          labels:["Direct","Organic Search","Referrals","Email","Display","Paid Search","Social Organic","Social Paid","Gen AI"],
+          datasets:[
+            {label:'HSBC', data:totalChannels.hsbc, backgroundColor:'#db0011'},
+            {label:'Barclays', data:totalChannels.barclays, backgroundColor:'#163d8f'},
+            {label:'NatWest', data:totalChannels.natwest, backgroundColor:'#6a1b9a'},
+            {label:'Lloyds', data:totalChannels.lloyds, backgroundColor:'#0f9d58'}
+          ]
+        },
+        options:{
+          responsive:true,
+          plugins:{legend:{position:'bottom'}},
+          scales:{
+            y:{title:{display:true,text:'Traffic totals (millions, multi-month)'}}
+          }
+        }
+      });
+
+      new Chart(document.getElementById('efficiencyChart'),{
+        type:'bar',
+        data:{
+          labels:efficiency.labels,
+          datasets:[
+            {label:'Paid search visits / £', data:efficiency.paidVisitsPerPound, backgroundColor:'#db0011'}
+          ]
+        },
+        options:{
+          responsive:true,
+          plugins:{legend:{display:false}},
+          scales:{
+            y:{beginAtZero:true,title:{display:true,text:'Visits per £'}},
+            x:{grid:{display:false}}
+          }
+        }
+      });
+
+      new Chart(document.getElementById('displayChart'),{
+        type:'bar',
+        data:{
+          labels:efficiency.labels,
+          datasets:[
+            {label:'Display visits per spend unit', data:efficiency.displayVisitsPerSpend, backgroundColor:['#db0011','#163d8f','#6a1b9a','#0f9d58']}
+          ]
+        },
+        options:{
+          responsive:true,
+          plugins:{legend:{display:false}},
+          scales:{y:{beginAtZero:true,title:{display:true,text:'Visits per spend unit'}}}
+        }
+      });
+
+      new Chart(document.getElementById('deviceChart'),{
+        type:'bar',
+        data:{
+          labels:device.labels,
+          datasets:[
+            {label:'Desktop %', data:device.desktop, backgroundColor:'#3b3b3b'},
+            {label:'Mobile %', data:device.mobile, backgroundColor:'#db0011'}
+          ]
+        },
+        options:{
+          responsive:true,
+          plugins:{legend:{position:'bottom'}},
+          scales:{
+            x:{stacked:true},
+            y:{stacked:true, max:100, title:{display:true,text:'Share of visits (%)'}}
+          }
+        }
+      });
+
+      new Chart(document.getElementById('aiReferralChart'),{
+        type:'bar',
+        data:{
+          labels:aiReferrals.labels,
+          datasets:[
+            {label:'GenAI traffic (k)', data:aiReferrals.genAI, backgroundColor:'#163d8f'},
+            {label:'ChatGPT peer share (%)', data:aiReferrals.chatgptShare, backgroundColor:'#db0011'}
+          ]
+        },
+        options:{
+          responsive:true,
+          plugins:{legend:{position:'bottom'}},
+          scales:{
+            y:{beginAtZero:true,title:{display:true,text:'Relative strength'}}
+          }
+        }
+      });
+    }
+
+    function updateSim(){
+      const v1 = +document.getElementById('s1').value;
+      const v2 = +document.getElementById('s2').value;
+      const v3 = +document.getElementById('s3').value;
+      const v4 = +document.getElementById('s4').value;
+
+      document.getElementById('s1v').textContent = `£${v1}k`;
+      document.getElementById('s2v').textContent = `£${v2}k`;
+      document.getElementById('s3v').textContent = `£${v3}k`;
+      document.getElementById('s4v').textContent = `£${v4}k`;
+
+      const budget = v1+v2+v3+v4;
+
+      // Proxy assumptions
+      const visits =
+        (v1*1000*1.4) +   // mortgage search
+        (v2*1000*1.0) +   // switcher search
+        (v3*1000*11.3) +  // contextual display
+        (v4*1000*2.2);    // AI/content direct+assisted
+
+      const quality =
+        (v1*1000*1.4*1.30) +
+        (v2*1000*1.0*1.12) +
+        (v3*1000*11.3*0.88) +
+        (v4*1000*2.2*1.42);
+
+      document.getElementById('budgetOut').textContent = `£${budget}k`;
+      document.getElementById('visitOut').textContent = `${Math.round(visits/1000)}k`;
+      document.getElementById('qualityOut').textContent = `${Math.round(quality/1000)}k`;
+
+      let msg = "";
+      if(v1 >= v3 && v1 >= v2){
+        msg = "Mortgage demand is getting the largest push. That is the most direct way to close the category’s biggest commercial-intent gap.";
+      } else if(v3 > v1 && v3 >= v2){
+        msg = "Display is leading the plan. Make sure this only scales in tightly curated home-finance, money-guidance and affluent travel contexts.";
+      } else if(v2 > v1 && v2 > v3){
+        msg = "Switcher intent is leading. This is a smart move only if the landing journey is mobile-fast and has a strong value proposition.";
+      } else {
+        msg = "The current mix is balanced. It should work best when HSBC treats AI/content as assisted acquisition and not just an SEO side project.";
+      }
+      document.getElementById('simNarrative').textContent = msg;
+    }
+
+    createCharts();
+    updateSim();
+  </script>
+</body>
+</html>

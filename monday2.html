@@ -1,0 +1,913 @@
+<html lang="en"><head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>monday.com Growth Intelligence Report</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <style>
+    :root{
+      --primary:#333333;
+      --secondary:#ffffff;
+      --muted:#6b7280;
+      --bg:#f5f6f8;
+      --card:#ffffff;
+      --border:#e5e7eb;
+      --monday:#333333;
+      --smartsheet:#61d161;
+      --asana:#2e3c54;
+      --wrike:#8a6c28;
+      --clickup:#ff2fba;
+      --good:#10b981;
+      --warn:#f59e0b;
+      --bad:#ef4444;
+      --info:#3b82f6;
+    }
+    html { scroll-behavior:smooth; }
+    body{
+      margin:0;
+      font-family: Inter, ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, sans-serif;
+      background:var(--bg);
+      color:#111827;
+    }
+    .sidebar{
+      position:fixed;
+      top:0; left:0; bottom:0;
+      width:240px;
+      background:linear-gradient(180deg,#222 0%, var(--primary) 100%);
+      color:white;
+      overflow-y:auto;
+      z-index:50;
+      border-right:1px solid rgba(255,255,255,.08);
+    }
+    .main{
+      margin-left:240px;
+      min-height:100vh;
+    }
+    .card{
+      background:var(--card);
+      border:1px solid var(--border);
+      border-radius:20px;
+      box-shadow:0 10px 25px rgba(0,0,0,.05);
+    }
+    .panel-grid{ align-items:start; }
+    .chart-wrap{
+      position:relative;
+      height:320px;
+      max-height:320px;
+      overflow:hidden;
+      align-self:start;
+      min-height:0;
+    }
+    .chart-wrap.sm{ height:240px; max-height:240px; }
+    .chart-wrap.lg{ height:400px; max-height:400px; }
+    .metric{
+      border:1px solid var(--border);
+      border-radius:18px;
+      padding:16px;
+      background:linear-gradient(180deg,#fff 0%, #fafafa 100%);
+    }
+    .pill{
+      display:inline-flex;
+      align-items:center;
+      gap:.35rem;
+      border-radius:9999px;
+      padding:.3rem .7rem;
+      font-size:.75rem;
+      font-weight:700;
+    }
+    .pill.good{ background:rgba(16,185,129,.12); color:#047857; }
+    .pill.warn{ background:rgba(245,158,11,.12); color:#b45309; }
+    .pill.bad{ background:rgba(239,68,68,.12); color:#b91c1c; }
+    .pill.info{ background:rgba(59,130,246,.12); color:#1d4ed8; }
+    .nav-link{
+      display:block;
+      color:rgba(255,255,255,.82);
+      text-decoration:none;
+      padding:.65rem .9rem;
+      border-radius:12px;
+      font-size:.92rem;
+    }
+    .nav-link:hover{ background:rgba(255,255,255,.08); color:#fff; }
+    .section-title{
+      font-size:1.65rem;
+      font-weight:800;
+      letter-spacing:-.03em;
+    }
+    .insight{
+      border-left:4px solid #111827;
+      background:#fafafa;
+      border-radius:0 16px 16px 0;
+      padding:14px 16px;
+    }
+    .scorebar{
+      height:10px; border-radius:999px; background:#e5e7eb; overflow:hidden;
+    }
+    .scorefill{ height:100%; border-radius:999px; }
+    .sticky-top{ position:sticky; top:0; z-index:20; backdrop-filter: blur(8px); }
+    .mini{
+      font-size:.78rem; color:#6b7280;
+    }
+    .table-wrap{ overflow:auto; }
+    .roi-output{
+      background:linear-gradient(135deg,#111827 0%, #374151 100%);
+      color:white;
+    }
+    .ad-card img{ object-fit:cover; border-radius:14px; border:1px solid var(--border); background:#f9fafb; }
+  </style>
+<style>*, ::before, ::after{--tw-border-spacing-x:0;--tw-border-spacing-y:0;--tw-translate-x:0;--tw-translate-y:0;--tw-rotate:0;--tw-skew-x:0;--tw-skew-y:0;--tw-scale-x:1;--tw-scale-y:1;--tw-pan-x: ;--tw-pan-y: ;--tw-pinch-zoom: ;--tw-scroll-snap-strictness:proximity;--tw-gradient-from-position: ;--tw-gradient-via-position: ;--tw-gradient-to-position: ;--tw-ordinal: ;--tw-slashed-zero: ;--tw-numeric-figure: ;--tw-numeric-spacing: ;--tw-numeric-fraction: ;--tw-ring-inset: ;--tw-ring-offset-width:0px;--tw-ring-offset-color:#fff;--tw-ring-color:rgb(59 130 246 / 0.5);--tw-ring-offset-shadow:0 0 #0000;--tw-ring-shadow:0 0 #0000;--tw-shadow:0 0 #0000;--tw-shadow-colored:0 0 #0000;--tw-blur: ;--tw-brightness: ;--tw-contrast: ;--tw-grayscale: ;--tw-hue-rotate: ;--tw-invert: ;--tw-saturate: ;--tw-sepia: ;--tw-drop-shadow: ;--tw-backdrop-blur: ;--tw-backdrop-brightness: ;--tw-backdrop-contrast: ;--tw-backdrop-grayscale: ;--tw-backdrop-hue-rotate: ;--tw-backdrop-invert: ;--tw-backdrop-opacity: ;--tw-backdrop-saturate: ;--tw-backdrop-sepia: ;--tw-contain-size: ;--tw-contain-layout: ;--tw-contain-paint: ;--tw-contain-style: }::backdrop{--tw-border-spacing-x:0;--tw-border-spacing-y:0;--tw-translate-x:0;--tw-translate-y:0;--tw-rotate:0;--tw-skew-x:0;--tw-skew-y:0;--tw-scale-x:1;--tw-scale-y:1;--tw-pan-x: ;--tw-pan-y: ;--tw-pinch-zoom: ;--tw-scroll-snap-strictness:proximity;--tw-gradient-from-position: ;--tw-gradient-via-position: ;--tw-gradient-to-position: ;--tw-ordinal: ;--tw-slashed-zero: ;--tw-numeric-figure: ;--tw-numeric-spacing: ;--tw-numeric-fraction: ;--tw-ring-inset: ;--tw-ring-offset-width:0px;--tw-ring-offset-color:#fff;--tw-ring-color:rgb(59 130 246 / 0.5);--tw-ring-offset-shadow:0 0 #0000;--tw-ring-shadow:0 0 #0000;--tw-shadow:0 0 #0000;--tw-shadow-colored:0 0 #0000;--tw-blur: ;--tw-brightness: ;--tw-contrast: ;--tw-grayscale: ;--tw-hue-rotate: ;--tw-invert: ;--tw-saturate: ;--tw-sepia: ;--tw-drop-shadow: ;--tw-backdrop-blur: ;--tw-backdrop-brightness: ;--tw-backdrop-contrast: ;--tw-backdrop-grayscale: ;--tw-backdrop-hue-rotate: ;--tw-backdrop-invert: ;--tw-backdrop-opacity: ;--tw-backdrop-saturate: ;--tw-backdrop-sepia: ;--tw-contain-size: ;--tw-contain-layout: ;--tw-contain-paint: ;--tw-contain-style: }/* ! tailwindcss v3.4.17 | MIT License | https://tailwindcss.com */*,::after,::before{box-sizing:border-box;border-width:0;border-style:solid;border-color:#e5e7eb}::after,::before{--tw-content:''}:host,html{line-height:1.5;-webkit-text-size-adjust:100%;-moz-tab-size:4;tab-size:4;font-family:ui-sans-serif, system-ui, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";font-feature-settings:normal;font-variation-settings:normal;-webkit-tap-highlight-color:transparent}body{margin:0;line-height:inherit}hr{height:0;color:inherit;border-top-width:1px}abbr:where([title]){-webkit-text-decoration:underline dotted;text-decoration:underline dotted}h1,h2,h3,h4,h5,h6{font-size:inherit;font-weight:inherit}a{color:inherit;text-decoration:inherit}b,strong{font-weight:bolder}code,kbd,pre,samp{font-family:ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;font-feature-settings:normal;font-variation-settings:normal;font-size:1em}small{font-size:80%}sub,sup{font-size:75%;line-height:0;position:relative;vertical-align:baseline}sub{bottom:-.25em}sup{top:-.5em}table{text-indent:0;border-color:inherit;border-collapse:collapse}button,input,optgroup,select,textarea{font-family:inherit;font-feature-settings:inherit;font-variation-settings:inherit;font-size:100%;font-weight:inherit;line-height:inherit;letter-spacing:inherit;color:inherit;margin:0;padding:0}button,select{text-transform:none}button,input:where([type=button]),input:where([type=reset]),input:where([type=submit]){-webkit-appearance:button;background-color:transparent;background-image:none}:-moz-focusring{outline:auto}:-moz-ui-invalid{box-shadow:none}progress{vertical-align:baseline}::-webkit-inner-spin-button,::-webkit-outer-spin-button{height:auto}[type=search]{-webkit-appearance:textfield;outline-offset:-2px}::-webkit-search-decoration{-webkit-appearance:none}::-webkit-file-upload-button{-webkit-appearance:button;font:inherit}summary{display:list-item}blockquote,dd,dl,figure,h1,h2,h3,h4,h5,h6,hr,p,pre{margin:0}fieldset{margin:0;padding:0}legend{padding:0}menu,ol,ul{list-style:none;margin:0;padding:0}dialog{padding:0}textarea{resize:vertical}input::placeholder,textarea::placeholder{opacity:1;color:#9ca3af}[role=button],button{cursor:pointer}:disabled{cursor:default}audio,canvas,embed,iframe,img,object,svg,video{display:block;vertical-align:middle}img,video{max-width:100%;height:auto}[hidden]:where(:not([hidden=until-found])){display:none}.mb-1{margin-bottom:0.25rem}.mb-2{margin-bottom:0.5rem}.mb-3{margin-bottom:0.75rem}.mb-4{margin-bottom:1rem}.mb-6{margin-bottom:1.5rem}.mt-1{margin-top:0.25rem}.mt-2{margin-top:0.5rem}.mt-3{margin-top:0.75rem}.mt-4{margin-top:1rem}.mt-6{margin-top:1.5rem}.mt-8{margin-top:2rem}.block{display:block}.flex{display:flex}.grid{display:grid}.hidden{display:none}.h-10{height:2.5rem}.h-52{height:13rem}.w-10{width:2.5rem}.w-full{width:100%}.min-w-\[320px\]{min-width:320px}.max-w-4xl{max-width:56rem}.list-disc{list-style-type:disc}.grid-cols-2{grid-template-columns:repeat(2, minmax(0, 1fr))}.grid-cols-3{grid-template-columns:repeat(3, minmax(0, 1fr))}.flex-col{flex-direction:column}.content-start{align-content:flex-start}.items-end{align-items:flex-end}.items-center{align-items:center}.justify-center{justify-content:center}.justify-between{justify-content:space-between}.gap-3{gap:0.75rem}.gap-4{gap:1rem}.gap-6{gap:1.5rem}.space-y-1 > :not([hidden]) ~ :not([hidden]){--tw-space-y-reverse:0;margin-top:calc(0.25rem * calc(1 - var(--tw-space-y-reverse)));margin-bottom:calc(0.25rem * var(--tw-space-y-reverse))}.space-y-2 > :not([hidden]) ~ :not([hidden]){--tw-space-y-reverse:0;margin-top:calc(0.5rem * calc(1 - var(--tw-space-y-reverse)));margin-bottom:calc(0.5rem * var(--tw-space-y-reverse))}.space-y-3 > :not([hidden]) ~ :not([hidden]){--tw-space-y-reverse:0;margin-top:calc(0.75rem * calc(1 - var(--tw-space-y-reverse)));margin-bottom:calc(0.75rem * var(--tw-space-y-reverse))}.space-y-4 > :not([hidden]) ~ :not([hidden]){--tw-space-y-reverse:0;margin-top:calc(1rem * calc(1 - var(--tw-space-y-reverse)));margin-bottom:calc(1rem * var(--tw-space-y-reverse))}.space-y-6 > :not([hidden]) ~ :not([hidden]){--tw-space-y-reverse:0;margin-top:calc(1.5rem * calc(1 - var(--tw-space-y-reverse)));margin-bottom:calc(1.5rem * var(--tw-space-y-reverse))}.space-y-8 > :not([hidden]) ~ :not([hidden]){--tw-space-y-reverse:0;margin-top:calc(2rem * calc(1 - var(--tw-space-y-reverse)));margin-bottom:calc(2rem * var(--tw-space-y-reverse))}.rounded-2xl{border-radius:1rem}.rounded-3xl{border-radius:1.5rem}.rounded-xl{border-radius:0.75rem}.border{border-width:1px}.border-b{border-bottom-width:1px}.border-gray-100{--tw-border-opacity:1;border-color:rgb(243 244 246 / var(--tw-border-opacity, 1))}.border-gray-200{--tw-border-opacity:1;border-color:rgb(229 231 235 / var(--tw-border-opacity, 1))}.border-white\/10{border-color:rgb(255 255 255 / 0.1)}.bg-white{--tw-bg-opacity:1;background-color:rgb(255 255 255 / var(--tw-bg-opacity, 1))}.bg-white\/10{background-color:rgb(255 255 255 / 0.1)}.bg-white\/5{background-color:rgb(255 255 255 / 0.05)}.bg-white\/80{background-color:rgb(255 255 255 / 0.8)}.object-contain{object-fit:contain}.p-1{padding:0.25rem}.p-3{padding:0.75rem}.p-4{padding:1rem}.p-5{padding:1.25rem}.p-6{padding:1.5rem}.p-8{padding:2rem}.px-8{padding-left:2rem;padding-right:2rem}.py-5{padding-top:1.25rem;padding-bottom:1.25rem}.pl-5{padding-left:1.25rem}.text-center{text-align:center}.text-2xl{font-size:1.5rem;line-height:2rem}.text-3xl{font-size:1.875rem;line-height:2.25rem}.text-lg{font-size:1.125rem;line-height:1.75rem}.text-sm{font-size:0.875rem;line-height:1.25rem}.text-xl{font-size:1.25rem;line-height:1.75rem}.text-xs{font-size:0.75rem;line-height:1rem}.font-black{font-weight:900}.font-bold{font-weight:700}.font-extrabold{font-weight:800}.font-semibold{font-weight:600}.uppercase{text-transform:uppercase}.leading-6{line-height:1.5rem}.leading-none{line-height:1}.tracking-tight{letter-spacing:-0.025em}.tracking-widest{letter-spacing:0.1em}.text-\[var\(--primary\)\]{color:var(--primary)}.text-gray-500{--tw-text-opacity:1;color:rgb(107 114 128 / var(--tw-text-opacity, 1))}.text-gray-600{--tw-text-opacity:1;color:rgb(75 85 99 / var(--tw-text-opacity, 1))}.text-gray-700{--tw-text-opacity:1;color:rgb(55 65 81 / var(--tw-text-opacity, 1))}.text-white\/60{color:rgb(255 255 255 / 0.6)}.text-white\/70{color:rgb(255 255 255 / 0.7)}.text-white\/80{color:rgb(255 255 255 / 0.8)}.text-white\/85{color:rgb(255 255 255 / 0.85)}@media (min-width: 768px){.md\:grid-cols-2{grid-template-columns:repeat(2, minmax(0, 1fr))}.md\:grid-cols-3{grid-template-columns:repeat(3, minmax(0, 1fr))}.md\:grid-cols-4{grid-template-columns:repeat(4, minmax(0, 1fr))}.md\:flex-row{flex-direction:row}.md\:items-center{align-items:center}.md\:justify-between{justify-content:space-between}}@media (min-width: 1024px){.lg\:grid-cols-2{grid-template-columns:repeat(2, minmax(0, 1fr))}.lg\:grid-cols-3{grid-template-columns:repeat(3, minmax(0, 1fr))}.lg\:flex-row{flex-direction:row}.lg\:items-end{align-items:flex-end}.lg\:justify-between{justify-content:space-between}}@media (min-width: 1280px){.xl\:grid-cols-4{grid-template-columns:repeat(4, minmax(0, 1fr))}}</style></head>
+<body cz-shortcut-listen="true">
+  <aside class="sidebar p-4">
+    <div class="flex items-center gap-3 mb-6">
+      <img src="https://dapulse-res.cloudinary.com/image/upload/Generator_featured%20images/Logos/campaigns.svg" alt="monday.com logo" class="w-10 h-10 bg-white rounded-xl p-1 object-contain" onerror="this.style.display='none';document.getElementById('fallbackLogo').classList.remove('hidden')">
+      <div id="fallbackLogo" class="hidden w-10 h-10 rounded-xl bg-white text-[var(--primary)] font-black flex items-center justify-center">m</div>
+      <div>
+        <div class="font-extrabold text-lg leading-none">monday.com</div>
+        <div class="text-xs text-white/70">US Growth Intelligence</div>
+      </div>
+    </div>
+
+    <nav class="space-y-1">
+      <a href="#overview" class="nav-link">Overview</a>
+      <a href="#market" class="nav-link">Market Position</a>
+      <a href="#engagement" class="nav-link">Engagement Signals</a>
+      <a href="#channels" class="nav-link">Channel Mix</a>
+      <a href="#seo" class="nav-link">SEO &amp; Topics</a>
+      <a href="#paid-search" class="nav-link">Paid Search</a>
+      <a href="#display" class="nav-link">Display &amp; Creative</a>
+      <a href="#social" class="nav-link">Social &amp; Referrals</a>
+      <a href="#geo" class="nav-link">Geography</a>
+      <a href="#gaps" class="nav-link">Growth Gaps</a>
+      <a href="#playbook" class="nav-link">Action Plan</a>
+      <a href="#roi" class="nav-link">ROI Simulator</a>
+    </nav>
+
+    <div class="mt-8 p-4 rounded-2xl bg-white/5 border border-white/10">
+      <div class="text-xs uppercase tracking-widest text-white/60 mb-2">Quick read</div>
+      <p class="text-sm text-white/85 leading-6">
+        monday.com has elite engagement and paid-search scale, but it is under-indexed in organic non-brand topic ownership relative to the size of its spend.
+      </p>
+    </div>
+  </aside>
+
+  <main class="main">
+    <header class="sticky-top bg-white/80 border-b border-gray-200">
+      <div class="px-8 py-5 flex flex-col md:flex-row md:items-center md:justify-between gap-3">
+        <div>
+          <h1 class="text-3xl font-black tracking-tight">monday.com Competitive Intelligence Platform</h1>
+          <p class="text-gray-600">Actionable growth plan for improving marketing ROI in the US using Similarweb competitive data.</p>
+        </div>
+        <div class="flex gap-3">
+          <div class="pill info">Updated through Feb 2026</div>
+          <div class="pill good">ROI-focused</div>
+        </div>
+      </div>
+    </header>
+
+    <div class="p-8 space-y-8">
+      <section id="overview" class="space-y-6">
+        <div class="grid md:grid-cols-4 gap-4">
+          <div class="metric">
+            <div class="mini">Latest monthly visits</div>
+            <div class="text-3xl font-black mt-1">12.47M</div>
+            <div class="mt-2 pill info">#3 by traffic in set</div>
+          </div>
+          <div class="metric">
+            <div class="mini">Latest unique users</div>
+            <div class="text-3xl font-black mt-1">2.14M</div>
+            <div class="mt-2 pill good">Up vs early 2024 base</div>
+          </div>
+          <div class="metric">
+            <div class="mini">Visit quality</div>
+            <div class="text-3xl font-black mt-1">9m 29s</div>
+            <div class="mt-2 pill good">Strong session depth</div>
+          </div>
+          <div class="metric">
+            <div class="mini">Bounce rate</div>
+            <div class="text-3xl font-black mt-1">32.8%</div>
+            <div class="mt-2 pill good">Better than Smartsheet</div>
+          </div>
+        </div>
+
+        <div class="card p-6">
+          <div class="flex flex-col lg:flex-row lg:items-end lg:justify-between gap-4 mb-4">
+            <div>
+              <h2 class="section-title">Executive summary</h2>
+              <p class="text-gray-600 max-w-4xl">monday.com is operating from a position of brand strength and high-engagement product interest. The brand wins in paid search scale versus Smartsheet and Asana, competes aggressively in competitor conquesting, and maintains premium on-site engagement. The biggest ROI unlock is not “more spend everywhere.” It is reallocating spend from broad comparison-heavy paid traffic into topic-led organic authority, AI-era SERP capture, and differentiated creative that translates monday.com from a generic “work platform” into specific business outcomes by role and use case.</p>
+            </div>
+            <div class="grid grid-cols-3 gap-3 min-w-[320px]">
+              <div class="text-center metric p-3">
+                <div class="mini">Traffic trend</div>
+                <div class="font-black text-xl">Stable+</div>
+              </div>
+              <div class="text-center metric p-3">
+                <div class="mini">Paid intensity</div>
+                <div class="font-black text-xl">Very High</div>
+              </div>
+              <div class="text-center metric p-3">
+                <div class="mini">SEO upside</div>
+                <div class="font-black text-xl">Massive</div>
+              </div>
+            </div>
+          </div>
+
+          <div class="grid md:grid-cols-3 gap-4">
+            <div class="insight">
+              <div class="font-bold mb-1">1. monday.com has premium traffic quality.</div>
+              <div class="text-sm text-gray-700">Pages per visit (~6.4) and duration (~569s) are materially stronger than Smartsheet and competitive with Asana, despite a lower bounce rate than Smartsheet. This means conversion efficiency can improve before top-of-funnel scale does.</div>
+            </div>
+            <div class="insight">
+              <div class="font-bold mb-1">2. Paid search is doing heavy lifting.</div>
+              <div class="text-sm text-gray-700">monday.com spent about <span class="font-bold">$3.33M</span> in total PPC in Feb 2026 versus Smartsheet’s roughly <span class="font-bold">$0.21M</span>. That gap signals a scale advantage, but also exposes dependency risk.</div>
+            </div>
+            <div class="insight">
+              <div class="font-bold mb-1">3. Organic topic share is still too brand-centric.</div>
+              <div class="text-sm text-gray-700">Branded topics dominate organic clicks while comparison, templates, frameworks, and operational education are under-owned relative to spend. Competitors are capturing those journeys.</div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section id="market" class="card p-6 space-y-6">
+        <div class="flex items-end justify-between gap-4">
+          <div>
+            <h2 class="section-title">Market position vs core competitors</h2>
+            <p class="text-gray-600">Traffic trend and latest scale show monday.com in the top tier, but still behind Smartsheet in total visits and behind Asana in some depth-based organic authority signals.</p>
+          </div>
+          <div class="pill warn">Goal: grow non-brand demand, not only branded demand</div>
+        </div>
+
+        <div class="grid lg:grid-cols-2 gap-6 panel-grid">
+          <div class="card p-4 border-gray-100">
+            <div class="font-semibold mb-2">24-month total visits trend</div>
+            <div class="chart-wrap lg">
+              <canvas id="visitsChart" width="1354" height="800" style="display: block; box-sizing: border-box; height: 400px; width: 677px;"></canvas>
+            </div>
+          </div>
+          <div class="grid gap-4 content-start">
+            <div class="metric">
+              <div class="flex justify-between items-center">
+                <div>
+                  <div class="mini">Latest monthly visits ranking</div>
+                  <div class="mt-2 space-y-2 text-sm">
+                    <div class="flex justify-between"><span>1. Smartsheet</span><span class="font-bold">12.80M</span></div>
+                    <div class="flex justify-between"><span>2. monday.com</span><span class="font-bold">12.47M</span></div>
+                    <div class="flex justify-between"><span>3. Asana</span><span class="font-bold">11.96M</span></div>
+                    <div class="flex justify-between"><span>4. ClickUp</span><span class="font-bold">7.77M</span></div>
+                    <div class="flex justify-between"><span>5. Wrike</span><span class="font-bold">1.83M</span></div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="metric">
+              <div class="mini">Share of latest total pageviews among top 4</div>
+              <div class="mt-3 space-y-3">
+                <div>
+                  <div class="flex justify-between text-sm"><span>Asana</span><span>90.3M</span></div>
+                  <div class="scorebar mt-1"><div class="scorefill" style="width:100%;background:var(--asana)"></div></div>
+                </div>
+                <div>
+                  <div class="flex justify-between text-sm"><span>monday.com</span><span>80.0M</span></div>
+                  <div class="scorebar mt-1"><div class="scorefill" style="width:88.6%;background:var(--monday)"></div></div>
+                </div>
+                <div>
+                  <div class="flex justify-between text-sm"><span>Smartsheet</span><span>60.9M</span></div>
+                  <div class="scorebar mt-1"><div class="scorefill" style="width:67.4%;background:var(--smartsheet)"></div></div>
+                </div>
+                <div>
+                  <div class="flex justify-between text-sm"><span>ClickUp</span><span>59.4M</span></div>
+                  <div class="scorebar mt-1"><div class="scorefill" style="width:65.8%;background:var(--clickup)"></div></div>
+                </div>
+              </div>
+            </div>
+            <div class="insight">
+              <div class="font-bold mb-1">Strategic interpretation</div>
+              <div class="text-sm text-gray-700">monday.com is not suffering from awareness scarcity. It is suffering from <span class="font-semibold">demand mix inefficiency</span>: too much reliance on direct + paid + branded journeys relative to the amount of money already in market.</div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section id="engagement" class="card p-6 space-y-6">
+        <div>
+          <h2 class="section-title">Engagement signals: your moat is real</h2>
+          <p class="text-gray-600">The strongest argument for increasing ROI is that monday.com already attracts high-intent users who stay, browse, and return.</p>
+        </div>
+
+        <div class="grid lg:grid-cols-3 gap-4">
+          <div class="metric">
+            <div class="mini">Avg visit duration, latest</div>
+            <div class="text-2xl font-black mt-1">568.9 sec</div>
+            <div class="text-sm text-gray-600 mt-2">Above Smartsheet by ~241 sec; slightly below Asana.</div>
+          </div>
+          <div class="metric">
+            <div class="mini">Pages per visit, latest</div>
+            <div class="text-2xl font-black mt-1">6.41</div>
+            <div class="text-sm text-gray-600 mt-2">Healthy exploration. Lower than Asana/ClickUp, but with lower bounce than Smartsheet and better overall quality mix.</div>
+          </div>
+          <div class="metric">
+            <div class="mini">New vs returning</div>
+            <div class="text-2xl font-black mt-1">56% / 44%</div>
+            <div class="text-sm text-gray-600 mt-2">Balanced acquisition-retention mix, better than a pure top-funnel engine.</div>
+          </div>
+        </div>
+
+        <div class="grid lg:grid-cols-2 gap-6 panel-grid">
+          <div class="card p-4 border-gray-100">
+            <div class="font-semibold mb-2">Engagement benchmark</div>
+            <div class="chart-wrap">
+              <canvas id="engagementRadar" width="1354" height="640" style="display: block; box-sizing: border-box; height: 320px; width: 677px;"></canvas>
+            </div>
+          </div>
+          <div class="space-y-4">
+            <div class="insight">
+              <div class="font-bold mb-1">Engagement conclusion</div>
+              <div class="text-sm text-gray-700">monday.com is earning the right to spend more efficiently because traffic quality is high. This suggests the next gains come from improving landing-page-message match and reducing wasted paid conquest clicks.</div>
+            </div>
+            <div class="metric">
+              <div class="font-semibold mb-2">Actionable implication</div>
+              <ul class="list-disc pl-5 text-sm text-gray-700 space-y-2">
+                <li>Push more budget into high-intent category and role pages where visit depth already signals fit.</li>
+                <li>Use deeper content and product proof on paid landing pages to convert traffic that currently behaves like research visitors.</li>
+                <li>Retarget engaged visitors with industry- and role-specific proof rather than general “Work OS” messages.</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section id="channels" class="card p-6 space-y-6">
+        <div>
+          <h2 class="section-title">Channel mix: strong direct engine, under-leveraged diversification</h2>
+          <p class="text-gray-600">Traffic is heavily direct across the category. That is good for brand equity, but dangerous when paired with very high PPC outlay and a weak organic non-brand share.</p>
+        </div>
+
+        <div class="grid lg:grid-cols-2 gap-6 panel-grid">
+          <div class="card p-4 border-gray-100">
+            <div class="font-semibold mb-2">Traffic source share across the category (last 3 months)</div>
+            <div class="chart-wrap">
+              <canvas id="sourceShareChart" width="1354" height="640" style="display: block; box-sizing: border-box; height: 320px; width: 677px;"></canvas>
+            </div>
+          </div>
+          <div class="space-y-4">
+            <div class="metric">
+              <div class="font-semibold mb-3">What the source data says</div>
+              <ul class="list-disc pl-5 text-sm text-gray-700 space-y-2">
+                <li><span class="font-semibold">Direct dominates</span> category demand, roughly 77.5% of tracked share. monday.com already captures a large portion of this.</li>
+                <li><span class="font-semibold">Paid search share</span> is led by ClickUp and monday.com. monday.com contributes ~38.7% of paid search origin share among peers shown.</li>
+                <li><span class="font-semibold">Organic search share</span> trails Smartsheet’s leadership, suggesting room to replace expensive clicks with durable topic authority.</li>
+                <li><span class="font-semibold">Display</span> is currently more visible for ClickUp in the data, creating a creative white space for monday.com in upper-funnel visual storytelling.</li>
+              </ul>
+            </div>
+            <div class="insight">
+              <div class="font-bold mb-1">ROI move</div>
+              <div class="text-sm text-gray-700">Shift 10–15% of conquest and broad-match budget into organic topic clusters, high-intent comparison content, and paid remarketing tied to engaged sessions. This will lower blended CAC over 2–3 quarters.</div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section id="seo" class="card p-6 space-y-6">
+        <div>
+          <h2 class="section-title">SEO &amp; topic authority</h2>
+          <p class="text-gray-600">The SEO story is split: ranking distribution improved dramatically through late 2025, but organic click concentration remains brand-heavy. monday.com should convert its product breadth into topic breadth.</p>
+        </div>
+
+        <div class="grid lg:grid-cols-2 gap-6 panel-grid">
+          <div class="card p-4 border-gray-100">
+            <div class="font-semibold mb-2">Google rank distribution trend</div>
+            <div class="chart-wrap">
+              <canvas id="rankChart" width="1354" height="640" style="display: block; box-sizing: border-box; height: 320px; width: 677px;"></canvas>
+            </div>
+          </div>
+          <div class="card p-4 border-gray-100">
+            <div class="font-semibold mb-2">Top organic topic clusters</div>
+            <div class="chart-wrap">
+              <canvas id="organicTopicsChart" width="1354" height="640" style="display: block; box-sizing: border-box; height: 320px; width: 677px;"></canvas>
+            </div>
+          </div>
+        </div>
+
+        <div class="grid lg:grid-cols-3 gap-4">
+          <div class="metric">
+            <div class="font-semibold mb-2">SEO strengths</div>
+            <ul class="list-disc pl-5 text-sm text-gray-700 space-y-2">
+              <li>Brand ranking share surged into top positions.</li>
+              <li>Templates, dashboards, weekly planning, Gantt, CRM, and project management topics are rising.</li>
+              <li>SERP visibility aligns well with AI overviews, related questions, images, and video surfaces.</li>
+            </ul>
+          </div>
+          <div class="metric">
+            <div class="font-semibold mb-2">SEO weaknesses</div>
+            <ul class="list-disc pl-5 text-sm text-gray-700 space-y-2">
+              <li>Pricing and CRM topic clicks declined despite clear commercial intent.</li>
+              <li>Competitors own educational framework topics like prioritization and agile guidance more consistently.</li>
+              <li>Some fast-growing content appears off-core, creating topical dilution risk.</li>
+            </ul>
+          </div>
+          <div class="metric">
+            <div class="font-semibold mb-2">High-value SEO opportunities</div>
+            <ul class="list-disc pl-5 text-sm text-gray-700 space-y-2">
+              <li>Operational frameworks: prioritization, agile, planning systems, resource allocation.</li>
+              <li>Template ecosystems: budget, calendar, staffing, launch, sales pipeline, intake, PMO.</li>
+              <li>Comparison-led content with stronger proof: alternatives, migration, ROI, and “why switch” pages.</li>
+            </ul>
+          </div>
+        </div>
+
+        <div class="insight">
+          <div class="font-bold mb-1">Most important SEO recommendation</div>
+          <div class="text-sm text-gray-700">Build a <span class="font-semibold">topic-led growth engine</span>, not a keyword-led publishing calendar. Own clusters around planning systems, cross-functional visibility, CRM workflows, templates, prioritization frameworks, dashboards, and migration. Every topic should ladder into a product module, template, or role landing page.</div>
+        </div>
+      </section>
+
+      <section id="paid-search" class="card p-6 space-y-6">
+        <div class="flex items-end justify-between gap-4">
+          <div>
+            <h2 class="section-title">Paid search intelligence</h2>
+            <p class="text-gray-600">monday.com is one of the most aggressive paid players in the category. The opportunity is better message architecture and tighter spend discipline by intent layer.</p>
+          </div>
+          <div class="pill bad">Spend dependency risk</div>
+        </div>
+
+        <div class="grid lg:grid-cols-2 gap-6 panel-grid">
+          <div class="card p-4 border-gray-100">
+            <div class="font-semibold mb-2">PPC spend vs Smartsheet (USD, total)</div>
+            <div class="chart-wrap">
+              <canvas id="ppcChart" width="1354" height="640" style="display: block; box-sizing: border-box; height: 320px; width: 677px;"></canvas>
+            </div>
+          </div>
+          <div class="space-y-4">
+            <div class="metric">
+              <div class="font-semibold mb-2">Where monday.com is playing hardest</div>
+              <ul class="list-disc pl-5 text-sm text-gray-700 space-y-2">
+                <li>Brand and competitor terms: Asana, ClickUp, Trello, Notion.</li>
+                <li>Broad utility terms with huge volume: Google Sheets, Google Calendar, spreadsheets-related intent.</li>
+                <li>CRM conquesting: HubSpot, Salesforce, Pipedrive, Zoho, HighLevel.</li>
+              </ul>
+            </div>
+            <div class="metric">
+              <div class="font-semibold mb-2">Main paid-search inefficiency</div>
+              <div class="text-sm text-gray-700">Ads frequently repeat a generic claim: <span class="font-semibold">“monday.com is so much better”</span> or broad “AI project manager” language. That is serviceable for comparison intent, but weak for high-CPC categories where buyers need differentiated proof, role fit, migration ease, and time-to-value.</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="grid lg:grid-cols-2 gap-6">
+          <div class="metric">
+            <div class="font-semibold mb-3">Paid search messaging gaps</div>
+            <div class="space-y-3 text-sm text-gray-700">
+              <div><span class="font-semibold">Gap 1:</span> Too much comparative bravado, not enough quantified business value.</div>
+              <div><span class="font-semibold">Gap 2:</span> Broad “AI” messaging is not tied to a role-specific pain point.</div>
+              <div><span class="font-semibold">Gap 3:</span> Spreadsheet-intent ads often promise project management, but should bridge from familiarity to systemization.</div>
+              <div><span class="font-semibold">Gap 4:</span> CRM conquest pages need stronger migration and admin-proof messaging versus HubSpot/Salesforce/Pipedrive.</div>
+            </div>
+          </div>
+          <div class="metric">
+            <div class="font-semibold mb-3">Recommended paid-search restructure</div>
+            <ul class="list-disc pl-5 text-sm text-gray-700 space-y-2">
+              <li><span class="font-semibold">Bucket A: Brand defense</span> — protect branded + high-conversion sitelinks, but cap excess overlap with organic.</li>
+              <li><span class="font-semibold">Bucket B: Competitor switch intent</span> — use migration, admin effort, adoption speed, and reporting proof.</li>
+              <li><span class="font-semibold">Bucket C: Category demand creation</span> — focus on use case pages, not generic homepage traffic.</li>
+              <li><span class="font-semibold">Bucket D: Spreadsheet escape velocity</span> — message the transition from manual sheets to live collaborative workflows.</li>
+            </ul>
+          </div>
+        </div>
+
+        <div class="card p-5">
+          <div class="font-semibold text-lg mb-3">Suggested new search ad copy</div>
+          <div class="grid md:grid-cols-2 xl:grid-cols-4 gap-4">
+            <div class="metric">
+              <div class="font-bold">For spreadsheet users</div>
+              <div class="mt-2 text-sm text-gray-700"><span class="font-semibold">Headline:</span> From Spreadsheets to Real Workflows</div>
+              <div class="mt-1 text-sm text-gray-700"><span class="font-semibold">Description:</span> Keep the flexibility your team loves and add owners, automations, dashboards, and real-time progress. Start free in minutes.</div>
+            </div>
+            <div class="metric">
+              <div class="font-bold">For CRM switchers</div>
+              <div class="mt-2 text-sm text-gray-700"><span class="font-semibold">Headline:</span> CRM Your Team Can Actually Adopt</div>
+              <div class="mt-1 text-sm text-gray-700"><span class="font-semibold">Description:</span> Replace rigid pipelines with customizable sales workflows, automations, and visibility that sales teams use every day.</div>
+            </div>
+            <div class="metric">
+              <div class="font-bold">For PM category</div>
+              <div class="mt-2 text-sm text-gray-700"><span class="font-semibold">Headline:</span> See Every Project. Miss Fewer Deadlines.</div>
+              <div class="mt-1 text-sm text-gray-700"><span class="font-semibold">Description:</span> Plan work, manage dependencies, automate updates, and keep stakeholders aligned with live dashboards.</div>
+            </div>
+            <div class="metric">
+              <div class="font-bold">For competitor conquest</div>
+              <div class="mt-2 text-sm text-gray-700"><span class="font-semibold">Headline:</span> Easier to Roll Out Than You Think</div>
+              <div class="mt-1 text-sm text-gray-700"><span class="font-semibold">Description:</span> Switch from your current tool with templates, imports, automations, and reporting your teams can learn fast.</div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section id="display" class="card p-6 space-y-6">
+        <div>
+          <h2 class="section-title">Display &amp; creative intelligence</h2>
+          <p class="text-gray-600">monday.com’s display library leans heavily into “AI work platform” and “love to use” themes. That creates broad memorability, but not enough outcome clarity by persona.</p>
+        </div>
+
+        <div class="grid lg:grid-cols-2 gap-6 panel-grid">
+          <div class="metric">
+            <div class="font-semibold mb-3">Observed creative themes</div>
+            <ul class="list-disc pl-5 text-sm text-gray-700 space-y-2">
+              <li>“The AI work platform”</li>
+              <li>“Outpace everyone”</li>
+              <li>“The work platform your teams will love to use”</li>
+              <li>“Do it faster with monday.com”</li>
+            </ul>
+            <div class="mt-4 text-sm text-gray-700">These are strong top-funnel emotional frames, but the messaging is still broad. Competitor white space is in role proof: PMO, RevOps, sales ops, marketing ops, client services, and executive visibility.</div>
+          </div>
+          <div class="metric">
+            <div class="font-semibold mb-3">Creative recommendations</div>
+            <ul class="list-disc pl-5 text-sm text-gray-700 space-y-2">
+              <li><span class="font-semibold">Outcome-first creatives:</span> “Cut status meetings,” “Launch with fewer delays,” “See pipeline risk earlier.”</li>
+              <li><span class="font-semibold">Proof-driven creatives:</span> dashboards, automations, workload, and CRM screenshots with concrete claims.</li>
+              <li><span class="font-semibold">Persona variations:</span> one visual system, multiple overlays for PM, Sales, Marketing, IT, and Operations.</li>
+              <li><span class="font-semibold">Migration creatives:</span> “Outgrow spreadsheets,” “Move beyond rigid CRM,” “Replace scattered tools.”</li>
+            </ul>
+          </div>
+        </div>
+
+        <div class="grid md:grid-cols-3 gap-4">
+          <div class="ad-card metric">
+            <div class="font-bold mb-2">Suggested banner direction 1</div>
+            <img src="https://sw-df-ads-capture-creatives-production.s3.us-east-1.amazonaws.com/atc-thumbnails/CR17638447154341085185/400x667?X-Amz-Expires=86400&amp;response-content-disposition=attachment%3B%20filename%3D%22creative_screenshot.png%22&amp;X-Amz-Algorithm=AWS4-HMAC-SHA256" alt="Creative reference" class="w-full h-52">
+            <div class="mt-3 text-sm text-gray-700"><span class="font-semibold">New copy:</span> “Stop chasing updates. See every project live.”</div>
+            <div class="text-xs text-gray-500 mt-1">Visual: executive dashboard + status automation + due date risk.</div>
+          </div>
+          <div class="ad-card metric">
+            <div class="font-bold mb-2">Suggested banner direction 2</div>
+            <img src="https://sw-df-ads-capture-creatives-production.s3.us-east-1.amazonaws.com/atc-thumbnails/CR07196212902674563073/400x667?X-Amz-Expires=86400&amp;response-content-disposition=attachment%3B%20filename%3D%22creative_screenshot.png%22&amp;X-Amz-Algorithm=AWS4-HMAC-SHA256" alt="Creative reference" class="w-full h-52">
+            <div class="mt-3 text-sm text-gray-700"><span class="font-semibold">New copy:</span> “From spreadsheets to scalable workflows.”</div>
+            <div class="text-xs text-gray-500 mt-1">Visual: left = sheet, right = board, automations, dashboard.</div>
+          </div>
+          <div class="ad-card metric">
+            <div class="font-bold mb-2">Suggested banner direction 3</div>
+            <img src="https://sw-df-ads-capture-creatives-production.s3.us-east-1.amazonaws.com/creatives/execution_key%3Dads-capture-client-side/images/15127181678410710328/600x130?X-Amz-Expires=86400&amp;response-content-disposition=attachment%3B%20filename%3D%22creative_screenshot.gif%22&amp;X-Amz-Algorithm=AWS4-HMAC-SHA256" alt="Creative reference" class="w-full h-52">
+            <div class="mt-3 text-sm text-gray-700"><span class="font-semibold">New copy:</span> “Your CRM, your workflow, your rules.”</div>
+            <div class="text-xs text-gray-500 mt-1">Visual: sales pipeline + automation + revenue dashboard.</div>
+          </div>
+        </div>
+      </section>
+
+      <section id="social" class="card p-6 space-y-6">
+        <div>
+          <h2 class="section-title">Social &amp; referral momentum</h2>
+          <p class="text-gray-600">monday.com is relatively strong on LinkedIn, Facebook referral variants, X, and YouTube. Reddit is growing fast across the category and is disproportionately dominated by ClickUp.</p>
+        </div>
+
+        <div class="grid lg:grid-cols-2 gap-6 panel-grid">
+          <div class="card p-4 border-gray-100">
+            <div class="font-semibold mb-2">Top social referral platform share across peers</div>
+            <div class="chart-wrap">
+              <canvas id="socialChart" width="1354" height="640" style="display: block; box-sizing: border-box; height: 320px; width: 677px;"></canvas>
+            </div>
+          </div>
+          <div class="space-y-4">
+            <div class="metric">
+              <div class="font-semibold mb-2">What monday.com should do next</div>
+              <ul class="list-disc pl-5 text-sm text-gray-700 space-y-2">
+                <li><span class="font-semibold">LinkedIn:</span> double down on role-based thought leadership and customer proof for operations and leadership audiences.</li>
+                <li><span class="font-semibold">Reddit:</span> create “honest migration” and workflow education content, not polished brand speak.</li>
+                <li><span class="font-semibold">YouTube:</span> build short walkthrough series around templates, dashboards, CRM setup, and spreadsheet replacement.</li>
+                <li><span class="font-semibold">ChatGPT referrals:</span> structure content for AI citation with concise definitions, comparisons, checklists, and framework pages.</li>
+              </ul>
+            </div>
+            <div class="insight">
+              <div class="font-bold mb-1">Referral wildcard</div>
+              <div class="text-sm text-gray-700">ChatGPT is already a meaningful referral domain across the category. monday.com’s share has weakened by Feb 2026 versus peers. This is a major signal to optimize for AI discovery, not just Google.</div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section id="geo" class="card p-6 space-y-6">
+        <div>
+          <h2 class="section-title">Geographic signal with US lens</h2>
+          <p class="text-gray-600">While this report is US-focused, the geography data shows where monday.com has natural product-market fit and where learnings can be imported into US campaigns.</p>
+        </div>
+        <div class="grid lg:grid-cols-3 gap-4">
+          <div class="metric">
+            <div class="font-semibold mb-2">US position</div>
+            <div class="text-sm text-gray-700">In the US share mix shown, monday.com competes closely with Smartsheet and Asana on visits, but Smartsheet over-indexes on users. This suggests Smartsheet attracts a broader, possibly more enterprise-embedded user base.</div>
+          </div>
+          <div class="metric">
+            <div class="font-semibold mb-2">Geos where monday.com overperforms</div>
+            <div class="text-sm text-gray-700">Australia, UK, France, Brazil show especially strong relative footprint. These markets can be used as messaging laboratories for role-led adoption and template-led acquisition.</div>
+          </div>
+          <div class="metric">
+            <div class="font-semibold mb-2">US implication</div>
+            <div class="text-sm text-gray-700">Bring the best-performing international proof into US creative: simplicity, adaptability, and team love are working. Now attach those strengths to measurable business outcomes.</div>
+          </div>
+        </div>
+      </section>
+
+      <section id="gaps" class="card p-6 space-y-6">
+        <div>
+          <h2 class="section-title">Biggest growth gaps and ROI opportunities</h2>
+          <p class="text-gray-600">These are the highest-confidence areas where monday.com can improve blended marketing ROI.</p>
+        </div>
+
+        <div class="grid lg:grid-cols-2 gap-4">
+          <div class="metric">
+            <div class="font-bold mb-2">Gap A — Too much money on broad paid utility intent</div>
+            <div class="text-sm text-gray-700">Heavy clicks around spreadsheet/calendar utility can scale traffic, but often without enough commercial specificity. Keep the volume, but route it to tighter “why switch” narratives and stronger lead capture offers.</div>
+          </div>
+          <div class="metric">
+            <div class="font-bold mb-2">Gap B — Organic non-brand education is underbuilt</div>
+            <div class="text-sm text-gray-700">Competitors win on frameworks, methodology, and practical templates. monday.com should own the operating system behind how teams plan, prioritize, and execute.</div>
+          </div>
+          <div class="metric">
+            <div class="font-bold mb-2">Gap C — Comparison pages are overused as a generic paid weapon</div>
+            <div class="text-sm text-gray-700">Comparison landing pages need more role-specific switch arguments, migration plans, product proof, and pricing clarity. General superiority claims are insufficient.</div>
+          </div>
+          <div class="metric">
+            <div class="font-bold mb-2">Gap D — AI messaging is broad, not operational</div>
+            <div class="text-sm text-gray-700">“AI platform” is memorable, but buyers need specifics: summarize work, surface blockers, recommend next steps, generate dashboards, automate status, score leads, and flag risk.</div>
+          </div>
+        </div>
+      </section>
+
+      <section id="playbook" class="card p-6 space-y-6">
+        <div>
+          <h2 class="section-title">90-day playbook</h2>
+          <p class="text-gray-600">A practical roadmap to improve efficiency without sacrificing growth.</p>
+        </div>
+
+        <div class="grid lg:grid-cols-3 gap-4">
+          <div class="metric">
+            <div class="font-bold mb-2">Days 1–30</div>
+            <ul class="list-disc pl-5 text-sm text-gray-700 space-y-2">
+              <li>Audit top paid landing pages by intent and conversion depth.</li>
+              <li>Reduce spend on lowest-converting broad spreadsheet terms by 10–15%.</li>
+              <li>Rewrite competitor ad sets around migration, adoption, and reporting proof.</li>
+              <li>Launch AI-answer-ready content templates for top commercial topics.</li>
+            </ul>
+          </div>
+          <div class="metric">
+            <div class="font-bold mb-2">Days 31–60</div>
+            <ul class="list-disc pl-5 text-sm text-gray-700 space-y-2">
+              <li>Publish topic clusters: planning frameworks, calendar systems, budget templates, PMO, CRM setup, dashboard use cases.</li>
+              <li>Launch 5–7 role-based display variants.</li>
+              <li>Stand up engaged-session retargeting with proof-led creative.</li>
+              <li>Create “spreadsheet to workflow” and “switch from X” lifecycle emails.</li>
+            </ul>
+          </div>
+          <div class="metric">
+            <div class="font-bold mb-2">Days 61–90</div>
+            <ul class="list-disc pl-5 text-sm text-gray-700 space-y-2">
+              <li>Scale what converts: role pages, CRM modules, Gantt, dashboard, templates.</li>
+              <li>Expand Reddit/YouTube content loops.</li>
+              <li>Introduce interactive ROI calculators on category and comparison pages.</li>
+              <li>Shift another 5% of spend from generic conquesting to proven high-intent content + remarketing.</li>
+            </ul>
+          </div>
+        </div>
+
+        <div class="insight">
+          <div class="font-bold mb-1">North-star recommendation</div>
+          <div class="text-sm text-gray-700">Turn monday.com from a brand people know into a <span class="font-semibold">decision architecture</span> people trust: educational topic → proof-rich use case → role-specific page → migration/ROI proof → trial/demo.</div>
+        </div>
+      </section>
+
+      <section id="roi" class="space-y-6">
+        <div class="card p-6">
+          <div class="flex items-end justify-between gap-4">
+            <div>
+              <h2 class="section-title">Interactive ROI proxy simulator</h2>
+              <p class="text-gray-600">Use this model to explore how reallocating budget from inefficient paid demand to SEO, creative, and retargeting can improve blended ROI. This is a directional planning tool, not a finance model.</p>
+            </div>
+            <div class="pill info">Proxy model</div>
+          </div>
+
+          <div class="grid lg:grid-cols-2 gap-6 mt-6 panel-grid">
+            <div class="space-y-4">
+              <div class="metric">
+                <label class="block text-sm font-semibold mb-2">Monthly reallocated budget from inefficient paid search ($)</label>
+                <input id="budgetShift" type="range" min="50000" max="1000000" step="10000" value="250000" class="w-full">
+                <div class="flex justify-between text-sm mt-2"><span>$50k</span><span id="budgetShiftVal" class="font-bold">$250,000</span><span>$1M</span></div>
+              </div>
+
+              <div class="metric">
+                <label class="block text-sm font-semibold mb-2">SEO/content efficiency gain multiplier</label>
+                <input id="seoGain" type="range" min="1" max="3" step="0.1" value="1.8" class="w-full">
+                <div class="flex justify-between text-sm mt-2"><span>1.0x</span><span id="seoGainVal" class="font-bold">1.8x</span><span>3.0x</span></div>
+              </div>
+
+              <div class="metric">
+                <label class="block text-sm font-semibold mb-2">Landing page conversion uplift from better messaging</label>
+                <input id="cvrLift" type="range" min="0" max="40" step="1" value="12" class="w-full">
+                <div class="flex justify-between text-sm mt-2"><span>0%</span><span id="cvrLiftVal" class="font-bold">12%</span><span>40%</span></div>
+              </div>
+
+              <div class="metric">
+                <label class="block text-sm font-semibold mb-2">Retargeting + creative improvement impact</label>
+                <input id="retargetLift" type="range" min="0" max="30" step="1" value="10" class="w-full">
+                <div class="flex justify-between text-sm mt-2"><span>0%</span><span id="retargetLiftVal" class="font-bold">10%</span><span>30%</span></div>
+              </div>
+            </div>
+
+            <div class="roi-output rounded-3xl p-6">
+              <div class="text-white/70 text-sm">Projected impact</div>
+              <div class="grid grid-cols-2 gap-4 mt-4">
+                <div class="bg-white/10 rounded-2xl p-4">
+                  <div class="text-xs text-white/70">Estimated incremental qualified visits</div>
+                  <div id="outVisits" class="text-3xl font-black mt-2">43,313</div>
+                </div>
+                <div class="bg-white/10 rounded-2xl p-4">
+                  <div class="text-xs text-white/70">Estimated incremental conversions</div>
+                  <div id="outConv" class="text-3xl font-black mt-2">1,213</div>
+                </div>
+                <div class="bg-white/10 rounded-2xl p-4">
+                  <div class="text-xs text-white/70">Estimated CAC improvement</div>
+                  <div id="outCac" class="text-3xl font-black mt-2">-21%</div>
+                </div>
+                <div class="bg-white/10 rounded-2xl p-4">
+                  <div class="text-xs text-white/70">Blended ROI proxy</div>
+                  <div id="outRoi" class="text-3xl font-black mt-2">2.8x</div>
+                </div>
+              </div>
+              <div class="mt-4 text-sm text-white/80">Assumes reallocated budget goes to a mix of topic-led organic content, improved landing pages, and engaged-user remarketing rather than net-new top-funnel waste.</div>
+            </div>
+          </div>
+
+          <div class="mt-6 card p-4 border-gray-100">
+            <div class="font-semibold mb-2">Why this simulator matters</div>
+            <p class="text-sm text-gray-700">The data suggests monday.com does not need a larger awareness machine first. It needs a more efficient conversion architecture around the attention it already buys and earns. Small improvements in message match and lower dependence on broad paid traffic can create outsized ROI gains because baseline engagement is already strong.</p>
+          </div>
+        </div>
+      </section>
+    </div>
+  </main>
+
+  <script>
+    const labels24 = ["2024-03","2024-04","2024-05","2024-06","2024-07","2024-08","2024-09","2024-10","2024-11","2024-12","2025-01","2025-02","2025-03","2025-04","2025-05","2025-06","2025-07","2025-08","2025-09","2025-10","2025-11","2025-12","2026-01","2026-02"];
+
+    const visitsData = {
+      monday:[13.07,13.32,13.33,12.58,13.68,13.77,12.47,12.95,11.13,10.62,13.48,11.93,13.27,12.99,12.57,13.10,14.04,13.70,13.62,14.05,11.49,11.54,13.18,12.47],
+      smartsheet:[14.97,15.41,15.43,14.53,15.53,15.60,14.52,15.58,13.34,12.41,15.46,14.31,15.12,15.29,14.76,14.48,14.82,14.16,13.96,14.60,11.57,11.17,13.03,12.80],
+      asana:[13.81,13.24,13.76,13.12,14.10,13.55,12.66,13.19,11.38,10.72,13.23,12.92,15.13,13.62,12.69,12.89,14.15,13.24,12.81,13.56,11.39,11.25,12.93,11.96],
+      wrike:[1.83,1.91,1.79,1.70,2.03,2.04,1.72,1.98,1.63,1.59,1.92,1.79,2.06,1.97,1.97,2.05,2.29,2.23,2.22,2.17,1.75,1.65,1.89,1.83],
+      clickup:[6.26,6.10,6.42,5.96,6.47,6.19,5.78,6.09,5.40,5.54,6.34,5.85,6.24,6.39,6.80,6.79,7.27,7.26,7.62,7.82,7.09,9.14,10.27,7.77]
+    };
+
+    new Chart(document.getElementById('visitsChart'), {
+      type:'line',
+      data:{
+        labels:labels24,
+        datasets:[
+          {label:'monday.com', data:visitsData.monday, borderColor:getComputedStyle(document.documentElement).getPropertyValue('--monday').trim(), backgroundColor:'transparent', tension:.32, borderWidth:3},
+          {label:'Smartsheet', data:visitsData.smartsheet, borderColor:getComputedStyle(document.documentElement).getPropertyValue('--smartsheet').trim(), backgroundColor:'transparent', tension:.32, borderWidth:2},
+          {label:'Asana', data:visitsData.asana, borderColor:getComputedStyle(document.documentElement).getPropertyValue('--asana').trim(), backgroundColor:'transparent', tension:.32, borderWidth:2},
+          {label:'Wrike', data:visitsData.wrike, borderColor:getComputedStyle(document.documentElement).getPropertyValue('--wrike').trim(), backgroundColor:'transparent', tension:.32, borderWidth:2},
+          {label:'ClickUp', data:visitsData.clickup, borderColor:getComputedStyle(document.documentElement).getPropertyValue('--clickup').trim(), backgroundColor:'transparent', tension:.32, borderWidth:2}
+        ]
+      },
+      options:{
+        responsive:true, maintainAspectRatio:false,
+        plugins:{ legend:{position:'bottom'} },
+        scales:{
+          y:{ title:{display:true,text:'Visits (Millions)'} },
+          x:{ ticks:{ maxTicksLimit:8 } }
+        }
+      }
+    });
+
+    new Chart(document.getElementById('engagementRadar'),{
+      type:'radar',
+      data:{
+        labels:['Duration','Pages/Visit','Low Bounce','Unique Users','Return Rate'],
+        datasets:[
+          {label:'monday.com', data:[8.8,7.2,7.1,7.0,7.8], borderColor:'#333333', backgroundColor:'rgba(51,51,51,.18)', pointBackgroundColor:'#333333'},
+          {label:'Smartsheet', data:[5.1,5.3,4.3,9.2,8.1], borderColor:'#61d161', backgroundColor:'rgba(97,209,97,.16)', pointBackgroundColor:'#61d161'},
+          {label:'Asana', data:[9.2,8.5,9.4,5.2,8.4], borderColor:'#2e3c54', backgroundColor:'rgba(46,60,84,.15)', pointBackgroundColor:'#2e3c54'},
+          {label:'ClickUp', data:[7.1,8.6,5.6,4.7,6.8], borderColor:'#ff2fba', backgroundColor:'rgba(255,47,186,.14)', pointBackgroundColor:'#ff2fba'}
+        ]
+      },
+      options:{
+        responsive:true, maintainAspectRatio:false,
+        plugins:{ legend:{position:'bottom'} },
+        scales:{ r:{ suggestedMin:0, suggestedMax:10, grid:{color:'#e5e7eb'} } }
+      }
+    });
+
+    new Chart(document.getElementById('sourceShareChart'),{
+      type:'bar',
+      data:{
+        labels:['Direct','Organic Search','Paid Search','Email','Display','Social'],
+        datasets:[
+          {label:'Category share', data:[77.54,4.52,1.83,2.75,0.85,0.71], backgroundColor:['#333333','#4b5563','#6b7280','#9ca3af','#d1d5db','#111827']}
+        ]
+      },
+      options:{
+        responsive:true, maintainAspectRatio:false,
+        plugins:{legend:{display:false}},
+        scales:{ y:{ beginAtZero:true, title:{display:true,text:'Share %'} } }
+      }
+    });
+
+    const rankLabels = ['2025-03','2025-05','2025-07','2025-09','2025-11','2026-02'];
+    new Chart(document.getElementById('rankChart'),{
+      type:'bar',
+      data:{
+        labels:rankLabels,
+        datasets:[
+          {label:'1-3', data:[8.63,26.38,29.93,41.27,43.04,32.52], backgroundColor:'#111827'},
+          {label:'4-10', data:[9.48,11.12,12.04,13.30,13.76,15.73], backgroundColor:'#374151'},
+          {label:'11-20', data:[16.44,17.42,17.08,20.64,26.26,22.55], backgroundColor:'#6b7280'},
+          {label:'21-50', data:[58.36,41.83,38.65,22.36,15.24,27.17], backgroundColor:'#d1d5db'}
+        ]
+      },
+      options:{
+        responsive:true, maintainAspectRatio:false,
+        plugins:{legend:{position:'bottom'}},
+        scales:{ x:{ stacked:true }, y:{ stacked:true, beginAtZero:true, max:100, title:{display:true,text:'Share % of ranking keywords'} } }
+      }
+    });
+
+    new Chart(document.getElementById('organicTopicsChart'),{
+      type:'bar',
+      data:{
+        labels:['Brand','Pricing','CRM','Templates','Dashboards','PM Tools','Weekly Planner','Gantt','CRM category','RACI'],
+        datasets:[{
+          label:'Organic click share proxy',
+          data:[50.4,7.0,4.7,2.1,1.0,0.9,0.8,0.7,0.5,0.5],
+          backgroundColor:['#333333','#4b5563','#6b7280','#111827','#9ca3af','#374151','#6b7280','#111827','#4b5563','#9ca3af']
+        }]
+      },
+      options:{
+        indexAxis:'y',
+        responsive:true, maintainAspectRatio:false,
+        plugins:{legend:{display:false}},
+        scales:{ x:{ beginAtZero:true, title:{display:true,text:'Share %'} } }
+      }
+    });
+
+    new Chart(document.getElementById('ppcChart'),{
+      type:'line',
+      data:{
+        labels:['2025-03','2025-04','2025-05','2025-06','2025-07','2025-08','2025-09','2025-10','2025-11','2025-12','2026-01','2026-02'],
+        datasets:[
+          {label:'monday.com', data:[3.43,2.99,3.26,3.69,4.83,4.98,5.16,5.74,4.50,3.10,3.63,3.33], borderColor:'#333333', backgroundColor:'rgba(51,51,51,.12)', fill:true, tension:.3, borderWidth:3},
+          {label:'Smartsheet', data:[0.133,0.112,0.085,0.087,0.175,0.187,0.164,0.193,0.156,0.074,0.109,0.213], borderColor:'#61d161', backgroundColor:'rgba(97,209,97,.1)', fill:true, tension:.3, borderWidth:2}
+        ]
+      },
+      options:{
+        responsive:true, maintainAspectRatio:false,
+        plugins:{legend:{position:'bottom'}},
+        scales:{ y:{ title:{display:true,text:'Spend (USD Millions)'} } }
+      }
+    });
+
+    new Chart(document.getElementById('socialChart'),{
+      type:'doughnut',
+      data:{
+        labels:['Reddit','YouTube','LinkedIn','Facebook ref','X','Instagram'],
+        datasets:[{
+          data:[29.15,25.79,16.71,11.76,4.57,2.65],
+          backgroundColor:['#ff4500','#ff0000','#0a66c2','#1877f2','#000000','#e1306c']
+        }]
+      },
+      options:{
+        responsive:true, maintainAspectRatio:false,
+        plugins:{legend:{position:'bottom'}}
+      }
+    });
+
+    const budgetShift = document.getElementById('budgetShift');
+    const seoGain = document.getElementById('seoGain');
+    const cvrLift = document.getElementById('cvrLift');
+    const retargetLift = document.getElementById('retargetLift');
+
+    function formatMoney(v){ return '$' + Number(v).toLocaleString(); }
+
+    function updateROI(){
+      const budget = +budgetShift.value;
+      const seo = +seoGain.value;
+      const cvr = +cvrLift.value;
+      const rt = +retargetLift.value;
+
+      document.getElementById('budgetShiftVal').textContent = formatMoney(budget);
+      document.getElementById('seoGainVal').textContent = seo.toFixed(1) + 'x';
+      document.getElementById('cvrLiftVal').textContent = cvr + '%';
+      document.getElementById('retargetLiftVal').textContent = rt + '%';
+
+      const baseCpc = 4.8;
+      const baseVisitMultiplier = 0.42 * seo;
+      const incrementalVisits = Math.round((budget / baseCpc) * baseVisitMultiplier * (1 + rt/100));
+      const baseConvRate = 0.025;
+      const conversions = Math.round(incrementalVisits * baseConvRate * (1 + cvr/100));
+      const cacImprove = Math.round(8 + (seo - 1)*8 + cvr*0.35 + rt*0.25);
+      const roi = (1.4 + (seo*0.45) + (cvr*0.03) + (rt*0.02)).toFixed(1);
+
+      document.getElementById('outVisits').textContent = incrementalVisits.toLocaleString();
+      document.getElementById('outConv').textContent = conversions.toLocaleString();
+      document.getElementById('outCac').textContent = '-' + cacImprove + '%';
+      document.getElementById('outRoi').textContent = roi + 'x';
+    }
+
+    [budgetShift, seoGain, cvrLift, retargetLift].forEach(el => el.addEventListener('input', updateROI));
+    updateROI();
+  </script>
+
+</body></html>

@@ -1,0 +1,1063 @@
+<html lang="en"><head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Similarweb US Growth Intelligence Report</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <style>
+    :root{
+      --primary:#ff9600;
+      --secondary:#1c3654;
+      --bg:#f6f8fb;
+      --card:#ffffff;
+      --muted:#6b7280;
+      --border:#e5e7eb;
+      --success:#10b981;
+      --danger:#ef4444;
+      --warning:#f59e0b;
+      --info:#3b82f6;
+      --semrush:#dfe3e8;
+      --seranking:#123af8;
+      --ahrefs:#de36fc;
+      --moz:#912140;
+    }
+    html{scroll-behavior:smooth}
+    body{background:var(--bg); color:#111827;}
+    .sidebar{
+      width:240px;
+      background:linear-gradient(180deg, #a75d00 0%, #7a4500 100%);
+    }
+    .main{margin-left:240px;}
+    .card{
+      background:var(--card);
+      border:1px solid var(--border);
+      border-radius:1rem;
+      box-shadow:0 8px 30px rgba(28,54,84,.08);
+    }
+    .chip{
+      display:inline-flex; align-items:center; gap:.4rem;
+      padding:.3rem .7rem; border-radius:999px; font-size:.75rem; font-weight:600;
+    }
+    .chip-good{background:#ecfdf5;color:#047857}
+    .chip-bad{background:#fef2f2;color:#b91c1c}
+    .chip-warn{background:#fff7ed;color:#c2410c}
+    .chip-info{background:#eff6ff;color:#1d4ed8}
+    .kpi{
+      background:linear-gradient(135deg, rgba(255,150,0,.12), rgba(28,54,84,.06));
+      border:1px solid rgba(255,150,0,.18);
+    }
+    .nav-link{
+      display:block; padding:.7rem .9rem; border-radius:.75rem; color:#fff; opacity:.92;
+    }
+    .nav-link:hover,.nav-link.active{background:rgba(255,255,255,.14); opacity:1}
+    .section-title{color:var(--secondary)}
+    .accent{color:var(--primary)}
+    .chart-wrap{
+      position:relative;
+      height:320px;
+      max-height:320px;
+      overflow:hidden;
+      align-self:start;
+      min-height:0;
+    }
+    .chart-wrap.tall{height:380px;max-height:380px;}
+    .chart-wrap.small{height:260px;max-height:260px;}
+    .grid-start{align-items:start;}
+    .card-start{align-self:start;}
+    .ad-mock{
+      background:linear-gradient(135deg,#fff 0%,#fff7ed 100%);
+      border:1px solid #fed7aa;
+    }
+    .heat{
+      background:linear-gradient(90deg, rgba(255,150,0,.08), rgba(255,150,0,.18));
+    }
+    .mini-bar{
+      height:10px;border-radius:999px;background:#e5e7eb;overflow:hidden;
+    }
+    .mini-bar > span{
+      display:block;height:100%;background:linear-gradient(90deg,var(--primary),#ffbe63);
+    }
+    .sticky-top{position:sticky;top:0;z-index:20;background:rgba(246,248,251,.9);backdrop-filter:blur(8px)}
+    .table-scroll{overflow:auto}
+  </style>
+<style>*, ::before, ::after{--tw-border-spacing-x:0;--tw-border-spacing-y:0;--tw-translate-x:0;--tw-translate-y:0;--tw-rotate:0;--tw-skew-x:0;--tw-skew-y:0;--tw-scale-x:1;--tw-scale-y:1;--tw-pan-x: ;--tw-pan-y: ;--tw-pinch-zoom: ;--tw-scroll-snap-strictness:proximity;--tw-gradient-from-position: ;--tw-gradient-via-position: ;--tw-gradient-to-position: ;--tw-ordinal: ;--tw-slashed-zero: ;--tw-numeric-figure: ;--tw-numeric-spacing: ;--tw-numeric-fraction: ;--tw-ring-inset: ;--tw-ring-offset-width:0px;--tw-ring-offset-color:#fff;--tw-ring-color:rgb(59 130 246 / 0.5);--tw-ring-offset-shadow:0 0 #0000;--tw-ring-shadow:0 0 #0000;--tw-shadow:0 0 #0000;--tw-shadow-colored:0 0 #0000;--tw-blur: ;--tw-brightness: ;--tw-contrast: ;--tw-grayscale: ;--tw-hue-rotate: ;--tw-invert: ;--tw-saturate: ;--tw-sepia: ;--tw-drop-shadow: ;--tw-backdrop-blur: ;--tw-backdrop-brightness: ;--tw-backdrop-contrast: ;--tw-backdrop-grayscale: ;--tw-backdrop-hue-rotate: ;--tw-backdrop-invert: ;--tw-backdrop-opacity: ;--tw-backdrop-saturate: ;--tw-backdrop-sepia: ;--tw-contain-size: ;--tw-contain-layout: ;--tw-contain-paint: ;--tw-contain-style: }::backdrop{--tw-border-spacing-x:0;--tw-border-spacing-y:0;--tw-translate-x:0;--tw-translate-y:0;--tw-rotate:0;--tw-skew-x:0;--tw-skew-y:0;--tw-scale-x:1;--tw-scale-y:1;--tw-pan-x: ;--tw-pan-y: ;--tw-pinch-zoom: ;--tw-scroll-snap-strictness:proximity;--tw-gradient-from-position: ;--tw-gradient-via-position: ;--tw-gradient-to-position: ;--tw-ordinal: ;--tw-slashed-zero: ;--tw-numeric-figure: ;--tw-numeric-spacing: ;--tw-numeric-fraction: ;--tw-ring-inset: ;--tw-ring-offset-width:0px;--tw-ring-offset-color:#fff;--tw-ring-color:rgb(59 130 246 / 0.5);--tw-ring-offset-shadow:0 0 #0000;--tw-ring-shadow:0 0 #0000;--tw-shadow:0 0 #0000;--tw-shadow-colored:0 0 #0000;--tw-blur: ;--tw-brightness: ;--tw-contrast: ;--tw-grayscale: ;--tw-hue-rotate: ;--tw-invert: ;--tw-saturate: ;--tw-sepia: ;--tw-drop-shadow: ;--tw-backdrop-blur: ;--tw-backdrop-brightness: ;--tw-backdrop-contrast: ;--tw-backdrop-grayscale: ;--tw-backdrop-hue-rotate: ;--tw-backdrop-invert: ;--tw-backdrop-opacity: ;--tw-backdrop-saturate: ;--tw-backdrop-sepia: ;--tw-contain-size: ;--tw-contain-layout: ;--tw-contain-paint: ;--tw-contain-style: }/* ! tailwindcss v3.4.17 | MIT License | https://tailwindcss.com */*,::after,::before{box-sizing:border-box;border-width:0;border-style:solid;border-color:#e5e7eb}::after,::before{--tw-content:''}:host,html{line-height:1.5;-webkit-text-size-adjust:100%;-moz-tab-size:4;tab-size:4;font-family:ui-sans-serif, system-ui, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";font-feature-settings:normal;font-variation-settings:normal;-webkit-tap-highlight-color:transparent}body{margin:0;line-height:inherit}hr{height:0;color:inherit;border-top-width:1px}abbr:where([title]){-webkit-text-decoration:underline dotted;text-decoration:underline dotted}h1,h2,h3,h4,h5,h6{font-size:inherit;font-weight:inherit}a{color:inherit;text-decoration:inherit}b,strong{font-weight:bolder}code,kbd,pre,samp{font-family:ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;font-feature-settings:normal;font-variation-settings:normal;font-size:1em}small{font-size:80%}sub,sup{font-size:75%;line-height:0;position:relative;vertical-align:baseline}sub{bottom:-.25em}sup{top:-.5em}table{text-indent:0;border-color:inherit;border-collapse:collapse}button,input,optgroup,select,textarea{font-family:inherit;font-feature-settings:inherit;font-variation-settings:inherit;font-size:100%;font-weight:inherit;line-height:inherit;letter-spacing:inherit;color:inherit;margin:0;padding:0}button,select{text-transform:none}button,input:where([type=button]),input:where([type=reset]),input:where([type=submit]){-webkit-appearance:button;background-color:transparent;background-image:none}:-moz-focusring{outline:auto}:-moz-ui-invalid{box-shadow:none}progress{vertical-align:baseline}::-webkit-inner-spin-button,::-webkit-outer-spin-button{height:auto}[type=search]{-webkit-appearance:textfield;outline-offset:-2px}::-webkit-search-decoration{-webkit-appearance:none}::-webkit-file-upload-button{-webkit-appearance:button;font:inherit}summary{display:list-item}blockquote,dd,dl,figure,h1,h2,h3,h4,h5,h6,hr,p,pre{margin:0}fieldset{margin:0;padding:0}legend{padding:0}menu,ol,ul{list-style:none;margin:0;padding:0}dialog{padding:0}textarea{resize:vertical}input::placeholder,textarea::placeholder{opacity:1;color:#9ca3af}[role=button],button{cursor:pointer}:disabled{cursor:default}audio,canvas,embed,iframe,img,object,svg,video{display:block;vertical-align:middle}img,video{max-width:100%;height:auto}[hidden]:where(:not([hidden=until-found])){display:none}.fixed{position:fixed}.left-0{left:0px}.top-0{top:0px}.mb-8{margin-bottom:2rem}.mt-1{margin-top:0.25rem}.mt-2{margin-top:0.5rem}.mt-3{margin-top:0.75rem}.mt-4{margin-top:1rem}.mt-5{margin-top:1.25rem}.mt-6{margin-top:1.5rem}.mt-auto{margin-top:auto}.inline-block{display:inline-block}.flex{display:flex}.grid{display:grid}.hidden{display:none}.h-11{height:2.75rem}.h-screen{height:100vh}.min-h-screen{min-height:100vh}.w-11{width:2.75rem}.w-full{width:100%}.min-w-\[260px\]{min-width:260px}.min-w-full{min-width:100%}.max-w-4xl{max-width:56rem}.list-decimal{list-style-type:decimal}.list-disc{list-style-type:disc}.flex-col{flex-direction:column}.flex-wrap{flex-wrap:wrap}.items-start{align-items:flex-start}.items-center{align-items:center}.justify-center{justify-content:center}.justify-between{justify-content:space-between}.gap-2{gap:0.5rem}.gap-3{gap:0.75rem}.gap-4{gap:1rem}.gap-6{gap:1.5rem}.gap-8{gap:2rem}.space-y-1 > :not([hidden]) ~ :not([hidden]){--tw-space-y-reverse:0;margin-top:calc(0.25rem * calc(1 - var(--tw-space-y-reverse)));margin-bottom:calc(0.25rem * var(--tw-space-y-reverse))}.space-y-2 > :not([hidden]) ~ :not([hidden]){--tw-space-y-reverse:0;margin-top:calc(0.5rem * calc(1 - var(--tw-space-y-reverse)));margin-bottom:calc(0.5rem * var(--tw-space-y-reverse))}.space-y-3 > :not([hidden]) ~ :not([hidden]){--tw-space-y-reverse:0;margin-top:calc(0.75rem * calc(1 - var(--tw-space-y-reverse)));margin-bottom:calc(0.75rem * var(--tw-space-y-reverse))}.space-y-4 > :not([hidden]) ~ :not([hidden]){--tw-space-y-reverse:0;margin-top:calc(1rem * calc(1 - var(--tw-space-y-reverse)));margin-bottom:calc(1rem * var(--tw-space-y-reverse))}.space-y-5 > :not([hidden]) ~ :not([hidden]){--tw-space-y-reverse:0;margin-top:calc(1.25rem * calc(1 - var(--tw-space-y-reverse)));margin-bottom:calc(1.25rem * var(--tw-space-y-reverse))}.space-y-6 > :not([hidden]) ~ :not([hidden]){--tw-space-y-reverse:0;margin-top:calc(1.5rem * calc(1 - var(--tw-space-y-reverse)));margin-bottom:calc(1.5rem * var(--tw-space-y-reverse))}.space-y-8 > :not([hidden]) ~ :not([hidden]){--tw-space-y-reverse:0;margin-top:calc(2rem * calc(1 - var(--tw-space-y-reverse)));margin-bottom:calc(2rem * var(--tw-space-y-reverse))}.overflow-auto{overflow:auto}.overflow-hidden{overflow:hidden}.rounded-full{border-radius:9999px}.rounded-lg{border-radius:0.5rem}.rounded-xl{border-radius:0.75rem}.border{border-width:1px}.border-b{border-bottom-width:1px}.border-blue-200{--tw-border-opacity:1;border-color:rgb(191 219 254 / var(--tw-border-opacity, 1))}.border-green-200{--tw-border-opacity:1;border-color:rgb(187 247 208 / var(--tw-border-opacity, 1))}.border-orange-100{--tw-border-opacity:1;border-color:rgb(255 237 213 / var(--tw-border-opacity, 1))}.border-orange-200{--tw-border-opacity:1;border-color:rgb(254 215 170 / var(--tw-border-opacity, 1))}.border-red-200{--tw-border-opacity:1;border-color:rgb(254 202 202 / var(--tw-border-opacity, 1))}.border-slate-100{--tw-border-opacity:1;border-color:rgb(241 245 249 / var(--tw-border-opacity, 1))}.border-slate-200{--tw-border-opacity:1;border-color:rgb(226 232 240 / var(--tw-border-opacity, 1))}.bg-blue-50{--tw-bg-opacity:1;background-color:rgb(239 246 255 / var(--tw-bg-opacity, 1))}.bg-blue-600{--tw-bg-opacity:1;background-color:rgb(37 99 235 / var(--tw-bg-opacity, 1))}.bg-green-50{--tw-bg-opacity:1;background-color:rgb(240 253 244 / var(--tw-bg-opacity, 1))}.bg-orange-400{--tw-bg-opacity:1;background-color:rgb(251 146 60 / var(--tw-bg-opacity, 1))}.bg-orange-50{--tw-bg-opacity:1;background-color:rgb(255 247 237 / var(--tw-bg-opacity, 1))}.bg-red-50{--tw-bg-opacity:1;background-color:rgb(254 242 242 / var(--tw-bg-opacity, 1))}.bg-slate-50{--tw-bg-opacity:1;background-color:rgb(248 250 252 / var(--tw-bg-opacity, 1))}.bg-slate-900{--tw-bg-opacity:1;background-color:rgb(15 23 42 / var(--tw-bg-opacity, 1))}.bg-white{--tw-bg-opacity:1;background-color:rgb(255 255 255 / var(--tw-bg-opacity, 1))}.bg-white\/15{background-color:rgb(255 255 255 / 0.15)}.object-contain{object-fit:contain}.object-cover{object-fit:cover}.p-1{padding:0.25rem}.p-4{padding:1rem}.p-5{padding:1.25rem}.p-6{padding:1.5rem}.p-8{padding:2rem}.px-3{padding-left:0.75rem;padding-right:0.75rem}.px-8{padding-left:2rem;padding-right:2rem}.py-1{padding-top:0.25rem;padding-bottom:0.25rem}.py-2{padding-top:0.5rem;padding-bottom:0.5rem}.py-3{padding-top:0.75rem;padding-bottom:0.75rem}.py-4{padding-top:1rem;padding-bottom:1rem}.pl-5{padding-left:1.25rem}.pr-1{padding-right:0.25rem}.pr-4{padding-right:1rem}.pt-6{padding-top:1.5rem}.text-left{text-align:left}.text-2xl{font-size:1.5rem;line-height:2rem}.text-3xl{font-size:1.875rem;line-height:2.25rem}.text-lg{font-size:1.125rem;line-height:1.75rem}.text-sm{font-size:0.875rem;line-height:1.25rem}.text-xl{font-size:1.25rem;line-height:1.75rem}.text-xs{font-size:0.75rem;line-height:1rem}.font-bold{font-weight:700}.font-extrabold{font-weight:800}.font-medium{font-weight:500}.font-semibold{font-weight:600}.uppercase{text-transform:uppercase}.leading-tight{line-height:1.25}.tracking-wide{letter-spacing:0.025em}.text-blue-700{--tw-text-opacity:1;color:rgb(29 78 216 / var(--tw-text-opacity, 1))}.text-blue-800{--tw-text-opacity:1;color:rgb(30 64 175 / var(--tw-text-opacity, 1))}.text-green-700{--tw-text-opacity:1;color:rgb(21 128 61 / var(--tw-text-opacity, 1))}.text-green-800{--tw-text-opacity:1;color:rgb(22 101 52 / var(--tw-text-opacity, 1))}.text-orange-700{--tw-text-opacity:1;color:rgb(194 65 12 / var(--tw-text-opacity, 1))}.text-orange-800{--tw-text-opacity:1;color:rgb(154 52 18 / var(--tw-text-opacity, 1))}.text-red-600{--tw-text-opacity:1;color:rgb(220 38 38 / var(--tw-text-opacity, 1))}.text-red-700{--tw-text-opacity:1;color:rgb(185 28 28 / var(--tw-text-opacity, 1))}.text-red-800{--tw-text-opacity:1;color:rgb(153 27 27 / var(--tw-text-opacity, 1))}.text-slate-500{--tw-text-opacity:1;color:rgb(100 116 139 / var(--tw-text-opacity, 1))}.text-slate-600{--tw-text-opacity:1;color:rgb(71 85 105 / var(--tw-text-opacity, 1))}.text-slate-700{--tw-text-opacity:1;color:rgb(51 65 85 / var(--tw-text-opacity, 1))}.text-slate-900{--tw-text-opacity:1;color:rgb(15 23 42 / var(--tw-text-opacity, 1))}.text-white{--tw-text-opacity:1;color:rgb(255 255 255 / var(--tw-text-opacity, 1))}.text-white\/70{color:rgb(255 255 255 / 0.7)}.text-white\/75{color:rgb(255 255 255 / 0.75)}.antialiased{-webkit-font-smoothing:antialiased;-moz-osx-font-smoothing:grayscale}.opacity-75{opacity:0.75}.opacity-90{opacity:0.9}@media (min-width: 768px){.md\:grid-cols-2{grid-template-columns:repeat(2, minmax(0, 1fr))}.md\:grid-cols-3{grid-template-columns:repeat(3, minmax(0, 1fr))}.md\:grid-cols-4{grid-template-columns:repeat(4, minmax(0, 1fr))}.md\:text-3xl{font-size:1.875rem;line-height:2.25rem}}@media (min-width: 1024px){.lg\:grid-cols-2{grid-template-columns:repeat(2, minmax(0, 1fr))}.lg\:grid-cols-3{grid-template-columns:repeat(3, minmax(0, 1fr))}.lg\:grid-cols-4{grid-template-columns:repeat(4, minmax(0, 1fr))}}@media (min-width: 1280px){.xl\:col-span-2{grid-column:span 2 / span 2}.xl\:grid-cols-3{grid-template-columns:repeat(3, minmax(0, 1fr))}}</style></head>
+<body class="antialiased" cz-shortcut-listen="true">
+  <aside class="sidebar fixed left-0 top-0 h-screen text-white p-5 flex flex-col">
+    <div class="flex items-center gap-3 mb-8">
+      <img src="https://static-us-east-1.similarcdn.com/build/20260312.master.6d04eb6/dist/scripts/lite-app/assets/bf0781432ef84ce62b85.png" alt="Similarweb" class="w-11 h-11 rounded-lg bg-white p-1 object-contain" onerror="this.style.display='none';document.getElementById('logoFallback').classList.remove('hidden')">
+      <div id="logoFallback" class="hidden w-11 h-11 rounded-lg bg-white/15 flex items-center justify-center text-xl font-bold">S</div>
+      <div>
+        <div class="text-lg font-bold leading-tight">Similarweb</div>
+        <div class="text-xs text-white/75">US Growth Intelligence</div>
+      </div>
+    </div>
+
+    <nav class="space-y-1 text-sm overflow-auto pr-1">
+      <a class="nav-link active" href="#overview">Executive Overview</a>
+      <a class="nav-link" href="#market">Market Position</a>
+      <a class="nav-link" href="#channel">Channel Strategy</a>
+      <a class="nav-link" href="#seo">SEO &amp; Topic Strategy</a>
+      <a class="nav-link" href="#paid">Paid Search Intelligence</a>
+      <a class="nav-link" href="#display">Display &amp; Creative Gaps</a>
+      <a class="nav-link" href="#social">Social &amp; Referral Plays</a>
+      <a class="nav-link" href="#geo">Geographic Opportunities</a>
+      <a class="nav-link" href="#funnel">Retention &amp; Engagement</a>
+      <a class="nav-link" href="#roadmap">90-Day Action Plan</a>
+      <a class="nav-link" href="#simulator">ROI Simulator</a>
+    </nav>
+
+    <div class="mt-auto pt-6 text-xs text-white/70">
+      Based on Similarweb competitive intelligence data<br>
+      Focus market: <span class="font-semibold text-white">United States</span>
+    </div>
+  </aside>
+
+  <main class="main min-h-screen">
+    <div class="sticky-top border-b border-slate-200 px-8 py-4">
+      <div class="flex flex-wrap items-center justify-between gap-4">
+        <div>
+          <h1 class="text-2xl md:text-3xl font-extrabold section-title">Similarweb US Growth Intelligence Report</h1>
+          <p class="text-sm text-slate-600">How Similarweb can grow marketing ROI faster than Semrush, Ahrefs, SE Ranking, and Moz.</p>
+        </div>
+        <div class="flex gap-2 flex-wrap">
+          <span class="chip chip-info">Brand strength high</span>
+          <span class="chip chip-warn">Traffic trend down</span>
+          <span class="chip chip-good">Paid expansion opportunities</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="p-8 space-y-8">
+      <section id="overview" class="space-y-6">
+        <div class="grid lg:grid-cols-4 gap-4">
+          <div class="card kpi p-5">
+            <div class="text-sm text-slate-500">Latest monthly visits</div>
+            <div class="text-3xl font-extrabold mt-1">749K</div>
+            <div class="text-sm text-red-600 mt-2">-51.6% vs Mar 2024 peak</div>
+          </div>
+          <div class="card kpi p-5">
+            <div class="text-sm text-slate-500">Latest monthly unique users</div>
+            <div class="text-3xl font-extrabold mt-1">530K</div>
+            <div class="text-sm text-red-600 mt-2">Audience pool contracting</div>
+          </div>
+          <div class="card kpi p-5">
+            <div class="text-sm text-slate-500">US competitor benchmark</div>
+            <div class="text-3xl font-extrabold mt-1">#3</div>
+            <div class="text-sm text-slate-600 mt-2">Behind Semrush and Ahrefs on scale</div>
+          </div>
+          <div class="card kpi p-5">
+            <div class="text-sm text-slate-500">Engagement gap vs Semrush</div>
+            <div class="text-3xl font-extrabold mt-1">~2x lower</div>
+            <div class="text-sm text-slate-600 mt-2">Visit duration + pages/visit lag</div>
+          </div>
+        </div>
+
+        <div class="card p-6">
+          <div class="flex items-start justify-between gap-4 flex-wrap">
+            <div>
+              <h2 class="text-xl font-bold section-title">Executive summary</h2>
+              <p class="text-slate-600 mt-1 max-w-4xl">
+                Similarweb has strong brand demand and high visibility in the US, but its traffic base, repeat behavior, and depth of engagement have weakened meaningfully over the last 24 months. Competitors—especially Semrush and Ahrefs—are winning on two fronts: deeper product exploration and broader acquisition across non-brand problem/solution topics. The biggest ROI unlock is not “more of the same” brand capture. It is a deliberate shift toward high-intent category messaging, retention loops, and comparison-led paid and content programs.
+              </p>
+            </div>
+            <div class="bg-orange-50 border border-orange-200 rounded-xl p-4 min-w-[260px]">
+              <div class="text-xs uppercase tracking-wide text-orange-700 font-semibold">Primary growth thesis</div>
+              <div class="font-bold text-slate-900 mt-1">Move budget from brand defense to problem-solution acquisition + activation</div>
+            </div>
+          </div>
+
+          <div class="grid md:grid-cols-3 gap-4 mt-6">
+            <div class="p-4 rounded-xl bg-slate-50 border border-slate-200">
+              <div class="font-semibold text-slate-900">1. Fix acquisition mix</div>
+              <p class="text-sm text-slate-600 mt-2">Paid and organic exposure are too dependent on brand and competitor-name intercepts instead of broader decision-stage topics like traffic intelligence, ad intelligence, app intelligence, and market benchmarking.</p>
+            </div>
+            <div class="p-4 rounded-xl bg-slate-50 border border-slate-200">
+              <div class="font-semibold text-slate-900">2. Raise engagement quality</div>
+              <p class="text-sm text-slate-600 mt-2">Similarweb’s pages/visit and duration lag peers. The likely issue is landing pages selling features without building “next click momentum” into tools, templates, use cases, and proof experiences.</p>
+            </div>
+            <div class="p-4 rounded-xl bg-slate-50 border border-slate-200">
+              <div class="font-semibold text-slate-900">3. Build stronger retention loops</div>
+              <p class="text-sm text-slate-600 mt-2">Returning users are low relative to new users. Weekly insights, alerts, saved watchlists, category dashboards, and competitor monitoring should become the core of lifecycle marketing.</p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section id="market" class="space-y-6">
+        <div class="grid xl:grid-cols-3 gap-6 grid-start">
+          <div class="card p-6 xl:col-span-2 card-start">
+            <div class="flex items-center justify-between">
+              <h2 class="text-xl font-bold section-title">Traffic scale trend vs competitors</h2>
+              <span class="chip chip-info">24 months</span>
+            </div>
+            <div class="chart-wrap tall mt-4"><canvas id="visitsChart" width="1878" height="760" style="display: block; box-sizing: border-box; height: 380px; width: 939.3px;"></canvas></div>
+          </div>
+          <div class="card p-6 card-start">
+            <h3 class="text-lg font-bold section-title">What the trend says</h3>
+            <ul class="mt-4 space-y-3 text-sm text-slate-700">
+              <li><span class="font-semibold">Semrush</span> remains the scale leader despite declines, suggesting stronger category-level acquisition and broader product pull.</li>
+              <li><span class="font-semibold">Ahrefs</span> has lower total scale than Semrush but stronger engagement intensity, pointing to better product-led intent capture.</li>
+              <li><span class="font-semibold">Similarweb</span> lost both visits and unique users, meaning this is not just lower session frequency—it’s a shrinking top-of-funnel.</li>
+              <li><span class="font-semibold">SE Ranking</span> is small but growing, proving challenger messaging can still win share in this category.</li>
+            </ul>
+
+            <div class="mt-5 space-y-3">
+              <div>
+                <div class="flex justify-between text-sm"><span>Similarweb latest vs Semrush</span><span>40%</span></div>
+                <div class="mini-bar mt-1"><span style="width:40%"></span></div>
+              </div>
+              <div>
+                <div class="flex justify-between text-sm"><span>Similarweb latest vs Ahrefs</span><span>55%</span></div>
+                <div class="mini-bar mt-1"><span style="width:55%"></span></div>
+              </div>
+              <div>
+                <div class="flex justify-between text-sm"><span>New-user dependence</span><span>79%</span></div>
+                <div class="mini-bar mt-1"><span style="width:79%"></span></div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="grid lg:grid-cols-3 gap-6 grid-start">
+          <div class="card p-6 card-start">
+            <h3 class="text-lg font-bold section-title">Unique users trend</h3>
+            <div class="chart-wrap small mt-4"><canvas id="usersChart" width="865" height="520" style="display: block; box-sizing: border-box; height: 260px; width: 432.7px;"></canvas></div>
+          </div>
+          <div class="card p-6 card-start">
+            <h3 class="text-lg font-bold section-title">Engagement benchmark</h3>
+            <div class="chart-wrap small mt-4"><canvas id="engagementRadar" width="865" height="520" style="display: block; box-sizing: border-box; height: 260px; width: 432.7px;"></canvas></div>
+          </div>
+          <div class="card p-6 card-start">
+            <h3 class="text-lg font-bold section-title">Core diagnosis</h3>
+            <div class="space-y-4 mt-4 text-sm">
+              <div class="p-4 rounded-xl bg-red-50 border border-red-200">
+                <div class="font-semibold text-red-800">Problem</div>
+                <div class="text-red-700 mt-1">Scale is down faster than category leaders while engagement sits below the top benchmark.</div>
+              </div>
+              <div class="p-4 rounded-xl bg-green-50 border border-green-200">
+                <div class="font-semibold text-green-800">Opportunity</div>
+                <div class="text-green-700 mt-1">Strong brand demand and high-intent product topics already exist. Better page sequencing can improve monetization without requiring Semrush-level spend.</div>
+              </div>
+              <div class="p-4 rounded-xl bg-blue-50 border border-blue-200">
+                <div class="font-semibold text-blue-800">Winning move</div>
+                <div class="text-blue-700 mt-1">Own the “market intelligence for marketers, investors, ecommerce teams, and app growth teams” narrative—not just generic traffic analysis.</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section id="channel" class="space-y-6">
+        <div class="card p-6">
+          <div class="flex justify-between items-center flex-wrap gap-4">
+            <div>
+              <h2 class="text-xl font-bold section-title">Channel strategy: where ROI is leaking</h2>
+              <p class="text-slate-600 text-sm mt-1">Recent source mix shows Direct and Organic are large, but Similarweb under-indexes in paid search share relative to Semrush.</p>
+            </div>
+            <span class="chip chip-warn">Last 3 months summary</span>
+          </div>
+          <div class="grid lg:grid-cols-2 gap-6 mt-6 grid-start">
+            <div class="card-start">
+              <div class="chart-wrap"><canvas id="sourceMixChart" width="1422" height="640" style="display: block; box-sizing: border-box; height: 320px; width: 711px;"></canvas></div>
+            </div>
+            <div class="space-y-4 card-start">
+              <div class="p-4 rounded-xl border border-slate-200 bg-slate-50">
+                <div class="font-semibold">Direct is healthy, but not enough</div>
+                <p class="text-sm text-slate-600 mt-1">Direct contributes a meaningful share, validating brand awareness. But overreliance on direct can hide weak category capture and flatten growth.</p>
+              </div>
+              <div class="p-4 rounded-xl border border-slate-200 bg-slate-50">
+                <div class="font-semibold">Organic search is a growth lever, not just a reporting line</div>
+                <p class="text-sm text-slate-600 mt-1">Similarweb has solid organic presence, yet much of the visible topic mix is noisy, low-relevance, or brand-centered. This hurts conversion efficiency.</p>
+              </div>
+              <div class="p-4 rounded-xl border border-slate-200 bg-slate-50">
+                <div class="font-semibold">Paid search share is underpowered for decision-stage capture</div>
+                <p class="text-sm text-slate-600 mt-1">Paid search source share for Similarweb trails Semrush. That likely means competitors are intercepting more “compare / evaluate / switch” demand.</p>
+              </div>
+              <div class="p-4 rounded-xl border border-orange-200 bg-orange-50">
+                <div class="font-semibold text-orange-800">Recommendation</div>
+                <p class="text-sm text-orange-700 mt-1">Increase paid search budget selectively around competitor comparisons, specific buyer jobs, and high-conversion use cases—not broad exploratory traffic.</p>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="grid lg:grid-cols-4 gap-4">
+          <div class="card p-5">
+            <div class="text-sm text-slate-500">Direct share across market</div>
+            <div class="text-2xl font-bold mt-1">43.5%</div>
+            <p class="text-xs text-slate-500 mt-2">Direct is still the category’s anchor channel.</p>
+          </div>
+          <div class="card p-5">
+            <div class="text-sm text-slate-500">Organic search share</div>
+            <div class="text-2xl font-bold mt-1">35.5%</div>
+            <p class="text-xs text-slate-500 mt-2">Search remains the best scalable non-brand growth lane.</p>
+          </div>
+          <div class="card p-5">
+            <div class="text-sm text-slate-500">Paid search share</div>
+            <div class="text-2xl font-bold mt-1">5.2%</div>
+            <p class="text-xs text-slate-500 mt-2">Small overall, but highly monetizable.</p>
+          </div>
+          <div class="card p-5">
+            <div class="text-sm text-slate-500">Email share</div>
+            <div class="text-2xl font-bold mt-1">1.0%</div>
+            <p class="text-xs text-slate-500 mt-2">Retention engine is materially underdeveloped.</p>
+          </div>
+        </div>
+      </section>
+
+      <section id="seo" class="space-y-6">
+        <div class="grid xl:grid-cols-3 gap-6 grid-start">
+          <div class="card p-6 xl:col-span-2 card-start">
+            <div class="flex justify-between items-center flex-wrap gap-4">
+              <div>
+                <h2 class="text-xl font-bold section-title">SEO: topic strategy needs quality control and ICP focus</h2>
+                <p class="text-sm text-slate-600 mt-1">Ranking distribution improved in higher positions, but total keyword universe shrank and many winning topic clusters appear low-fit for B2B monetization.</p>
+              </div>
+              <span class="chip chip-bad">Fix topic hygiene</span>
+            </div>
+            <div class="chart-wrap tall mt-4"><canvas id="rankDistChart" width="1878" height="760" style="display: block; box-sizing: border-box; height: 380px; width: 939.3px;"></canvas></div>
+          </div>
+          <div class="card p-6 card-start">
+            <h3 class="text-lg font-bold section-title">SEO verdict</h3>
+            <div class="space-y-4 mt-4 text-sm text-slate-700">
+              <div class="p-4 rounded-xl bg-red-50 border border-red-200">
+                <div class="font-semibold text-red-800">Major issue</div>
+                <p class="mt-1">Organic topic clusters include adult/streaming/adjacent lookup topics. These may drive sessions, but they likely dilute brand trust, intent quality, and sales efficiency.</p>
+              </div>
+              <div class="p-4 rounded-xl bg-blue-50 border border-blue-200">
+                <div class="font-semibold text-blue-800">Better direction</div>
+                <p class="mt-1">Build topic clusters around buyer jobs: competitor benchmarking, market sizing, channel share analysis, app intelligence, ecommerce category analysis, lead generation intelligence, and investor research.</p>
+              </div>
+              <div class="p-4 rounded-xl bg-green-50 border border-green-200">
+                <div class="font-semibold text-green-800">SERP reality</div>
+                <p class="mt-1">AI Overviews and People Also Ask are rising. Similarweb should publish “answer-first” assets and proof-rich pages to win those surfaces.</p>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="grid lg:grid-cols-2 gap-6 grid-start">
+          <div class="card p-6 card-start">
+            <h3 class="text-lg font-bold section-title">Best-fit topic opportunities</h3>
+            <div class="mt-4 space-y-4 text-sm">
+              <div class="heat p-4 rounded-xl border border-orange-100">
+                <div class="font-semibold">Website traffic intelligence</div>
+                <p class="text-slate-700 mt-1">Keep owning it, but reframe from “checker” to “decision intelligence”: channels, competitors, audience overlap, and conversion clues.</p>
+              </div>
+              <div class="heat p-4 rounded-xl border border-orange-100">
+                <div class="font-semibold">Competitor ad analysis</div>
+                <p class="text-slate-700 mt-1">Strong paid cluster exists. Expand organic content around ad libraries, creative themes, landing page teardowns, and budget trend analysis.</p>
+              </div>
+              <div class="heat p-4 rounded-xl border border-orange-100">
+                <div class="font-semibold">Market and category benchmarking</div>
+                <p class="text-slate-700 mt-1">Top websites, category leaders, and regional leaders can become repeatable acquisition hubs with strong enterprise intent.</p>
+              </div>
+              <div class="heat p-4 rounded-xl border border-orange-100">
+                <div class="font-semibold">App intelligence and rankings</div>
+                <p class="text-slate-700 mt-1">Paid data already hints at traction here. Build category pages for app marketers and mobile strategy teams.</p>
+              </div>
+              <div class="heat p-4 rounded-xl border border-orange-100">
+                <div class="font-semibold">Alternative / comparison journeys</div>
+                <p class="text-slate-700 mt-1">Pages comparing Similarweb to Semrush, Ahrefs, SpyFu, Sensor Tower, RocketReach, Jungle Scout should be full-funnel assets, not simple feature tables.</p>
+              </div>
+            </div>
+          </div>
+          <div class="card p-6 card-start">
+            <h3 class="text-lg font-bold section-title">SEO actions that increase pipeline quality</h3>
+            <ol class="mt-4 space-y-3 text-sm text-slate-700 list-decimal pl-5">
+              <li>Audit and de-prioritize low-fit topic clusters that attract curiosity traffic with low B2B conversion potential.</li>
+              <li>Build topic hubs around business questions, not generic keyword variants: “Which competitors are gaining share?”, “Where are rivals buying traffic?”, “What categories are growing fastest?”</li>
+              <li>Create answer-first pages optimized for AI Overview inclusion with charts, definitions, methodology, and data snippets.</li>
+              <li>Add deeper internal journeys from top acquisition pages into product demos, templates, category reports, and saved-watchlist workflows.</li>
+              <li>Turn <span class="font-semibold">top-websites</span> and market leaderboard pages into email capture and alert subscription engines.</li>
+            </ol>
+          </div>
+        </div>
+      </section>
+
+      <section id="paid" class="space-y-6">
+        <div class="grid xl:grid-cols-3 gap-6 grid-start">
+          <div class="card p-6 xl:col-span-2 card-start">
+            <div class="flex justify-between items-center flex-wrap gap-4">
+              <div>
+                <h2 class="text-xl font-bold section-title">Paid search intelligence</h2>
+                <p class="text-sm text-slate-600 mt-1">Paid spend rose sharply late in the period, but ad copy remains repetitive and over-concentrated on brand claims.</p>
+              </div>
+              <span class="chip chip-info">Spend ramping</span>
+            </div>
+            <div class="chart-wrap tall mt-4"><canvas id="ppcSpendChart" width="1878" height="760" style="display: block; box-sizing: border-box; height: 380px; width: 939.3px;"></canvas></div>
+          </div>
+          <div class="card p-6 card-start">
+            <h3 class="text-lg font-bold section-title">Paid search diagnosis</h3>
+            <ul class="mt-4 space-y-3 text-sm text-slate-700">
+              <li><span class="font-semibold">Brand defense is working</span>, but it is also dominating. The top paid landing page is brand-oriented and absorbs most clicks.</li>
+              <li><span class="font-semibold">Competitor conquesting exists</span>, especially against Semrush and SpyFu, but page/message differentiation needs work.</li>
+              <li><span class="font-semibold">Expansion themes are emerging</span>: AI SEO, retail competitors, sales intelligence competitors, app intelligence.</li>
+              <li><span class="font-semibold">Creative fatigue risk is high</span> because many ads repeat the same phrase structure: “Analyze any app or website.”</li>
+            </ul>
+            <div class="mt-5 p-4 rounded-xl bg-orange-50 border border-orange-200">
+              <div class="font-semibold text-orange-800">Paid search opportunity</div>
+              <p class="text-sm text-orange-700 mt-1">Build segmented campaigns by buyer job: SEO, ecommerce, app growth, sales intelligence, investor research, and category strategy.</p>
+            </div>
+          </div>
+        </div>
+
+        <div class="grid lg:grid-cols-2 gap-6 grid-start">
+          <div class="card p-6 card-start">
+            <h3 class="text-lg font-bold section-title">Messaging gaps in current search ads</h3>
+            <div class="mt-4 table-scroll">
+              <table class="min-w-full text-sm">
+                <thead>
+                  <tr class="text-left border-b border-slate-200">
+                    <th class="py-2 pr-4">Observed pattern</th>
+                    <th class="py-2 pr-4">Why it underperforms</th>
+                    <th class="py-2">Better angle</th>
+                  </tr>
+                </thead>
+                <tbody class="text-slate-700">
+                  <tr class="border-b border-slate-100">
+                    <td class="py-3 pr-4">“Analyze competitor web traffic” repeated</td>
+                    <td class="py-3 pr-4">Too generic; sounds like every competitor</td>
+                    <td class="py-3">Lead with unique outputs: share shifts, ad strategy, audience overlap, category winners</td>
+                  </tr>
+                  <tr class="border-b border-slate-100">
+                    <td class="py-3 pr-4">Heavy brand ad dependence</td>
+                    <td class="py-3 pr-4">Protects brand, but does not expand market</td>
+                    <td class="py-3">Invest in comparison and job-to-be-done campaigns</td>
+                  </tr>
+                  <tr class="border-b border-slate-100">
+                    <td class="py-3 pr-4">Feature-first language</td>
+                    <td class="py-3 pr-4">Low emotional differentiation</td>
+                    <td class="py-3">Use decision impact language: “See where rivals are stealing demand”</td>
+                  </tr>
+                  <tr>
+                    <td class="py-3 pr-4">Weak use-case specificity</td>
+                    <td class="py-3 pr-4">Lower relevance scores and CVR</td>
+                    <td class="py-3">Tailor for marketers, PMMs, retail teams, agencies, investors</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+
+          <div class="card p-6 card-start">
+            <h3 class="text-lg font-bold section-title">Suggested high-ROI ad copy</h3>
+            <div class="space-y-4 mt-4">
+              <div class="ad-mock rounded-xl p-4">
+                <div class="text-xs text-green-700 font-semibold">Search Ad Concept 1 — Comparison intent</div>
+                <div class="font-bold text-lg mt-1">Why Teams Switch from Semrush to Similarweb</div>
+                <div class="text-sm text-slate-700 mt-1">See traffic share, paid channels, audience overlap, and category leaders in one view. Get decision-ready competitive intelligence.</div>
+                <div class="text-xs text-slate-500 mt-2">Best for: competitor-switch, evaluation, VP marketing</div>
+              </div>
+              <div class="ad-mock rounded-xl p-4">
+                <div class="text-xs text-green-700 font-semibold">Search Ad Concept 2 — Buyer job intent</div>
+                <div class="font-bold text-lg mt-1">Find Where Competitors Get Their Best Traffic</div>
+                <div class="text-sm text-slate-700 mt-1">Uncover winning channels, ad creatives, top pages, and market share trends. Built for growth, strategy, and ecommerce teams.</div>
+                <div class="text-xs text-slate-500 mt-2">Best for: non-brand category demand</div>
+              </div>
+              <div class="ad-mock rounded-xl p-4">
+                <div class="text-xs text-green-700 font-semibold">Search Ad Concept 3 — AI SERP futureproofing</div>
+                <div class="font-bold text-lg mt-1">Market Intelligence for the AI Search Era</div>
+                <div class="text-sm text-slate-700 mt-1">Track category winners, search visibility shifts, and traffic trends before your team misses the move.</div>
+                <div class="text-xs text-slate-500 mt-2">Best for: AI SEO / strategic insight positioning</div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="card p-6">
+          <h3 class="text-lg font-bold section-title">Paid search restructuring plan</h3>
+          <div class="grid md:grid-cols-4 gap-4 mt-4 text-sm">
+            <div class="p-4 rounded-xl bg-slate-50 border border-slate-200">
+              <div class="font-semibold">Campaign 1</div>
+              <div class="mt-1 text-slate-700">Brand defense</div>
+              <div class="text-slate-500 mt-1">Keep efficient and capped.</div>
+            </div>
+            <div class="p-4 rounded-xl bg-slate-50 border border-slate-200">
+              <div class="font-semibold">Campaign 2</div>
+              <div class="mt-1 text-slate-700">Competitor alternatives</div>
+              <div class="text-slate-500 mt-1">Semrush, Ahrefs, SpyFu, Sensor Tower, RocketReach.</div>
+            </div>
+            <div class="p-4 rounded-xl bg-slate-50 border border-slate-200">
+              <div class="font-semibold">Campaign 3</div>
+              <div class="mt-1 text-slate-700">Use-case acquisition</div>
+              <div class="text-slate-500 mt-1">Retail, app growth, sales intelligence, market research.</div>
+            </div>
+            <div class="p-4 rounded-xl bg-slate-50 border border-slate-200">
+              <div class="font-semibold">Campaign 4</div>
+              <div class="mt-1 text-slate-700">Proof-led remarketing</div>
+              <div class="text-slate-500 mt-1">Case studies, ROI proof, category leaderboards.</div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section id="display" class="space-y-6">
+        <div class="grid lg:grid-cols-2 gap-6 grid-start">
+          <div class="card p-6 card-start">
+            <div class="flex justify-between items-center flex-wrap gap-4">
+              <div>
+                <h2 class="text-xl font-bold section-title">Display advertising: almost no active signal</h2>
+                <p class="text-sm text-slate-600 mt-1">Visible display presence is minimal. That creates a strong whitespace for mid-funnel education and retargeting.</p>
+              </div>
+              <span class="chip chip-warn">Underused channel</span>
+            </div>
+            <div class="mt-4 rounded-xl overflow-hidden border border-slate-200 bg-slate-50 p-4">
+              <img src="https://sw-df-ads-capture-creatives-production.s3.us-east-1.amazonaws.com/creatives/execution_key%3Dads-capture-client-side/images/a89bd57e690883b165f28798d3e6c710dc123b085fd604d227d5adb7/678x355?X-Amz-Expires=86400&amp;response-content-disposition=attachment%3B%20filename%3D%22creative_screenshot.jpg%22&amp;X-Amz-Algorithm=AWS4-HMAC-SHA256&amp;X-Amz-Credential=AKIA4GKBI5ER5IXVZOXV%2F20260325%2Fus-east-1%2Fs3%2Faws4_request&amp;X-Amz-Date=20260325T060257Z&amp;X-Amz-SignedHeaders=host&amp;X-Amz-Signature=7407dda0a54494c4ec32b77e17f4530f811c64b35d9ebda6b0da1f8c87c86aaa" alt="Similarweb display creative" class="w-full rounded-lg object-cover">
+              <div class="mt-3 text-sm text-slate-600">Observed creative: one brief “Similarweb vs. Semrush” display execution, active only one day. This is not a scaled learning system.</div>
+            </div>
+          </div>
+
+          <div class="card p-6 card-start">
+            <h3 class="text-lg font-bold section-title">Display growth direction</h3>
+            <div class="space-y-4 mt-4 text-sm text-slate-700">
+              <div class="p-4 rounded-xl bg-blue-50 border border-blue-200">
+                <div class="font-semibold text-blue-800">Role of display</div>
+                <p class="mt-1">Not broad prospecting. Use display to retarget evaluation-stage users and reinforce differentiation they already saw in search or content.</p>
+              </div>
+              <div class="p-4 rounded-xl bg-green-50 border border-green-200">
+                <div class="font-semibold text-green-800">Best audience pools</div>
+                <p class="mt-1">Visitors to competitor pages, pricing pages, category benchmark pages, ad intelligence pages, and top-websites pages.</p>
+              </div>
+              <div class="p-4 rounded-xl bg-orange-50 border border-orange-200">
+                <div class="font-semibold text-orange-800">Creative thesis</div>
+                <p class="mt-1">Show insight outputs, not feature badges. Use actual charts, category rank visuals, traffic split bars, and “before/after insight” narratives.</p>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="grid lg:grid-cols-3 gap-6">
+          <div class="card p-5">
+            <div class="text-sm font-semibold text-slate-900">Suggested Banner Concept A</div>
+            <div class="mt-3 rounded-lg p-4" style="background:linear-gradient(135deg,#1c3654,#244c77); color:white;">
+              <div class="text-xs opacity-75">Competitive Intelligence</div>
+              <div class="text-xl font-bold mt-1">See who’s stealing your traffic</div>
+              <div class="text-sm mt-2 opacity-90">Traffic share. Top channels. Winning pages.</div>
+              <div class="mt-4 inline-block bg-orange-400 text-slate-900 px-3 py-1 rounded-full text-xs font-bold">View market snapshot</div>
+            </div>
+            <p class="text-xs text-slate-500 mt-3">Use for retargeting users who visited traffic-checker and competitor pages.</p>
+          </div>
+          <div class="card p-5">
+            <div class="text-sm font-semibold text-slate-900">Suggested Banner Concept B</div>
+            <div class="mt-3 rounded-lg p-4" style="background:linear-gradient(135deg,#fff7ed,#ffe3bf);">
+              <div class="text-xs text-slate-600">Switching from legacy SEO tools?</div>
+              <div class="text-xl font-bold mt-1 text-slate-900">Go beyond keywords.</div>
+              <div class="text-sm mt-2 text-slate-700">Get web, app, ad, and audience intelligence in one platform.</div>
+              <div class="mt-4 inline-block bg-slate-900 text-white px-3 py-1 rounded-full text-xs font-bold">Compare platforms</div>
+            </div>
+            <p class="text-xs text-slate-500 mt-3">Use for Semrush/Ahrefs compare audiences.</p>
+          </div>
+          <div class="card p-5">
+            <div class="text-sm font-semibold text-slate-900">Suggested Banner Concept C</div>
+            <div class="mt-3 rounded-lg p-4" style="background:linear-gradient(135deg,#fff,#eef6ff); border:1px solid #bfdbfe;">
+              <div class="text-xs text-blue-700">For Ecommerce &amp; Retail Teams</div>
+              <div class="text-xl font-bold mt-1 text-slate-900">Benchmark every category move</div>
+              <div class="text-sm mt-2 text-slate-700">Find fast-growing competitors and channel winners before your next planning cycle.</div>
+              <div class="mt-4 inline-block bg-blue-600 text-white px-3 py-1 rounded-full text-xs font-bold">See retail leaders</div>
+            </div>
+            <p class="text-xs text-slate-500 mt-3">Use for vertical-specific campaigns.</p>
+          </div>
+        </div>
+      </section>
+
+      <section id="social" class="space-y-6">
+        <div class="grid lg:grid-cols-2 gap-6 grid-start">
+          <div class="card p-6 card-start">
+            <div class="flex justify-between items-center">
+              <h2 class="text-xl font-bold section-title">Social and referral intelligence</h2>
+              <span class="chip chip-info">Assist channels</span>
+            </div>
+            <div class="chart-wrap mt-4"><canvas id="socialChart" width="1372" height="640" style="display: block; box-sizing: border-box; height: 320px; width: 686px;"></canvas></div>
+          </div>
+          <div class="card p-6 card-start">
+            <h3 class="text-lg font-bold section-title">What to do with social</h3>
+            <ul class="mt-4 space-y-3 text-sm text-slate-700">
+              <li><span class="font-semibold">YouTube</span> is the top social referrer in the market set. Similarweb should produce visual teardown content: market winners, ad intelligence walkthroughs, competitor trend snapshots.</li>
+              <li><span class="font-semibold">LinkedIn</span> should be the priority paid-social retargeting lane for decision makers. Current category share is lower than it should be for a B2B platform.</li>
+              <li><span class="font-semibold">Reddit and X</span> are useful for insight-led distribution: “what changed this week in category X,” “which brand gained traffic share,” and “which ad angle is scaling.”</li>
+              <li><span class="font-semibold">ChatGPT referrals</span> are already material in the market. Similarweb should publish citation-friendly pages with clear methodology and answer blocks.</li>
+            </ul>
+            <div class="mt-5 p-4 rounded-xl bg-slate-50 border border-slate-200">
+              <div class="font-semibold">Fast-win referral idea</div>
+              <p class="text-sm text-slate-600 mt-1">Create embeddable “category pulse” widgets and downloadable charts that publishers, agencies, and newsletters can reference with attribution.</p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section id="geo" class="space-y-6">
+        <div class="card p-6">
+          <div class="flex justify-between items-center flex-wrap gap-4">
+            <div>
+              <h2 class="text-xl font-bold section-title">Geographic perspective: US is strategic, but global learnings matter</h2>
+              <p class="text-sm text-slate-600 mt-1">Semrush dominates US share in the compared set, while Similarweb is stronger in select international markets such as Spain and Japan.</p>
+            </div>
+            <span class="chip chip-info">Worldwide distribution snapshot</span>
+          </div>
+          <div class="grid lg:grid-cols-2 gap-6 mt-6 grid-start">
+            <div class="chart-wrap tall card-start"><canvas id="geoChart" width="1422" height="760" style="display: block; box-sizing: border-box; height: 380px; width: 711px;"></canvas></div>
+            <div class="space-y-4 card-start">
+              <div class="p-4 rounded-xl bg-slate-50 border border-slate-200">
+                <div class="font-semibold">US implication</div>
+                <p class="text-sm text-slate-600 mt-1">The US is the biggest commercial battleground. Similarweb’s scale here does not reflect its potential brand strength, meaning there is room to localize enterprise proof, category-specific proof, and more aggressive conquesting.</p>
+              </div>
+              <div class="p-4 rounded-xl bg-slate-50 border border-slate-200">
+                <div class="font-semibold">Transferable playbooks</div>
+                <p class="text-sm text-slate-600 mt-1">Markets where Similarweb over-indexes likely benefit from stronger category authority pages or clearer product-market framing. Reuse those patterns in US vertical campaigns.</p>
+              </div>
+              <div class="p-4 rounded-xl bg-orange-50 border border-orange-200">
+                <div class="font-semibold text-orange-800">US recommendation</div>
+                <p class="text-sm text-orange-700 mt-1">Build verticalized US pages for retail, agencies, SaaS, mobile apps, and investors. Show benchmark data specific to those audiences.</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section id="funnel" class="space-y-6">
+        <div class="grid xl:grid-cols-3 gap-6 grid-start">
+          <div class="card p-6 xl:col-span-2 card-start">
+            <div class="flex justify-between items-center">
+              <h2 class="text-xl font-bold section-title">Retention and engagement gap</h2>
+              <span class="chip chip-bad">Needs urgent work</span>
+            </div>
+            <div class="chart-wrap tall mt-4"><canvas id="newReturningChart" width="1878" height="760" style="display: block; box-sizing: border-box; height: 380px; width: 939.3px;"></canvas></div>
+          </div>
+          <div class="card p-6 card-start">
+            <h3 class="text-lg font-bold section-title">Why this matters</h3>
+            <div class="space-y-4 mt-4 text-sm text-slate-700">
+              <p>Similarweb’s average monthly profile is heavily weighted toward new users versus returning users. That suggests the product and content ecosystem is not yet creating enough habitual, repeat-value moments.</p>
+              <div class="p-4 rounded-xl bg-slate-50 border border-slate-200">
+                <div class="font-semibold">What returning usage should look like</div>
+                <ul class="list-disc pl-5 mt-2 space-y-1">
+                  <li>Weekly competitor movement alerts</li>
+                  <li>Saved market watchlists</li>
+                  <li>Benchmarks emailed every Monday</li>
+                  <li>Change-detection notifications for channels and ads</li>
+                  <li>Personalized dashboards by role</li>
+                </ul>
+              </div>
+              <div class="p-4 rounded-xl bg-green-50 border border-green-200">
+                <div class="font-semibold text-green-800">Highest-ROI lifecycle bet</div>
+                <p class="mt-1 text-green-700">Turn free users into repeat analysts before selling them on upgrade. Habit first, then monetization.</p>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="grid lg:grid-cols-4 gap-4">
+          <div class="card p-5">
+            <div class="text-sm text-slate-500">Avg visit duration</div>
+            <div class="text-2xl font-bold mt-1">111s</div>
+            <div class="text-xs text-slate-500 mt-2">Semrush: 205s | Ahrefs: 238s</div>
+          </div>
+          <div class="card p-5">
+            <div class="text-sm text-slate-500">Pages / visit</div>
+            <div class="text-2xl font-bold mt-1">4.08</div>
+            <div class="text-xs text-slate-500 mt-2">Semrush: 5.45 | Ahrefs: 5.34</div>
+          </div>
+          <div class="card p-5">
+            <div class="text-sm text-slate-500">Bounce rate</div>
+            <div class="text-2xl font-bold mt-1">47.3%</div>
+            <div class="text-xs text-slate-500 mt-2">Not catastrophic, but not elite</div>
+          </div>
+          <div class="card p-5">
+            <div class="text-sm text-slate-500">Pageviews trend</div>
+            <div class="text-2xl font-bold mt-1">3.06M</div>
+            <div class="text-xs text-slate-500 mt-2">Down materially from 6.43M peak</div>
+          </div>
+        </div>
+      </section>
+
+      <section id="roadmap" class="space-y-6">
+        <div class="card p-6">
+          <h2 class="text-xl font-bold section-title">90-day growth roadmap</h2>
+          <div class="grid md:grid-cols-3 gap-6 mt-6">
+            <div class="border border-slate-200 rounded-xl p-5">
+              <div class="text-xs uppercase tracking-wide text-slate-500">Days 1–30</div>
+              <div class="font-bold text-lg mt-1">Stop the leakage</div>
+              <ul class="list-disc pl-5 mt-3 space-y-2 text-sm text-slate-700">
+                <li>Reduce SEO dependency on low-fit topics and audit indexation priorities.</li>
+                <li>Rebuild top paid search ads around decision outcomes, not generic features.</li>
+                <li>Split landing pages by buyer role and use case.</li>
+                <li>Retarget visitors to compare pages with proof-led display and LinkedIn units.</li>
+              </ul>
+            </div>
+            <div class="border border-slate-200 rounded-xl p-5">
+              <div class="text-xs uppercase tracking-wide text-slate-500">Days 31–60</div>
+              <div class="font-bold text-lg mt-1">Scale high-intent acquisition</div>
+              <ul class="list-disc pl-5 mt-3 space-y-2 text-sm text-slate-700">
+                <li>Launch category pages for retail, apps, sales intelligence, agencies, investors.</li>
+                <li>Expand competitor comparison matrix with proof screenshots and ROI calculators.</li>
+                <li>Launch YouTube and LinkedIn insight series using Similarweb data visuals.</li>
+                <li>Create AI Overview-friendly answer pages for key industry questions.</li>
+              </ul>
+            </div>
+            <div class="border border-slate-200 rounded-xl p-5">
+              <div class="text-xs uppercase tracking-wide text-slate-500">Days 61–90</div>
+              <div class="font-bold text-lg mt-1">Build retention loops</div>
+              <ul class="list-disc pl-5 mt-3 space-y-2 text-sm text-slate-700">
+                <li>Launch saved watchlists and weekly market pulse emails.</li>
+                <li>Promote “alerts” as the main reason to create an account.</li>
+                <li>Use top-websites and category leaderboard pages as recurring subscription assets.</li>
+                <li>Measure ROI by activated users, not only sessions and clicks.</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section id="simulator" class="space-y-6">
+        <div class="card p-6">
+          <div class="flex justify-between items-center flex-wrap gap-4">
+            <div>
+              <h2 class="text-xl font-bold section-title">Interactive ROI proxy simulator</h2>
+              <p class="text-sm text-slate-600 mt-1">This model demonstrates directional ROI impact of the report’s recommendations. Adjust investments and expected efficiency improvements.</p>
+            </div>
+            <span class="chip chip-good">Interactive</span>
+          </div>
+
+          <div class="grid lg:grid-cols-2 gap-8 mt-6 grid-start">
+            <div class="space-y-5 card-start">
+              <div>
+                <label class="flex justify-between text-sm font-medium"><span>Incremental Paid Search Investment</span><span id="paidBudgetLabel">$120,000</span></label>
+                <input id="paidBudget" type="range" min="20000" max="400000" step="10000" value="120000" class="w-full mt-2">
+              </div>
+              <div>
+                <label class="flex justify-between text-sm font-medium"><span>SEO / Content Investment</span><span id="seoBudgetLabel">$80,000</span></label>
+                <input id="seoBudget" type="range" min="20000" max="300000" step="10000" value="80000" class="w-full mt-2">
+              </div>
+              <div>
+                <label class="flex justify-between text-sm font-medium"><span>Lifecycle / Retention Investment</span><span id="crmBudgetLabel">$50,000</span></label>
+                <input id="crmBudget" type="range" min="10000" max="200000" step="5000" value="50000" class="w-full mt-2">
+              </div>
+              <div>
+                <label class="flex justify-between text-sm font-medium"><span>Landing page CVR lift assumption</span><span id="cvrLiftLabel">18%</span></label>
+                <input id="cvrLift" type="range" min="0" max="60" step="1" value="18" class="w-full mt-2">
+              </div>
+              <div>
+                <label class="flex justify-between text-sm font-medium"><span>Retention lift assumption</span><span id="retLiftLabel">12%</span></label>
+                <input id="retLift" type="range" min="0" max="50" step="1" value="12" class="w-full mt-2">
+              </div>
+            </div>
+
+            <div class="card-start">
+              <div class="grid md:grid-cols-2 gap-4">
+                <div class="p-4 rounded-xl bg-slate-50 border border-slate-200">
+                  <div class="text-sm text-slate-500">Total incremental investment</div>
+                  <div id="totalInvestment" class="text-3xl font-extrabold mt-1">$250,000</div>
+                </div>
+                <div class="p-4 rounded-xl bg-green-50 border border-green-200">
+                  <div class="text-sm text-green-700">Projected pipeline value proxy</div>
+                  <div id="pipelineValue" class="text-3xl font-extrabold mt-1 text-green-800">$639,000</div>
+                </div>
+                <div class="p-4 rounded-xl bg-blue-50 border border-blue-200">
+                  <div class="text-sm text-blue-700">Projected net ROI</div>
+                  <div id="netRoi" class="text-3xl font-extrabold mt-1 text-blue-800">156%</div>
+                </div>
+                <div class="p-4 rounded-xl bg-orange-50 border border-orange-200">
+                  <div class="text-sm text-orange-700">Projected activated users</div>
+                  <div id="activatedUsers" class="text-3xl font-extrabold mt-1 text-orange-800">3,966</div>
+                </div>
+              </div>
+              <div class="chart-wrap mt-6"><canvas id="roiChart" width="1414" height="640" style="display: block; box-sizing: border-box; height: 320px; width: 707px;"></canvas></div>
+            </div>
+          </div>
+
+          <div class="mt-6 grid md:grid-cols-3 gap-4 text-sm">
+            <div class="p-4 rounded-xl border border-slate-200 bg-slate-50">
+              <div class="font-semibold">Model logic</div>
+              <p class="text-slate-600 mt-1">Paid search drives incremental high-intent sessions. SEO drives lower-cost assisted acquisition. Lifecycle drives more repeats and higher account activation.</p>
+            </div>
+            <div class="p-4 rounded-xl border border-slate-200 bg-slate-50">
+              <div class="font-semibold">What matters most</div>
+              <p class="text-slate-600 mt-1">In this category, better conversion and retention often create more ROI than simply increasing spend.</p>
+            </div>
+            <div class="p-4 rounded-xl border border-slate-200 bg-slate-50">
+              <div class="font-semibold">How to use</div>
+              <p class="text-slate-600 mt-1">Use this to align channel budget planning with executive expectations around pipeline efficiency.</p>
+            </div>
+          </div>
+        </div>
+      </section>
+    </div>
+  </main>
+
+  <script>
+    const labels24 = ["2024-03","2024-04","2024-05","2024-06","2024-07","2024-08","2024-09","2024-10","2024-11","2024-12","2025-01","2025-02","2025-03","2025-04","2025-05","2025-06","2025-07","2025-08","2025-09","2025-10","2025-11","2025-12","2026-01","2026-02"];
+
+    const visits = {
+      similarweb:[1548471,1365074,1103232,1031289,1162314,1290129,1182487,1132274,1140065,1250471,1394810,1181358,1168726,1022985,1056256,993758,1128144,1001378,1030398,924486,858298,834053,903907,749362],
+      semrush:[3205622,3109019,2850415,2624271,2692654,2489697,2243273,2202716,1961791,1866057,1760875,1561836,1632589,1613830,1604738,1575957,1759818,1761891,1780440,1936028,1935858,2039945,2075017,1860968],
+      seranking:[82738,74337,94658,82795,113448,104998,121811,142627,119550,99542,102598,97399,120019,109934,81715,97254,96528,138055,144748,159996,159850,185264,228502,211697],
+      ahrefs:[1659291,1601841,1608070,1459349,1549174,1558077,1872631,1982521,2038539,2171184,2076534,2069266,2200631,1953841,1892418,1781972,1793499,1658373,1765287,1729863,1665703,1486496,1467459,1373183],
+      moz:[326488,328515,310631,313398,276744,274500,229063,240840,189757,184346,188336,166932,182917,155781,164270,160300,155543,160645,158139,175990,172343,191388,210789,188636]
+    };
+
+    const users = {
+      similarweb:[1134102,1014678,809294,734464,804375,909768,858926,841398,849739,940933,1060673,900256,895283,771659,762185,707303,792861,738197,748870,648924,623335,586981,622872,529735],
+      semrush:[1675824,1653822,1409431,1311705,1340439,1208399,1103064,1083702,1030525,950993,793642,634709,655081,646345,639267,613699,674322,722897,762072,877025,999870,1039667,1038470,933988],
+      ahrefs:[493631,451610,435216,391016,387014,428711,524413,605340,663483,689748,699715,760952,754454,650685,588060,521610,497343,422597,500453,505479,465080,394928,371309,374223]
+    };
+
+    const avgDurationLatest = [111.2,204.8,212.9,238.3,387.6];
+    const pagesLatest = [4.08,5.45,5.51,5.34,5.57];
+    const bounceLatest = [47.3,51.6,31.6,50.6,21.9];
+    const engagementLabels = ["Similarweb","Semrush","SE Ranking","Ahrefs","Moz"];
+
+    const rankDist = {
+      labels:["1-3","4-10","11-20","21-50","Other"],
+      sep2025:[11.5,29.6,23.7,31.4,3.8],
+      nov2025:[15.1,30.6,25.5,24.7,4.1],
+      feb2026:[15.2,29.1,27.7,23.9,4.1]
+    };
+
+    const sourceMix = {
+      labels:["Direct","Organic Search","Paid Search","Referral","Email","Other"],
+      values:[12.69,22.92,21.21,8.0,9.13,26.05]
+    };
+
+    const ppcSpendLabels = ["2025-03","2025-04","2025-05","2025-06","2025-07","2025-08","2025-09","2025-10","2025-11","2025-12","2026-01","2026-02"];
+    const ppcSpend = {
+      similarweb:[197896,232620,422468,485715,486909,299118,322378,411406,651833,423725,681008,443395],
+      semrush:[976715,1038607,1001561,832348,894287,1148443,1002889,1087251,1148480,1173158,1180865,1226905]
+    };
+
+    const newReturningLabels = labels24;
+    const newUsers = [741990,660418,486615,480381,659238,793346,712054,704343,709499,775831,899055,736085,739247,602618,605797,548582,635668,596178,599770,521553,501067,464812,509993,421235];
+    const returningUsers = [392112,354260,322679,254083,145138,116422,146872,137056,140240,165102,161618,164171,156036,169041,156388,158722,157192,142019,149100,127370,122268,122169,112880,108500];
+
+    const socialLabels = ["YouTube","LinkedIn","X","Reddit","Instagram","Facebook"];
+    const socialValues = [29.63,29.32,9.85,8.48,5.07,5.02];
+
+    const geoLabels = ["US","India","Pakistan","UK","France","Spain","Germany","Italy","Japan"];
+    const geoSW = [17.76,19.29,8.43,16.21,26.65,39.64,28.01,36.52,37.92];
+    const geoSem = [42.66,44.57,24.55,38.58,53.32,36.85,43.88,47.50,21.45];
+
+    function money(n){ return '$' + Math.round(n).toLocaleString(); }
+
+    Chart.defaults.font.family = 'Inter, ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, sans-serif';
+    Chart.defaults.color = '#475569';
+
+    new Chart(document.getElementById('visitsChart'), {
+      type:'line',
+      data:{
+        labels:labels24,
+        datasets:[
+          {label:'Similarweb', data:visits.similarweb, borderColor:'#ff9600', backgroundColor:'rgba(255,150,0,.12)', tension:.35, fill:false, borderWidth:3},
+          {label:'Semrush', data:visits.semrush, borderColor:'#cfd5dc', backgroundColor:'rgba(207,213,220,.15)', tension:.35, fill:false, borderWidth:3},
+          {label:'SE Ranking', data:visits.seranking, borderColor:'#123af8', tension:.35, fill:false, borderWidth:2},
+          {label:'Ahrefs', data:visits.ahrefs, borderColor:'#de36fc', tension:.35, fill:false, borderWidth:3},
+          {label:'Moz', data:visits.moz, borderColor:'#912140', tension:.35, fill:false, borderWidth:2}
+        ]
+      },
+      options:{
+        responsive:true, maintainAspectRatio:false,
+        interaction:{mode:'index',intersect:false},
+        plugins:{legend:{position:'top'}},
+        scales:{y:{ticks:{callback:v=>(v/1000000).toFixed(1)+'M'}}}
+      }
+    });
+
+    new Chart(document.getElementById('usersChart'), {
+      type:'line',
+      data:{
+        labels:labels24,
+        datasets:[
+          {label:'Similarweb', data:users.similarweb, borderColor:'#ff9600', tension:.35, borderWidth:3},
+          {label:'Semrush', data:users.semrush, borderColor:'#cfd5dc', tension:.35, borderWidth:3},
+          {label:'Ahrefs', data:users.ahrefs, borderColor:'#de36fc', tension:.35, borderWidth:3}
+        ]
+      },
+      options:{
+        responsive:true, maintainAspectRatio:false,
+        plugins:{legend:{position:'top'}},
+        scales:{y:{ticks:{callback:v=>(v/1000).toFixed(0)+'K'}}}
+      }
+    });
+
+    new Chart(document.getElementById('engagementRadar'), {
+      type:'radar',
+      data:{
+        labels:['Avg Duration','Pages / Visit','Bounce Efficiency'],
+        datasets:[
+          {
+            label:'Similarweb',
+            data:[111.2/4,4.08*20,(100-47.3)],
+            borderColor:'#ff9600',
+            backgroundColor:'rgba(255,150,0,.18)'
+          },
+          {
+            label:'Semrush',
+            data:[204.8/4,5.45*20,(100-51.6)],
+            borderColor:'#cfd5dc',
+            backgroundColor:'rgba(207,213,220,.15)'
+          },
+          {
+            label:'Ahrefs',
+            data:[238.3/4,5.34*20,(100-50.6)],
+            borderColor:'#de36fc',
+            backgroundColor:'rgba(222,54,252,.12)'
+          }
+        ]
+      },
+      options:{responsive:true, maintainAspectRatio:false, scales:{r:{beginAtZero:true}}}
+    });
+
+    new Chart(document.getElementById('sourceMixChart'), {
+      type:'doughnut',
+      data:{
+        labels:sourceMix.labels,
+        datasets:[{
+          data:sourceMix.values,
+          backgroundColor:['#ff9600','#1c3654','#3b82f6','#8b5cf6','#10b981','#cbd5e1']
+        }]
+      },
+      options:{responsive:true, maintainAspectRatio:false, plugins:{legend:{position:'bottom'}}}
+    });
+
+    new Chart(document.getElementById('rankDistChart'), {
+      type:'bar',
+      data:{
+        labels:rankDist.labels,
+        datasets:[
+          {label:'Sep 2025', data:rankDist.sep2025, backgroundColor:'rgba(255,150,0,.35)'},
+          {label:'Nov 2025', data:rankDist.nov2025, backgroundColor:'rgba(28,54,84,.55)'},
+          {label:'Feb 2026', data:rankDist.feb2026, backgroundColor:'#ff9600'}
+        ]
+      },
+      options:{
+        responsive:true, maintainAspectRatio:false,
+        plugins:{legend:{position:'top'}},
+        scales:{y:{ticks:{callback:v=>v+'%'}}}
+      }
+    });
+
+    new Chart(document.getElementById('ppcSpendChart'), {
+      type:'line',
+      data:{
+        labels:ppcSpendLabels,
+        datasets:[
+          {label:'Similarweb PPC Spend (USD)', data:ppcSpend.similarweb, borderColor:'#ff9600', backgroundColor:'rgba(255,150,0,.12)', tension:.35, borderWidth:3},
+          {label:'Semrush PPC Spend (USD)', data:ppcSpend.semrush, borderColor:'#cfd5dc', backgroundColor:'rgba(207,213,220,.15)', tension:.35, borderWidth:3}
+        ]
+      },
+      options:{
+        responsive:true, maintainAspectRatio:false,
+        plugins:{legend:{position:'top'}},
+        scales:{y:{ticks:{callback:v=>'$'+(v/1000).toFixed(0)+'k'}}}
+      }
+    });
+
+    new Chart(document.getElementById('socialChart'), {
+      type:'bar',
+      data:{
+        labels:socialLabels,
+        datasets:[{
+          label:'Share of top social referrals across market set',
+          data:socialValues,
+          backgroundColor:['#ef4444','#2563eb','#111827','#f97316','#ec4899','#3b82f6']
+        }]
+      },
+      options:{
+        responsive:true, maintainAspectRatio:false,
+        plugins:{legend:{display:false}},
+        scales:{y:{ticks:{callback:v=>v+'%'}}}
+      }
+    });
+
+    new Chart(document.getElementById('geoChart'), {
+      type:'bar',
+      data:{
+        labels:geoLabels,
+        datasets:[
+          {label:'Similarweb share within country traffic split', data:geoSW, backgroundColor:'#ff9600'},
+          {label:'Semrush share within country traffic split', data:geoSem, backgroundColor:'#1c3654'}
+        ]
+      },
+      options:{
+        responsive:true, maintainAspectRatio:false,
+        plugins:{legend:{position:'top'}},
+        scales:{y:{ticks:{callback:v=>v+'%'}}}
+      }
+    });
+
+    new Chart(document.getElementById('newReturningChart'), {
+      type:'bar',
+      data:{
+        labels:newReturningLabels,
+        datasets:[
+          {label:'New users', data:newUsers, backgroundColor:'rgba(255,150,0,.85)', stack:'stack1'},
+          {label:'Returning users', data:returningUsers, backgroundColor:'rgba(28,54,84,.85)', stack:'stack1'}
+        ]
+      },
+      options:{
+        responsive:true, maintainAspectRatio:false,
+        plugins:{legend:{position:'top'}},
+        scales:{x:{stacked:true}, y:{stacked:true, ticks:{callback:v=>(v/1000).toFixed(0)+'K'}}}
+      }
+    });
+
+    const roiChart = new Chart(document.getElementById('roiChart'), {
+      type:'bar',
+      data:{
+        labels:['Investment','Projected value','Net gain'],
+        datasets:[{
+          data:[250000,612000,362000],
+          backgroundColor:['#1c3654','#10b981','#ff9600']
+        }]
+      },
+      options:{
+        responsive:true, maintainAspectRatio:false,
+        plugins:{legend:{display:false}},
+        scales:{y:{ticks:{callback:v=>'$'+(v/1000).toFixed(0)+'k'}}}
+      }
+    });
+
+    const controls = ['paidBudget','seoBudget','crmBudget','cvrLift','retLift'];
+    controls.forEach(id => document.getElementById(id).addEventListener('input', updateROI));
+
+    function updateROI(){
+      const paid = +document.getElementById('paidBudget').value;
+      const seo = +document.getElementById('seoBudget').value;
+      const crm = +document.getElementById('crmBudget').value;
+      const cvr = +document.getElementById('cvrLift').value;
+      const ret = +document.getElementById('retLift').value;
+
+      document.getElementById('paidBudgetLabel').textContent = money(paid);
+      document.getElementById('seoBudgetLabel').textContent = money(seo);
+      document.getElementById('crmBudgetLabel').textContent = money(crm);
+      document.getElementById('cvrLiftLabel').textContent = cvr + '%';
+      document.getElementById('retLiftLabel').textContent = ret + '%';
+
+      const total = paid + seo + crm;
+
+      const paidValue = paid * (2.0 + cvr/60);
+      const seoValue = seo * (2.4 + cvr/90);
+      const crmValue = crm * (2.8 + ret/40);
+      const pipeline = paidValue + seoValue + crmValue;
+
+      const net = pipeline - total;
+      const roi = (net / total) * 100;
+      const activated = Math.round((paid/80) + (seo/120) + (crm/60) + cvr*35 + ret*28);
+
+      document.getElementById('totalInvestment').textContent = money(total);
+      document.getElementById('pipelineValue').textContent = money(pipeline);
+      document.getElementById('netRoi').textContent = Math.round(roi) + '%';
+      document.getElementById('activatedUsers').textContent = activated.toLocaleString();
+
+      roiChart.data.datasets[0].data = [total, pipeline, Math.max(net,0)];
+      roiChart.update();
+    }
+    updateROI();
+
+    document.querySelectorAll('.nav-link').forEach(link=>{
+      link.addEventListener('click',()=>{
+        document.querySelectorAll('.nav-link').forEach(l=>l.classList.remove('active'));
+        link.classList.add('active');
+      });
+    });
+  </script>
+
+</body></html>

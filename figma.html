@@ -1,0 +1,1144 @@
+<html lang="en"><head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Figma Intelligence Report — Similarweb Competitive Marketing Analysis</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <style>
+    :root{
+      --primary:#ffffff;
+      --secondary:#000000;
+      --figma:#ffffff;
+      --canva:#01c3cc;
+      --stitch:#ffabf2;
+      --bg:#0b0b0c;
+      --panel:#121214;
+      --panel-2:#17171a;
+      --muted:#9ca3af;
+      --line:#26262b;
+      --success:#10b981;
+      --warn:#f59e0b;
+      --danger:#ef4444;
+      --accent:#7c3aed;
+    }
+    html{scroll-behavior:smooth}
+    body{
+      background:linear-gradient(180deg,#080809 0%, #0e0e10 100%);
+      color:#f8fafc;
+      font-family:Inter,ui-sans-serif,system-ui,-apple-system,Segoe UI,Roboto,Helvetica,Arial,sans-serif;
+    }
+    .sidebar{
+      width:240px;
+      background:linear-gradient(180deg,#0a0a0b 0%, #111114 100%);
+      border-right:1px solid var(--line);
+    }
+    .main{margin-left:240px}
+    .panel{
+      background:linear-gradient(180deg,rgba(255,255,255,.03),rgba(255,255,255,.02));
+      border:1px solid rgba(255,255,255,.08);
+      box-shadow:0 10px 30px rgba(0,0,0,.25);
+      border-radius:20px;
+    }
+    .glass{
+      background:rgba(255,255,255,.03);
+      backdrop-filter: blur(8px);
+      border:1px solid rgba(255,255,255,.08);
+    }
+    .chip{
+      border:1px solid rgba(255,255,255,.1);
+      background:rgba(255,255,255,.03);
+      color:#e5e7eb;
+    }
+    .metric{
+      background:linear-gradient(180deg,#111214,#0d0e11);
+      border:1px solid rgba(255,255,255,.07);
+      border-radius:18px;
+    }
+    .chart-wrap{
+      position:relative;
+      height:320px;
+      max-height:320px;
+      overflow:hidden;
+      align-self:start;
+      min-height:0;
+    }
+    .chart-wrap.sm{height:250px;max-height:250px}
+    .chart-wrap.lg{height:380px;max-height:380px}
+    .grid-start{align-items:start}
+    .card-start{align-self:start}
+    .nav-link{
+      display:flex;align-items:center;gap:.75rem;
+      padding:.7rem .9rem;border-radius:.9rem;
+      color:#d1d5db;transition:.2s;
+    }
+    .nav-link:hover,.nav-link.active{
+      background:rgba(255,255,255,.08);color:#fff;
+    }
+    .kpi-number{font-size:2rem;font-weight:800;letter-spacing:-.03em}
+    .gradient-text{
+      background:linear-gradient(90deg,#fff 0%, #c7d2fe 35%, #67e8f9 100%);
+      -webkit-background-clip:text;background-clip:text;color:transparent;
+    }
+    .table-row:nth-child(even){background:rgba(255,255,255,.02)}
+    .pill-up{color:#86efac;background:rgba(16,185,129,.12);border:1px solid rgba(16,185,129,.25)}
+    .pill-down{color:#fca5a5;background:rgba(239,68,68,.12);border:1px solid rgba(239,68,68,.25)}
+    .pill-flat{color:#fde68a;background:rgba(245,158,11,.12);border:1px solid rgba(245,158,11,.25)}
+    .ad-thumb{
+      width:100%;height:160px;object-fit:cover;border-radius:14px;border:1px solid rgba(255,255,255,.08);background:#fff;
+    }
+    .hero-ring{
+      box-shadow:0 0 0 1px rgba(255,255,255,.08), 0 0 80px rgba(124,58,237,.15), 0 0 120px rgba(6,182,212,.08);
+    }
+    .range-label{font-size:.8rem;color:#9ca3af}
+    input[type="range"]{width:100%}
+    .sim-output{font-variant-numeric:tabular-nums}
+    .sticky-top{position:sticky;top:0;z-index:20}
+    .small{font-size:.84rem}
+  </style>
+<style>*, ::before, ::after{--tw-border-spacing-x:0;--tw-border-spacing-y:0;--tw-translate-x:0;--tw-translate-y:0;--tw-rotate:0;--tw-skew-x:0;--tw-skew-y:0;--tw-scale-x:1;--tw-scale-y:1;--tw-pan-x: ;--tw-pan-y: ;--tw-pinch-zoom: ;--tw-scroll-snap-strictness:proximity;--tw-gradient-from-position: ;--tw-gradient-via-position: ;--tw-gradient-to-position: ;--tw-ordinal: ;--tw-slashed-zero: ;--tw-numeric-figure: ;--tw-numeric-spacing: ;--tw-numeric-fraction: ;--tw-ring-inset: ;--tw-ring-offset-width:0px;--tw-ring-offset-color:#fff;--tw-ring-color:rgb(59 130 246 / 0.5);--tw-ring-offset-shadow:0 0 #0000;--tw-ring-shadow:0 0 #0000;--tw-shadow:0 0 #0000;--tw-shadow-colored:0 0 #0000;--tw-blur: ;--tw-brightness: ;--tw-contrast: ;--tw-grayscale: ;--tw-hue-rotate: ;--tw-invert: ;--tw-saturate: ;--tw-sepia: ;--tw-drop-shadow: ;--tw-backdrop-blur: ;--tw-backdrop-brightness: ;--tw-backdrop-contrast: ;--tw-backdrop-grayscale: ;--tw-backdrop-hue-rotate: ;--tw-backdrop-invert: ;--tw-backdrop-opacity: ;--tw-backdrop-saturate: ;--tw-backdrop-sepia: ;--tw-contain-size: ;--tw-contain-layout: ;--tw-contain-paint: ;--tw-contain-style: }::backdrop{--tw-border-spacing-x:0;--tw-border-spacing-y:0;--tw-translate-x:0;--tw-translate-y:0;--tw-rotate:0;--tw-skew-x:0;--tw-skew-y:0;--tw-scale-x:1;--tw-scale-y:1;--tw-pan-x: ;--tw-pan-y: ;--tw-pinch-zoom: ;--tw-scroll-snap-strictness:proximity;--tw-gradient-from-position: ;--tw-gradient-via-position: ;--tw-gradient-to-position: ;--tw-ordinal: ;--tw-slashed-zero: ;--tw-numeric-figure: ;--tw-numeric-spacing: ;--tw-numeric-fraction: ;--tw-ring-inset: ;--tw-ring-offset-width:0px;--tw-ring-offset-color:#fff;--tw-ring-color:rgb(59 130 246 / 0.5);--tw-ring-offset-shadow:0 0 #0000;--tw-ring-shadow:0 0 #0000;--tw-shadow:0 0 #0000;--tw-shadow-colored:0 0 #0000;--tw-blur: ;--tw-brightness: ;--tw-contrast: ;--tw-grayscale: ;--tw-hue-rotate: ;--tw-invert: ;--tw-saturate: ;--tw-sepia: ;--tw-drop-shadow: ;--tw-backdrop-blur: ;--tw-backdrop-brightness: ;--tw-backdrop-contrast: ;--tw-backdrop-grayscale: ;--tw-backdrop-hue-rotate: ;--tw-backdrop-invert: ;--tw-backdrop-opacity: ;--tw-backdrop-saturate: ;--tw-backdrop-sepia: ;--tw-contain-size: ;--tw-contain-layout: ;--tw-contain-paint: ;--tw-contain-style: }/* ! tailwindcss v3.4.17 | MIT License | https://tailwindcss.com */*,::after,::before{box-sizing:border-box;border-width:0;border-style:solid;border-color:#e5e7eb}::after,::before{--tw-content:''}:host,html{line-height:1.5;-webkit-text-size-adjust:100%;-moz-tab-size:4;tab-size:4;font-family:ui-sans-serif, system-ui, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";font-feature-settings:normal;font-variation-settings:normal;-webkit-tap-highlight-color:transparent}body{margin:0;line-height:inherit}hr{height:0;color:inherit;border-top-width:1px}abbr:where([title]){-webkit-text-decoration:underline dotted;text-decoration:underline dotted}h1,h2,h3,h4,h5,h6{font-size:inherit;font-weight:inherit}a{color:inherit;text-decoration:inherit}b,strong{font-weight:bolder}code,kbd,pre,samp{font-family:ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;font-feature-settings:normal;font-variation-settings:normal;font-size:1em}small{font-size:80%}sub,sup{font-size:75%;line-height:0;position:relative;vertical-align:baseline}sub{bottom:-.25em}sup{top:-.5em}table{text-indent:0;border-color:inherit;border-collapse:collapse}button,input,optgroup,select,textarea{font-family:inherit;font-feature-settings:inherit;font-variation-settings:inherit;font-size:100%;font-weight:inherit;line-height:inherit;letter-spacing:inherit;color:inherit;margin:0;padding:0}button,select{text-transform:none}button,input:where([type=button]),input:where([type=reset]),input:where([type=submit]){-webkit-appearance:button;background-color:transparent;background-image:none}:-moz-focusring{outline:auto}:-moz-ui-invalid{box-shadow:none}progress{vertical-align:baseline}::-webkit-inner-spin-button,::-webkit-outer-spin-button{height:auto}[type=search]{-webkit-appearance:textfield;outline-offset:-2px}::-webkit-search-decoration{-webkit-appearance:none}::-webkit-file-upload-button{-webkit-appearance:button;font:inherit}summary{display:list-item}blockquote,dd,dl,figure,h1,h2,h3,h4,h5,h6,hr,p,pre{margin:0}fieldset{margin:0;padding:0}legend{padding:0}menu,ol,ul{list-style:none;margin:0;padding:0}dialog{padding:0}textarea{resize:vertical}input::placeholder,textarea::placeholder{opacity:1;color:#9ca3af}[role=button],button{cursor:pointer}:disabled{cursor:default}audio,canvas,embed,iframe,img,object,svg,video{display:block;vertical-align:middle}img,video{max-width:100%;height:auto}[hidden]:where(:not([hidden=until-found])){display:none}.fixed{position:fixed}.left-0{left:0px}.top-0{top:0px}.mb-1{margin-bottom:0.25rem}.mb-2{margin-bottom:0.5rem}.mb-3{margin-bottom:0.75rem}.mb-4{margin-bottom:1rem}.mb-5{margin-bottom:1.25rem}.mb-6{margin-bottom:1.5rem}.mb-8{margin-bottom:2rem}.ml-5{margin-left:1.25rem}.mt-10{margin-top:2.5rem}.mt-2{margin-top:0.5rem}.mt-3{margin-top:0.75rem}.mt-4{margin-top:1rem}.mt-6{margin-top:1.5rem}.mt-8{margin-top:2rem}.flex{display:flex}.inline-flex{display:inline-flex}.table-row{display:table-row}.grid{display:grid}.h-11{height:2.75rem}.h-2{height:0.5rem}.h-7{height:1.75rem}.h-screen{height:100vh}.min-h-screen{min-height:100vh}.w-11{width:2.75rem}.w-2{width:0.5rem}.w-7{width:1.75rem}.w-full{width:100%}.min-w-\[280px\]{min-width:280px}.max-w-3xl{max-width:48rem}.max-w-4xl{max-width:56rem}.list-disc{list-style-type:disc}.grid-cols-1{grid-template-columns:repeat(1, minmax(0, 1fr))}.grid-cols-2{grid-template-columns:repeat(2, minmax(0, 1fr))}.flex-col{flex-direction:column}.flex-wrap{flex-wrap:wrap}.items-end{align-items:flex-end}.items-center{align-items:center}.justify-center{justify-content:center}.justify-between{justify-content:space-between}.gap-2{gap:0.5rem}.gap-3{gap:0.75rem}.gap-4{gap:1rem}.gap-6{gap:1.5rem}.gap-8{gap:2rem}.space-y-1 > :not([hidden]) ~ :not([hidden]){--tw-space-y-reverse:0;margin-top:calc(0.25rem * calc(1 - var(--tw-space-y-reverse)));margin-bottom:calc(0.25rem * var(--tw-space-y-reverse))}.space-y-2 > :not([hidden]) ~ :not([hidden]){--tw-space-y-reverse:0;margin-top:calc(0.5rem * calc(1 - var(--tw-space-y-reverse)));margin-bottom:calc(0.5rem * var(--tw-space-y-reverse))}.space-y-4 > :not([hidden]) ~ :not([hidden]){--tw-space-y-reverse:0;margin-top:calc(1rem * calc(1 - var(--tw-space-y-reverse)));margin-bottom:calc(1rem * var(--tw-space-y-reverse))}.space-y-6 > :not([hidden]) ~ :not([hidden]){--tw-space-y-reverse:0;margin-top:calc(1.5rem * calc(1 - var(--tw-space-y-reverse)));margin-bottom:calc(1.5rem * var(--tw-space-y-reverse))}.overflow-x-auto{overflow-x:auto}.overflow-y-auto{overflow-y:auto}.rounded-2xl{border-radius:1rem}.rounded-full{border-radius:9999px}.border{border-width:1px}.border-b{border-bottom-width:1px}.border-white\/10{border-color:rgb(255 255 255 / 0.1)}.border-white\/5{border-color:rgb(255 255 255 / 0.05)}.bg-emerald-400{--tw-bg-opacity:1;background-color:rgb(52 211 153 / var(--tw-bg-opacity, 1))}.bg-white{--tw-bg-opacity:1;background-color:rgb(255 255 255 / var(--tw-bg-opacity, 1))}.bg-gradient-to-r{background-image:linear-gradient(to right, var(--tw-gradient-stops))}.from-cyan-500\/10{--tw-gradient-from:rgb(6 182 212 / 0.1) var(--tw-gradient-from-position);--tw-gradient-to:rgb(6 182 212 / 0) var(--tw-gradient-to-position);--tw-gradient-stops:var(--tw-gradient-from), var(--tw-gradient-to)}.to-violet-500\/10{--tw-gradient-to:rgb(139 92 246 / 0.1) var(--tw-gradient-to-position)}.p-4{padding:1rem}.p-5{padding:1.25rem}.p-6{padding:1.5rem}.p-8{padding:2rem}.px-2{padding-left:0.5rem;padding-right:0.5rem}.px-3{padding-left:0.75rem;padding-right:0.75rem}.px-8{padding-left:2rem;padding-right:2rem}.py-1{padding-top:0.25rem;padding-bottom:0.25rem}.py-3{padding-top:0.75rem;padding-bottom:0.75rem}.py-4{padding-top:1rem;padding-bottom:1rem}.py-8{padding-top:2rem;padding-bottom:2rem}.pb-10{padding-bottom:2.5rem}.pb-8{padding-bottom:2rem}.pr-4{padding-right:1rem}.text-left{text-align:left}.text-2xl{font-size:1.5rem;line-height:2rem}.text-3xl{font-size:1.875rem;line-height:2.25rem}.text-4xl{font-size:2.25rem;line-height:2.5rem}.text-lg{font-size:1.125rem;line-height:1.75rem}.text-sm{font-size:0.875rem;line-height:1.25rem}.text-xl{font-size:1.25rem;line-height:1.75rem}.text-xs{font-size:0.75rem;line-height:1rem}.font-black{font-weight:900}.font-bold{font-weight:700}.font-semibold{font-weight:600}.uppercase{text-transform:uppercase}.leading-6{line-height:1.5rem}.leading-7{line-height:1.75rem}.leading-tight{line-height:1.25}.tracking-\[0\.25em\]{letter-spacing:0.25em}.tracking-\[0\.2em\]{letter-spacing:0.2em}.tracking-wider{letter-spacing:0.05em}.tracking-widest{letter-spacing:0.1em}.text-amber-300{--tw-text-opacity:1;color:rgb(252 211 77 / var(--tw-text-opacity, 1))}.text-cyan-300{--tw-text-opacity:1;color:rgb(103 232 249 / var(--tw-text-opacity, 1))}.text-emerald-300{--tw-text-opacity:1;color:rgb(110 231 183 / var(--tw-text-opacity, 1))}.text-gray-200{--tw-text-opacity:1;color:rgb(229 231 235 / var(--tw-text-opacity, 1))}.text-gray-300{--tw-text-opacity:1;color:rgb(209 213 219 / var(--tw-text-opacity, 1))}.text-gray-400{--tw-text-opacity:1;color:rgb(156 163 175 / var(--tw-text-opacity, 1))}.text-rose-300{--tw-text-opacity:1;color:rgb(253 164 175 / var(--tw-text-opacity, 1))}.text-white{--tw-text-opacity:1;color:rgb(255 255 255 / var(--tw-text-opacity, 1))}@media (min-width: 768px){.md\:grid-cols-2{grid-template-columns:repeat(2, minmax(0, 1fr))}.md\:grid-cols-3{grid-template-columns:repeat(3, minmax(0, 1fr))}.md\:flex-row{flex-direction:row}.md\:items-end{align-items:flex-end}.md\:justify-between{justify-content:space-between}.md\:text-5xl{font-size:3rem;line-height:1}}@media (min-width: 1024px){.lg\:col-span-2{grid-column:span 2 / span 2}.lg\:grid-cols-2{grid-template-columns:repeat(2, minmax(0, 1fr))}.lg\:grid-cols-3{grid-template-columns:repeat(3, minmax(0, 1fr))}.lg\:flex-row{flex-direction:row}.lg\:items-end{align-items:flex-end}.lg\:justify-between{justify-content:space-between}}@media (min-width: 1280px){.xl\:grid-cols-4{grid-template-columns:repeat(4, minmax(0, 1fr))}}</style></head>
+<body>
+  <aside class="sidebar fixed left-0 top-0 h-screen p-5 overflow-y-auto">
+    <div class="flex items-center gap-3 mb-8">
+      <div class="w-11 h-11 rounded-2xl bg-white flex items-center justify-center">
+        <img src="https://static.figma.com/app/icon/2/favicon.svg" alt="Figma logo" class="w-7 h-7" onerror="this.style.display='none';this.parentNode.innerHTML='&lt;span class=&quot;text-black font-black text-xl&quot;&gt;F&lt;/span&gt;'">
+      </div>
+      <div>
+        <div class="text-xs uppercase tracking-[0.25em] text-gray-400">Intelligence Report</div>
+        <div class="text-lg font-semibold text-white">Figma</div>
+      </div>
+    </div>
+
+    <nav class="space-y-2 text-sm">
+      <a class="nav-link active" href="#overview">Overview</a>
+      <a class="nav-link" href="#market">Market Position</a>
+      <a class="nav-link" href="#channels">Channel Mix</a>
+      <a class="nav-link" href="#seo">SEO &amp; Topic Demand</a>
+      <a class="nav-link" href="#paid">Paid Search &amp; Ad Copy</a>
+      <a class="nav-link" href="#display">Display &amp; Creative Gaps</a>
+      <a class="nav-link" href="#referrals">Referral &amp; Social</a>
+      <a class="nav-link" href="#opportunities">Growth Plays</a>
+      <a class="nav-link" href="#simulator">ROI Simulator</a>
+      <a class="nav-link" href="#roadmap">90-Day Plan</a>
+    </nav>
+
+    <div class="mt-10 p-4 rounded-2xl glass">
+      <div class="text-xs uppercase tracking-[0.2em] text-gray-400 mb-2">Executive signal</div>
+      <div class="text-sm leading-6 text-gray-200">
+        Figma is winning on <span class="font-semibold text-white">engagement quality</span>, but Canva massively outscales it on <span class="font-semibold text-white">reach, paid spend, and utility-topic acquisition</span>.
+      </div>
+    </div>
+  </aside>
+
+  <main class="main min-h-screen">
+    <section id="overview" class="px-8 py-8">
+      <div class="panel hero-ring p-8">
+        <div class="flex flex-col lg:flex-row lg:items-end lg:justify-between gap-6">
+          <div class="max-w-4xl">
+            <div class="inline-flex items-center gap-2 chip rounded-full px-3 py-1 text-xs mb-4">
+              <span class="w-2 h-2 rounded-full bg-emerald-400"></span>
+              Similarweb competitive intelligence · US market context
+            </div>
+            <h1 class="text-4xl md:text-5xl font-black leading-tight gradient-text">
+              How Figma can grow marketing ROI faster than traffic
+            </h1>
+            <p class="mt-4 text-lg text-gray-300 max-w-3xl">
+              Figma already has a premium engagement engine: deeper sessions, far more pages per visit, and strong returning behavior. The opportunity is not to imitate Canva’s breadth — it is to <span class="text-white font-semibold">scale acquisition around high-intent product-led topics, AI creation workflows, and utility-led SEO/PPC entry points</span> without diluting monetization.
+            </p>
+          </div>
+          <div class="grid grid-cols-2 gap-3 min-w-[280px]">
+            <div class="metric p-4">
+              <div class="text-xs text-gray-400 uppercase tracking-widest">Visits</div>
+              <div class="kpi-number">13.4M</div>
+              <div class="small text-emerald-300">Feb 2026 · +5.8% YoY vs Mar'24 baseline season</div>
+            </div>
+            <div class="metric p-4">
+              <div class="text-xs text-gray-400 uppercase tracking-widest">Unique users</div>
+              <div class="kpi-number">2.51M</div>
+              <div class="small text-emerald-300">New highs sustained</div>
+            </div>
+            <div class="metric p-4">
+              <div class="text-xs text-gray-400 uppercase tracking-widest">Avg duration</div>
+              <div class="kpi-number">10.1m</div>
+              <div class="small text-cyan-300">2.2× Canva</div>
+            </div>
+            <div class="metric p-4">
+              <div class="text-xs text-gray-400 uppercase tracking-widest">Pages/visit</div>
+              <div class="kpi-number">22.7</div>
+              <div class="small text-cyan-300">4.2× Canva</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mt-8">
+          <div class="metric p-5">
+            <div class="text-sm font-semibold mb-2">1. Core thesis</div>
+            <p class="text-gray-300 text-sm leading-6">Figma should invest where its product depth matters most: design systems, prototyping, AI-to-product workflows, developer handoff, team collaboration, and creator utilities adjacent to design.</p>
+          </div>
+          <div class="metric p-5">
+            <div class="text-sm font-semibold mb-2">2. Competitive reality</div>
+            <p class="text-gray-300 text-sm leading-6">Canva dominates broad creative, education, and utility search space with much heavier paid support. Figma can win by taking higher-intent workflow territory and selectively expanding utility topics with stronger product bridges.</p>
+          </div>
+          <div class="metric p-5">
+            <div class="text-sm font-semibold mb-2">3. Best ROI lever</div>
+            <p class="text-gray-300 text-sm leading-6">Reallocate branded PPC surplus into non-brand AI/workflow clusters, creator utility landing pages, and partnership/referral surfaces that funnel into product experience faster.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section id="market" class="px-8 pb-8">
+      <div class="grid lg:grid-cols-3 gap-6 grid-start">
+        <div class="panel p-6 lg:col-span-2 card-start">
+          <div class="flex items-center justify-between mb-4">
+            <div>
+              <h2 class="text-2xl font-bold">Traffic scale vs engagement quality</h2>
+              <p class="text-gray-400 text-sm">Canva owns top-of-funnel volume; Figma owns depth and session value.</p>
+            </div>
+          </div>
+          <div class="chart-wrap lg">
+            <canvas id="visitsChart" width="1878" height="760" style="display: block; box-sizing: border-box; height: 380px; width: 939.3px;"></canvas>
+          </div>
+        </div>
+
+        <div class="panel p-6 card-start">
+          <h3 class="text-xl font-bold mb-4">Competitive scorecard</h3>
+          <div class="space-y-4">
+            <div class="metric p-4">
+              <div class="flex justify-between text-sm">
+                <span class="text-gray-400">Traffic scale ratio</span>
+                <span class="font-semibold">Canva ~10.6× Figma</span>
+              </div>
+            </div>
+            <div class="metric p-4">
+              <div class="flex justify-between text-sm">
+                <span class="text-gray-400">Pages per visit ratio</span>
+                <span class="font-semibold">Figma ~4.2× Canva</span>
+              </div>
+            </div>
+            <div class="metric p-4">
+              <div class="flex justify-between text-sm">
+                <span class="text-gray-400">Visit duration ratio</span>
+                <span class="font-semibold">Figma ~2.2× Canva</span>
+              </div>
+            </div>
+            <div class="metric p-4">
+              <div class="flex justify-between text-sm">
+                <span class="text-gray-400">Bounce disadvantage</span>
+                <span class="font-semibold text-rose-300">Figma slightly higher</span>
+              </div>
+            </div>
+            <div class="metric p-4">
+              <div class="text-sm font-semibold mb-2">Interpretation</div>
+              <p class="text-gray-300 text-sm leading-6">
+                Figma's users are dramatically more involved once they arrive. That means CAC can be justified in higher-intent segments where session depth predicts activation, collaboration, or paid conversion.
+              </p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="grid lg:grid-cols-2 gap-6 mt-6 grid-start">
+        <div class="panel p-6 card-start">
+          <h3 class="text-xl font-bold mb-4">Unique users growth</h3>
+          <div class="chart-wrap">
+            <canvas id="usersChart" width="1372" height="640" style="display: block; box-sizing: border-box; height: 320px; width: 686px;"></canvas>
+          </div>
+        </div>
+        <div class="panel p-6 card-start">
+          <h3 class="text-xl font-bold mb-4">Engagement benchmark snapshot</h3>
+          <div class="chart-wrap">
+            <canvas id="engagementRadar" width="1372" height="640" style="display: block; box-sizing: border-box; height: 320px; width: 686px;"></canvas>
+          </div>
+        </div>
+      </div>
+
+      <div class="grid lg:grid-cols-3 gap-6 mt-6">
+        <div class="panel p-6">
+          <h3 class="font-bold text-lg mb-3">Returning-user strength</h3>
+          <div class="text-4xl font-black mb-2">56%</div>
+          <p class="text-sm text-gray-300 leading-6">
+            Average monthly returning share is strong enough to support lifecycle-led growth. Figma should monetize this with better CRM segmentation: onboarding nudges, enterprise collaboration use cases, and AI feature adoption loops.
+          </p>
+        </div>
+        <div class="panel p-6">
+          <h3 class="font-bold text-lg mb-3">Watchout: engagement softening</h3>
+          <div class="text-4xl font-black mb-2 text-amber-300">-22%</div>
+          <p class="text-sm text-gray-300 leading-6">
+            Average visit duration declined from late 2024 peaks to early 2026. This suggests more top-of-funnel or lighter-intent traffic. Acquisition scale is rising, but landing page-message fit must be tightened.
+          </p>
+        </div>
+        <div class="panel p-6">
+          <h3 class="font-bold text-lg mb-3">Pageview efficiency</h3>
+          <div class="text-4xl font-black mb-2">304M</div>
+          <p class="text-sm text-gray-300 leading-6">
+            Total pageviews remain huge relative to user base, signaling rich in-product exploration. That gives Figma permission to buy costlier high-intent visits — but not waste budget on shallow generic creative terms with weak product linkage.
+          </p>
+        </div>
+      </div>
+    </section>
+
+    <section id="channels" class="px-8 pb-8">
+      <div class="panel p-6">
+        <div class="flex flex-col md:flex-row md:items-end md:justify-between gap-4 mb-6">
+          <div>
+            <h2 class="text-2xl font-bold">Channel mix: where Figma is underpowered</h2>
+            <p class="text-gray-400 text-sm">Direct is healthy; paid and email are materially under-scaled versus Canva.</p>
+          </div>
+          <div class="flex gap-2 flex-wrap">
+            <span class="chip rounded-full px-3 py-1 text-xs">Direct-led brand strength</span>
+            <span class="chip rounded-full px-3 py-1 text-xs">Referral whitespace</span>
+            <span class="chip rounded-full px-3 py-1 text-xs">Paid expansion headroom</span>
+          </div>
+        </div>
+
+        <div class="grid lg:grid-cols-2 gap-6 grid-start">
+          <div class="card-start">
+            <div class="chart-wrap">
+              <canvas id="channelBar" width="1422" height="640" style="display: block; box-sizing: border-box; height: 320px; width: 711px;"></canvas>
+            </div>
+          </div>
+          <div class="space-y-4 card-start">
+            <div class="metric p-4">
+              <div class="text-sm font-semibold mb-1">Direct is 89.3× display volume</div>
+              <p class="text-sm text-gray-300">Brand/product familiarity is doing the heavy lifting. Acquisition diversification is needed to reduce dependence on users already in-market.</p>
+            </div>
+            <div class="metric p-4">
+              <div class="text-sm font-semibold mb-1">Email is underutilized</div>
+              <p class="text-sm text-gray-300">Figma total email traffic is tiny relative to session depth. Better lifecycle orchestration should be one of the highest-ROI retention levers.</p>
+            </div>
+            <div class="metric p-4">
+              <div class="text-sm font-semibold mb-1">Display spiked, then receded</div>
+              <p class="text-sm text-gray-300">Display burst in Sep–Oct 2025 aligns with Figma Make push. The creative system likely lacks enough audience-specific narratives to sustain scale efficiently.</p>
+            </div>
+            <div class="metric p-4">
+              <div class="text-sm font-semibold mb-1">Recommendation</div>
+              <p class="text-sm text-gray-300">Shift from one-message AI promotion to segmented campaigns: <span class="text-white">designers</span>, <span class="text-white">PMs</span>, <span class="text-white">developers</span>, <span class="text-white">students</span>, and <span class="text-white">agencies</span>.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section id="seo" class="px-8 pb-8">
+      <div class="grid lg:grid-cols-2 gap-6 grid-start">
+        <div class="panel p-6 card-start">
+          <h2 class="text-2xl font-bold mb-1">SEO momentum</h2>
+          <p class="text-gray-400 text-sm mb-5">Ranking distribution improved markedly from Mar 2025 to Feb 2026.</p>
+          <div class="chart-wrap">
+            <canvas id="rankDist" width="1372" height="640" style="display: block; box-sizing: border-box; height: 320px; width: 686px;"></canvas>
+          </div>
+        </div>
+        <div class="panel p-6 card-start">
+          <h2 class="text-2xl font-bold mb-1">Organic topic clusters gaining traction</h2>
+          <p class="text-gray-400 text-sm mb-5">Brand plus AI, templates, pricing, education, and utility topics are accelerating.</p>
+          <div class="chart-wrap">
+            <canvas id="topicClusterChart" width="1372" height="640" style="display: block; box-sizing: border-box; height: 320px; width: 686px;"></canvas>
+          </div>
+        </div>
+      </div>
+
+      <div class="grid lg:grid-cols-3 gap-6 mt-6">
+        <div class="panel p-6">
+          <h3 class="font-bold text-lg mb-3">Biggest SEO win</h3>
+          <p class="text-gray-300 text-sm leading-6">
+            Figma is expanding beyond pure navigational demand into adjacent topics like <span class="text-white font-semibold">templates, pricing, student plans, presentation workflows, fonts, icons, color tools, and AI design collaboration</span>.
+          </p>
+        </div>
+        <div class="panel p-6">
+          <h3 class="font-bold text-lg mb-3">Biggest SEO gap</h3>
+          <p class="text-gray-300 text-sm leading-6">
+            Canva owns broader utility intent around creation tools: AI image generation, logo generation, QR workflows, document creation, editing tools, and many creative one-off jobs. Figma should selectively enter these only when the path back to core product is explicit.
+          </p>
+        </div>
+        <div class="panel p-6">
+          <h3 class="font-bold text-lg mb-3">SERP future-proofing</h3>
+          <p class="text-gray-300 text-sm leading-6">
+            AI Overviews, related questions, images, and video are increasingly present across Figma’s SERPs. Pages must be built to win summary extraction: clear definitions, steps, comparisons, visual examples, and embedded product demonstrations.
+          </p>
+        </div>
+      </div>
+
+      <div class="panel p-6 mt-6">
+        <h3 class="text-xl font-bold mb-4">Priority topic opportunities versus Canva</h3>
+        <div class="overflow-x-auto">
+          <table class="w-full text-sm">
+            <thead>
+              <tr class="text-left text-gray-400 border-b border-white/10">
+                <th class="py-3 pr-4">Topic territory</th>
+                <th class="py-3 pr-4">Why it matters</th>
+                <th class="py-3 pr-4">Competitive signal</th>
+                <th class="py-3 pr-4">Figma move</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr class="table-row border-b border-white/5">
+                <td class="py-4 pr-4 font-semibold">AI image creation</td>
+                <td class="py-4 pr-4 text-gray-300">Massive volume, entry point to Make and design workflows</td>
+                <td class="py-4 pr-4 text-gray-300">Canva overwhelmingly leads</td>
+                <td class="py-4 pr-4 text-gray-300">Create workflow-led pages: generate → edit → prototype → handoff</td>
+              </tr>
+              <tr class="table-row border-b border-white/5">
+                <td class="py-4 pr-4 font-semibold">Logo / brand asset generation</td>
+                <td class="py-4 pr-4 text-gray-300">High commercial and SMB appeal</td>
+                <td class="py-4 pr-4 text-gray-300">Canva owns generic intent</td>
+                <td class="py-4 pr-4 text-gray-300">Position Figma as brand-system builder, not mere logo maker</td>
+              </tr>
+              <tr class="table-row border-b border-white/5">
+                <td class="py-4 pr-4 font-semibold">Color systems &amp; visual utility</td>
+                <td class="py-4 pr-4 text-gray-300">Figma already has momentum and authority</td>
+                <td class="py-4 pr-4 text-gray-300">Head-to-head with Canva is viable</td>
+                <td class="py-4 pr-4 text-gray-300">Expand palette, accessibility, token, and design-system utilities</td>
+              </tr>
+              <tr class="table-row border-b border-white/5">
+                <td class="py-4 pr-4 font-semibold">Presentation / doc workflows</td>
+                <td class="py-4 pr-4 text-gray-300">Cross-functional adoption, PM and GTM teams</td>
+                <td class="py-4 pr-4 text-gray-300">Canva strong, but Figma has product story</td>
+                <td class="py-4 pr-4 text-gray-300">Create pages for product reviews, roadmaps, team briefs, investor updates</td>
+              </tr>
+              <tr class="table-row">
+                <td class="py-4 pr-4 font-semibold">AI code &amp; developer collaboration</td>
+                <td class="py-4 pr-4 text-gray-300">High-intent, closer to monetization</td>
+                <td class="py-4 pr-4 text-gray-300">Figma surging with MCP / Claude-related demand</td>
+                <td class="py-4 pr-4 text-gray-300">Double down with docs, comparisons, demos, integration pages</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+
+    <section id="paid" class="px-8 pb-8">
+      <div class="grid lg:grid-cols-3 gap-6 grid-start">
+        <div class="panel p-6 lg:col-span-2 card-start">
+          <h2 class="text-2xl font-bold mb-1">Paid search reality</h2>
+          <p class="text-gray-400 text-sm mb-4">Figma spend is rising, but still far below Canva. Most paid clicks center on branded / Make-led terms.</p>
+          <div class="chart-wrap lg">
+            <canvas id="ppcSpendChart" width="1878" height="760" style="display: block; box-sizing: border-box; height: 380px; width: 939.3px;"></canvas>
+          </div>
+        </div>
+        <div class="panel p-6 card-start">
+          <h3 class="text-xl font-bold mb-4">Paid diagnosis</h3>
+          <div class="space-y-4">
+            <div class="metric p-4">
+              <div class="text-xs text-gray-400 uppercase">Feb 2026 PPC spend</div>
+              <div class="text-3xl font-black">$656k</div>
+              <div class="small text-emerald-300">Highest in 12 months</div>
+            </div>
+            <div class="metric p-4">
+              <div class="text-xs text-gray-400 uppercase">Canva spend same month</div>
+              <div class="text-3xl font-black">$3.96M+</div>
+              <div class="small text-rose-300">~6× higher</div>
+            </div>
+            <div class="metric p-4">
+              <div class="text-sm font-semibold mb-1">Issue</div>
+              <p class="text-sm text-gray-300">Top ads repeatedly say the same thing: “Design &amp; Build with AI.” Strong for branded demand, weaker for category conquest or persona-specific pain points.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="grid lg:grid-cols-2 gap-6 mt-6 grid-start">
+        <div class="panel p-6 card-start">
+          <h3 class="text-xl font-bold mb-4">Current paid topic concentration</h3>
+          <div class="chart-wrap">
+            <canvas id="paidTopics" width="1372" height="640" style="display: block; box-sizing: border-box; height: 320px; width: 686px;"></canvas>
+          </div>
+        </div>
+        <div class="panel p-6 card-start">
+          <h3 class="text-xl font-bold mb-4">Message gap analysis</h3>
+          <div class="space-y-4">
+            <div class="metric p-4">
+              <div class="font-semibold mb-2">What current ads emphasize</div>
+              <ul class="text-sm text-gray-300 space-y-1 list-disc ml-5">
+                <li>AI-powered creation</li>
+                <li>Free start</li>
+                <li>Speed</li>
+                <li>Single creative space</li>
+              </ul>
+            </div>
+            <div class="metric p-4">
+              <div class="font-semibold mb-2">What’s missing</div>
+              <ul class="text-sm text-gray-300 space-y-1 list-disc ml-5">
+                <li>Developer handoff and build-ready output</li>
+                <li>Team collaboration and cross-functional workflows</li>
+                <li>Enterprise trust / systemization value</li>
+                <li>Specific job-to-be-done messaging by audience</li>
+                <li>Comparative framing against fragmented tool stacks</li>
+              </ul>
+            </div>
+            <div class="metric p-4">
+              <div class="font-semibold mb-2">Best opportunity</div>
+              <p class="text-sm text-gray-300">
+                Build ad groups and landing pages around <span class="text-white">workflow outcomes</span>, not just AI novelty:
+                ship UI faster, align design with code, review with PMs, turn screenshots into prototypes, generate assets inside systems.
+              </p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="panel p-6 mt-6">
+        <h3 class="text-xl font-bold mb-5">Recommended search ad copy directions</h3>
+        <div class="grid md:grid-cols-2 xl:grid-cols-4 gap-4">
+          <div class="metric p-4">
+            <div class="text-xs text-cyan-300 mb-2 uppercase tracking-wider">Persona: Product teams</div>
+            <div class="font-semibold">From idea to clickable product flow</div>
+            <p class="text-sm text-gray-300 mt-2">Design with AI, prototype instantly, and review with your team in one workspace.</p>
+            <div class="mt-3 text-xs text-gray-400">CTA: Start free</div>
+          </div>
+          <div class="metric p-4">
+            <div class="text-xs text-cyan-300 mb-2 uppercase tracking-wider">Persona: Designers</div>
+            <div class="font-semibold">Create concepts. Keep the system intact.</div>
+            <p class="text-sm text-gray-300 mt-2">Generate new UI directions with AI inside your components, styles, and workflows.</p>
+            <div class="mt-3 text-xs text-gray-400">CTA: Explore Figma Make</div>
+          </div>
+          <div class="metric p-4">
+            <div class="text-xs text-cyan-300 mb-2 uppercase tracking-wider">Persona: Developers</div>
+            <div class="font-semibold">Design that developers can actually build</div>
+            <p class="text-sm text-gray-300 mt-2">Move from mockup to handoff faster with inspectable specs, prototypes, and AI-assisted iteration.</p>
+            <div class="mt-3 text-xs text-gray-400">CTA: See build-ready workflows</div>
+          </div>
+          <div class="metric p-4">
+            <div class="text-xs text-cyan-300 mb-2 uppercase tracking-wider">Persona: SMB / agencies</div>
+            <div class="font-semibold">Replace scattered creative tools with one workflow</div>
+            <p class="text-sm text-gray-300 mt-2">Create assets, presentations, mockups, and prototypes in one collaborative platform.</p>
+            <div class="mt-3 text-xs text-gray-400">CTA: Try free</div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section id="display" class="px-8 pb-8">
+      <div class="panel p-6">
+        <div class="flex items-end justify-between gap-4 mb-6">
+          <div>
+            <h2 class="text-2xl font-bold">Display ads: creative review &amp; growth direction</h2>
+            <p class="text-gray-400 text-sm">Current display effort centers almost entirely on Figma Make. Good campaign focus, limited narrative range.</p>
+          </div>
+          <div class="chip rounded-full px-3 py-1 text-xs">1 campaign · 58 creatives captured</div>
+        </div>
+
+        <div class="grid lg:grid-cols-3 gap-6 grid-start">
+          <div class="lg:col-span-2 grid md:grid-cols-2 gap-4 card-start">
+            <div class="metric p-4">
+              <img class="ad-thumb" src="https://sw-df-ads-capture-creatives-production.s3.us-east-1.amazonaws.com/creatives/execution_key%3Dads_capture/images/1fb1eda4834e977baa521172ad1f7dfdb6bada55e4acc615d3cb037c/728x90?X-Amz-Expires=86400&amp;response-content-disposition=attachment%3B%20filename%3D%22creative_screenshot.jpg%22&amp;X-Amz-Algorithm=AWS4-HMAC-SHA256&amp;X-Amz-Credential=AKIA4GKBI5ER5IXVZOXV%2F20260325%2Fus-east-1%2Fs3%2Faws4_request&amp;X-Amz-Date=20260325T055628Z&amp;X-Amz-SignedHeaders=host&amp;X-Amz-Signature=d0f7c37b835c314c664933880268d42f164593e28f8b4fec125f5ff7818c8c25" alt="Figma display creative 1">
+              <div class="mt-3 text-sm font-semibold">728×90 banner</div>
+              <div class="text-xs text-gray-400">Persistent AI-design positioning</div>
+            </div>
+            <div class="metric p-4">
+              <img class="ad-thumb" src="https://sw-df-ads-capture-creatives-production.s3.us-east-1.amazonaws.com/creatives/execution_key%3Dads-capture-client-side/images/98f3e15fbb608c0b054c831b452a00d85040ca8a62c1706718cef448/970x250?X-Amz-Expires=86400&amp;response-content-disposition=attachment%3B%20filename%3D%22creative_screenshot.jpg%22&amp;X-Amz-Algorithm=AWS4-HMAC-SHA256&amp;X-Amz-Credential=AKIA4GKBI5ER5IXVZOXV%2F20260325%2Fus-east-1%2Fs3%2Faws4_request&amp;X-Amz-Date=20260325T055628Z&amp;X-Amz-SignedHeaders=host&amp;X-Amz-Signature=8feae85f15f88ea2e3f64a485d35b34151322a58be73c99590132615a4c66f48" alt="Figma display creative 2">
+              <div class="mt-3 text-sm font-semibold">970×250 banner</div>
+              <div class="text-xs text-gray-400">Good room for product UI, still broad message</div>
+            </div>
+            <div class="metric p-4">
+              <img class="ad-thumb" src="https://sw-df-ads-capture-creatives-production.s3.us-east-1.amazonaws.com/creatives/execution_key%3Dads-capture-client-side/images/81226ae8e0f7f5ab1a67d81c1c4ac76a0bacbe0fba9d9d5473228a58/336x280?X-Amz-Expires=86400&amp;response-content-disposition=attachment%3B%20filename%3D%22creative_screenshot.jpg%22&amp;X-Amz-Algorithm=AWS4-HMAC-SHA256&amp;X-Amz-Credential=AKIA4GKBI5ER5IXVZOXV%2F20260325%2Fus-east-1%2Fs3%2Faws4_request&amp;X-Amz-Date=20260325T055628Z&amp;X-Amz-SignedHeaders=host&amp;X-Amz-Signature=780088d824ca915eec5896fbc47094d330fcafcf176e335c84e5324e9441a1c1" alt="Figma display creative 3">
+              <div class="mt-3 text-sm font-semibold">336×280 box</div>
+              <div class="text-xs text-gray-400">Retargeting-friendly but generic</div>
+            </div>
+            <div class="metric p-4">
+              <img class="ad-thumb" src="https://sw-df-ads-capture-creatives-production.s3.us-east-1.amazonaws.com/creatives/execution_key%3Dads-capture-client-side/images/625b180e34bd7af47186bcd09a37920b08e9878a0ea07b89d961a6b4/300x250?X-Amz-Expires=86400&amp;response-content-disposition=attachment%3B%20filename%3D%22creative_screenshot.jpg%22&amp;X-Amz-Algorithm=AWS4-HMAC-SHA256&amp;X-Amz-Credential=AKIA4GKBI5ER5IXVZOXV%2F20260325%2Fus-east-1%2Fs3%2Faws4_request&amp;X-Amz-Date=20260325T055628Z&amp;X-Amz-SignedHeaders=host&amp;X-Amz-Signature=b8ccc0623b3fd3eb4a4a426dd2bb541e09abbfb27dbd0371a51fff397ae3b34f" alt="Figma display creative 4">
+              <div class="mt-3 text-sm font-semibold">300×250 box</div>
+              <div class="text-xs text-gray-400">Compact message, needs persona angle</div>
+            </div>
+          </div>
+
+          <div class="space-y-4 card-start">
+            <div class="metric p-4">
+              <div class="font-semibold mb-2">Creative gap</div>
+              <p class="text-sm text-gray-300 leading-6">
+                The ads appear to sell “AI-powered design tools” broadly. That’s useful for awareness, but not enough to create efficient segmented demand.
+              </p>
+            </div>
+            <div class="metric p-4">
+              <div class="font-semibold mb-2">Best display expansion</div>
+              <ul class="text-sm text-gray-300 space-y-2 list-disc ml-5">
+                <li>Audience-specific animations showing real output</li>
+                <li>Before/after frames: screenshot → prototype → handoff</li>
+                <li>Comparison ads against fragmented tool stacks</li>
+                <li>Use-case ads for product reviews, design systems, AI mockups, team workshops</li>
+              </ul>
+            </div>
+            <div class="metric p-4">
+              <div class="font-semibold mb-2">Recommended image directions</div>
+              <p class="text-sm text-gray-300 leading-6">
+                Feature actual Figma canvases, components, dev mode, prompts, and prototype states — not abstract AI visuals. Show “proof of work,” not just promise.
+              </p>
+            </div>
+          </div>
+        </div>
+
+        <div class="mt-6 grid md:grid-cols-3 gap-4">
+          <div class="metric p-4">
+            <div class="text-xs uppercase tracking-wider text-cyan-300 mb-2">New display concept 1</div>
+            <div class="font-semibold">Turn screenshots into product concepts</div>
+            <p class="text-sm text-gray-300 mt-2">Upload a reference. Generate UI. Refine in your design system. Prototype instantly.</p>
+          </div>
+          <div class="metric p-4">
+            <div class="text-xs uppercase tracking-wider text-cyan-300 mb-2">New display concept 2</div>
+            <div class="font-semibold">One canvas for design, PM, and dev</div>
+            <p class="text-sm text-gray-300 mt-2">Brief, design, comment, prototype, and inspect without switching tools.</p>
+          </div>
+          <div class="metric p-4">
+            <div class="text-xs uppercase tracking-wider text-cyan-300 mb-2">New display concept 3</div>
+            <div class="font-semibold">AI inside your system — not outside it</div>
+            <p class="text-sm text-gray-300 mt-2">Generate ideas with AI while keeping components, tokens, and workflow standards intact.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section id="referrals" class="px-8 pb-8">
+      <div class="grid lg:grid-cols-2 gap-6 grid-start">
+        <div class="panel p-6 card-start">
+          <h2 class="text-2xl font-bold mb-4">Referral insights</h2>
+          <div class="space-y-4">
+            <div class="metric p-4">
+              <div class="font-semibold mb-1">ClickUp matters</div>
+              <p class="text-sm text-gray-300 leading-6">
+                ClickUp is a meaningful shared referral domain. This is strategic: workflow adjacency. Figma should deepen partner motions with project management, documentation, sprint, and engineering platforms.
+              </p>
+            </div>
+            <div class="metric p-4">
+              <div class="font-semibold mb-1">Bitly signals campaign distribution</div>
+              <p class="text-sm text-gray-300 leading-6">
+                Figma gets some traffic from link-shortening distribution, but Canva owns vastly more. Socialized campaigns and creator/partner programs could lift distributed referral surfaces quickly.
+              </p>
+            </div>
+            <div class="metric p-4">
+              <div class="font-semibold mb-1">Partnership hypothesis</div>
+              <p class="text-sm text-gray-300 leading-6">
+                Expand integrations and co-marketing with work orchestration, developer tools, startup ecosystems, education platforms, and AI coding environments.
+              </p>
+            </div>
+          </div>
+        </div>
+
+        <div class="panel p-6 card-start">
+          <h2 class="text-2xl font-bold mb-4">Social referral priorities</h2>
+          <div class="chart-wrap">
+            <canvas id="socialChart" width="1372" height="640" style="display: block; box-sizing: border-box; height: 320px; width: 686px;"></canvas>
+          </div>
+          <div class="mt-4 grid grid-cols-2 gap-3">
+            <div class="metric p-4">
+              <div class="font-semibold">LinkedIn</div>
+              <div class="text-sm text-gray-300">Best B2B scale-up channel. Strong growth and strongest fit for PM, design leadership, and enterprise narratives.</div>
+            </div>
+            <div class="metric p-4">
+              <div class="font-semibold">Reddit &amp; X</div>
+              <div class="text-sm text-gray-300">High discussion value for makers, developers, startups, and prompt-led experiments.</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section id="opportunities" class="px-8 pb-8">
+      <div class="panel p-6">
+        <h2 class="text-2xl font-bold mb-5">Highest-impact growth plays</h2>
+        <div class="grid lg:grid-cols-2 gap-6">
+          <div class="space-y-4">
+            <div class="metric p-5">
+              <div class="flex items-center justify-between">
+                <div class="font-semibold">1. Build a utility SEO moat around design systems</div>
+                <span class="pill-up rounded-full px-2 py-1 text-xs">High ROI</span>
+              </div>
+              <p class="text-sm text-gray-300 mt-2 leading-6">
+                Expand tools like color picker, palette generator, accessibility helpers, token naming, spacing scales, icon systems, screenshot-to-wireframe, and UI pattern explainers. Every utility page should bridge directly into Figma files, components, or Make workflows.
+              </p>
+            </div>
+            <div class="metric p-5">
+              <div class="flex items-center justify-between">
+                <div class="font-semibold">2. Split Figma Make into audience-specific funnels</div>
+                <span class="pill-up rounded-full px-2 py-1 text-xs">Fast win</span>
+              </div>
+              <p class="text-sm text-gray-300 mt-2 leading-6">
+                Designers, PMs, developers, founders, marketers, and students do not buy the same AI promise. Create dedicated landing pages, ad groups, and remarketing creatives tied to each audience’s first-job-to-be-done.
+              </p>
+            </div>
+            <div class="metric p-5">
+              <div class="flex items-center justify-between">
+                <div class="font-semibold">3. Conquest fragmented tool stacks, not just competitors</div>
+                <span class="pill-up rounded-full px-2 py-1 text-xs">Strategic</span>
+              </div>
+              <p class="text-sm text-gray-300 mt-2 leading-6">
+                Instead of only bidding on competitor brands, target “tool stack replacement” narratives: briefing + wireframing + prototyping + collaboration + handoff in one platform.
+              </p>
+            </div>
+          </div>
+          <div class="space-y-4">
+            <div class="metric p-5">
+              <div class="flex items-center justify-between">
+                <div class="font-semibold">4. Turn high-returning traffic into lifecycle revenue</div>
+                <span class="pill-up rounded-full px-2 py-1 text-xs">Underused</span>
+              </div>
+              <p class="text-sm text-gray-300 mt-2 leading-6">
+                Segment CRM by usage stage: first file created, first team invite, first prototype, first dev handoff, first AI usage, dormant workspace, education upgrade path, and enterprise expansion trigger.
+              </p>
+            </div>
+            <div class="metric p-5">
+              <div class="flex items-center justify-between">
+                <div class="font-semibold">5. Own AI + developer collaboration topics</div>
+                <span class="pill-up rounded-full px-2 py-1 text-xs">Moat-building</span>
+              </div>
+              <p class="text-sm text-gray-300 mt-2 leading-6">
+                Organic growth around MCP, Claude code, and AI-assisted workflows suggests a premium positioning moat. Publish comparison pages, implementation tutorials, architecture explainers, and interactive demos.
+              </p>
+            </div>
+            <div class="metric p-5">
+              <div class="flex items-center justify-between">
+                <div class="font-semibold">6. Expand referral ecosystem</div>
+                <span class="pill-flat rounded-full px-2 py-1 text-xs">Compounding</span>
+              </div>
+              <p class="text-sm text-gray-300 mt-2 leading-6">
+                Formalize co-marketing with project, docs, developer, classroom, and startup platforms. Partnerships can create cheaper high-intent sessions than generic paid media.
+              </p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section id="simulator" class="px-8 pb-8">
+      <div class="panel p-6">
+        <div class="flex flex-col lg:flex-row lg:items-end lg:justify-between gap-4 mb-6">
+          <div>
+            <h2 class="text-2xl font-bold">Interactive ROI proxy simulator</h2>
+            <p class="text-gray-400 text-sm">
+              This proxy models how investment in key growth levers can affect pipeline value. It is directional, not financial guidance.
+            </p>
+          </div>
+          <div class="chip rounded-full px-3 py-1 text-xs">Proxy assumptions based on Similarweb performance signals</div>
+        </div>
+
+        <div class="grid lg:grid-cols-2 gap-8 grid-start">
+          <div class="space-y-6 card-start">
+            <div>
+              <div class="flex justify-between mb-2"><span class="range-label">Incremental paid search investment</span><span id="paidVal" class="text-sm font-semibold">$150,000</span></div>
+              <input id="paidRange" type="range" min="0" max="1000000" step="25000" value="150000">
+            </div>
+            <div>
+              <div class="flex justify-between mb-2"><span class="range-label">SEO/content investment</span><span id="seoVal" class="text-sm font-semibold">$120,000</span></div>
+              <input id="seoRange" type="range" min="0" max="750000" step="10000" value="120000">
+            </div>
+            <div>
+              <div class="flex justify-between mb-2"><span class="range-label">Lifecycle / CRM investment</span><span id="crmVal" class="text-sm font-semibold">$80,000</span></div>
+              <input id="crmRange" type="range" min="0" max="500000" step="10000" value="80000">
+            </div>
+            <div>
+              <div class="flex justify-between mb-2"><span class="range-label">Referral / partnership investment</span><span id="partnerVal" class="text-sm font-semibold">$60,000</span></div>
+              <input id="partnerRange" type="range" min="0" max="500000" step="10000" value="60000">
+            </div>
+            <div>
+              <div class="flex justify-between mb-2"><span class="range-label">Landing page &amp; creative improvement factor</span><span id="cvrVal" class="text-sm font-semibold">15%</span></div>
+              <input id="cvrRange" type="range" min="0" max="50" step="1" value="15">
+            </div>
+          </div>
+
+          <div class="card-start space-y-4">
+            <div class="grid grid-cols-2 gap-4">
+              <div class="metric p-4">
+                <div class="text-xs text-gray-400 uppercase">Estimated incremental visits</div>
+                <div id="simVisits" class="text-3xl font-black sim-output">126,959</div>
+              </div>
+              <div class="metric p-4">
+                <div class="text-xs text-gray-400 uppercase">Estimated activated users</div>
+                <div id="simActivated" class="text-3xl font-black sim-output">9,748</div>
+              </div>
+              <div class="metric p-4">
+                <div class="text-xs text-gray-400 uppercase">Estimated pipeline value</div>
+                <div id="simValue" class="text-3xl font-black sim-output">$4,094,073</div>
+              </div>
+              <div class="metric p-4">
+                <div class="text-xs text-gray-400 uppercase">Proxy ROI</div>
+                <div id="simROI" class="text-3xl font-black sim-output">9.99x</div>
+              </div>
+            </div>
+            <div class="metric p-5">
+              <div class="font-semibold mb-2">How this proxy works</div>
+              <p class="text-sm text-gray-300 leading-6">
+                Paid and SEO generate incremental visits, CRM improves activation from the existing returning base, and partnerships create smaller but higher-intent traffic. Creative / landing page improvement multiplies all conversion efficiency.
+              </p>
+            </div>
+            <div class="chart-wrap sm">
+              <canvas id="simChart" width="1414" height="500" style="display: block; box-sizing: border-box; height: 250px; width: 707px;"></canvas>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section id="roadmap" class="px-8 pb-10">
+      <div class="panel p-6">
+        <h2 class="text-2xl font-bold mb-6">90-day action plan</h2>
+        <div class="grid lg:grid-cols-3 gap-6">
+          <div class="metric p-5">
+            <div class="text-xs uppercase tracking-widest text-cyan-300 mb-2">Days 1–30</div>
+            <div class="font-semibold mb-2">Restructure acquisition architecture</div>
+            <ul class="text-sm text-gray-300 space-y-2 list-disc ml-5">
+              <li>Split Figma Make campaigns by audience and job-to-be-done</li>
+              <li>Launch new paid landing pages for PM, dev, design system, founder, and student segments</li>
+              <li>Refresh ad copy with workflow outcomes and proof messages</li>
+              <li>Audit branded spend leakage and reduce overinvestment on pure navigational terms</li>
+            </ul>
+          </div>
+          <div class="metric p-5">
+            <div class="text-xs uppercase tracking-widest text-cyan-300 mb-2">Days 31–60</div>
+            <div class="font-semibold mb-2">Build topic-led growth surfaces</div>
+            <ul class="text-sm text-gray-300 space-y-2 list-disc ml-5">
+              <li>Ship 10–15 utility pages tied to design systems and AI workflows</li>
+              <li>Create comparison pages versus fragmented stacks and adjacent tools</li>
+              <li>Produce video-first explainers for AI workflows, prototyping, and handoff</li>
+              <li>Start partner content with workflow platforms like project and developer tools</li>
+            </ul>
+          </div>
+          <div class="metric p-5">
+            <div class="text-xs uppercase tracking-widest text-cyan-300 mb-2">Days 61–90</div>
+            <div class="font-semibold mb-2">Compound activation &amp; retention</div>
+            <ul class="text-sm text-gray-300 space-y-2 list-disc ml-5">
+              <li>Deploy lifecycle triggers around first project milestones</li>
+              <li>Retarget utility visitors into relevant product experiences</li>
+              <li>Promote templates, community, and education loops to keep new users active</li>
+              <li>Measure CAC-to-activation by audience, not just channel</li>
+            </ul>
+          </div>
+        </div>
+
+        <div class="mt-6 p-5 rounded-2xl bg-gradient-to-r from-cyan-500/10 to-violet-500/10 border border-white/10">
+          <div class="text-lg font-bold mb-2">Bottom line</div>
+          <p class="text-gray-200 leading-7">
+            Figma does not need Canva’s traffic model to beat Canva on ROI. It needs a <span class="font-semibold text-white">more segmented acquisition machine</span>, a <span class="font-semibold text-white">wider topic moat tied to real product workflows</span>, and a <span class="font-semibold text-white">much stronger conversion bridge from AI interest to collaborative product usage</span>.
+          </p>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <script>
+    const labels = ["2024-03","2024-04","2024-05","2024-06","2024-07","2024-08","2024-09","2024-10","2024-11","2024-12","2025-01","2025-02","2025-03","2025-04","2025-05","2025-06","2025-07","2025-08","2025-09","2025-10","2025-11","2025-12","2026-01","2026-02"];
+
+    const figmaVisits = [12.74,12.95,12.13,11.32,12.32,12.30,11.61,13.03,11.80,10.18,11.76,11.98,13.26,14.03,13.37,13.44,14.31,13.15,13.76,15.39,13.55,12.07,13.05,13.40];
+    const canvaVisits = [95.57,100.09,99.58,84.06,86.62,97.40,101.19,105.76,99.99,99.35,107.06,104.00,115.08,119.87,119.79,108.66,112.90,125.66,138.85,151.20,146.43,142.72,145.05,142.44];
+    const stitchVisits = [null,null,null,null,null,null,null,null,null,null,null,null,null,null,0.303,0.297,0.197,0.132,0.167,0.168,0.188,0.284,0.374,0.461];
+
+    const figmaUsers = [1.82,1.76,1.65,1.70,1.69,1.74,1.72,1.83,1.77,1.68,1.83,1.91,2.01,2.06,2.07,2.10,2.35,2.36,2.54,2.64,2.56,2.33,2.44,2.51];
+    const canvaUsers = [23.46,24.17,24.69,20.92,20.99,23.51,25.28,26.38,26.00,27.38,27.55,27.25,29.92,30.87,30.42,27.51,28.05,31.36,33.45,36.03,36.41,36.81,35.41,35.10];
+
+    const figmaPPC = [172149,521671,356394,329900,391908,325029,333517,370060,331350,347398,388140,656079];
+    const canvaPPC = [3634129,3697628,4068025,4172892,4656084,4742488,5151851,5826015,5844469,5330000,3888805,3963247];
+    const ppcLabels = ["2025-03","2025-04","2025-05","2025-06","2025-07","2025-08","2025-09","2025-10","2025-11","2025-12","2026-01","2026-02"];
+
+    const paidTopics = {
+      labels:["Brand","AI design","Competitor conquest","AI image","Students","Pricing","Templates","Dev/code","Website builder","Design tools"],
+      values:[213964,10255,4661+3182+1307,2182,599,299,265,209,206,200]
+    };
+
+    const organicTopics = {
+      labels:["Brand","Figma AI","Downloads","Templates","FigJam","Login","Careers","Students","Pricing","Community"],
+      values:[474383,81216,33751,32791,32235,27453,26174,23238,22619,22042]
+    };
+
+    const social = {
+      labels:["YouTube","LinkedIn","X","Reddit","Facebook","Instagram","Pinterest","Discord"],
+      values:[3.25,19.77,11.62,15.13,4.19,4.38,3.45,3.17]
+    };
+
+    const rankMar = [10.1,10.9,14.2,54.8,10.0];
+    const rankFeb = [12.8,21.7,22.2,36.6,6.7];
+
+    function money(x){
+      return "$" + Math.round(x).toLocaleString();
+    }
+    function num(x){
+      return Math.round(x).toLocaleString();
+    }
+
+    const commonOptions = {
+      responsive:true,
+      maintainAspectRatio:false,
+      plugins:{
+        legend:{labels:{color:"#e5e7eb"}},
+        tooltip:{
+          backgroundColor:"#111214",
+          titleColor:"#fff",
+          bodyColor:"#e5e7eb",
+          borderColor:"rgba(255,255,255,.12)",
+          borderWidth:1
+        }
+      },
+      scales:{
+        x:{ticks:{color:"#9ca3af"}, grid:{color:"rgba(255,255,255,.06)"}},
+        y:{ticks:{color:"#9ca3af"}, grid:{color:"rgba(255,255,255,.06)"}}
+      }
+    };
+
+    new Chart(document.getElementById("visitsChart"), {
+      type:"line",
+      data:{
+        labels,
+        datasets:[
+          {label:"Figma", data:figmaVisits, borderColor:"#ffffff", backgroundColor:"rgba(255,255,255,.08)", tension:.3, borderWidth:3, pointRadius:0},
+          {label:"Canva", data:canvaVisits, borderColor:"#01c3cc", backgroundColor:"rgba(1,195,204,.08)", tension:.3, borderWidth:3, pointRadius:0},
+          {label:"Stitch", data:stitchVisits, borderColor:"#ffabf2", backgroundColor:"rgba(255,171,242,.08)", tension:.3, borderWidth:2, pointRadius:0}
+        ]
+      },
+      options:{
+        ...commonOptions,
+        plugins:{...commonOptions.plugins, legend:{labels:{color:"#e5e7eb"}}},
+        scales:{
+          x:{ticks:{color:"#9ca3af", maxRotation:0}, grid:{display:false}},
+          y:{ticks:{color:"#9ca3af", callback:v=>v+"M"}, grid:{color:"rgba(255,255,255,.06)"}}
+        }
+      }
+    });
+
+    new Chart(document.getElementById("usersChart"), {
+      type:"line",
+      data:{
+        labels,
+        datasets:[
+          {label:"Figma", data:figmaUsers, borderColor:"#ffffff", backgroundColor:"rgba(255,255,255,.08)", tension:.25, borderWidth:3, pointRadius:0},
+          {label:"Canva", data:canvaUsers, borderColor:"#01c3cc", backgroundColor:"rgba(1,195,204,.08)", tension:.25, borderWidth:3, pointRadius:0}
+        ]
+      },
+      options:{
+        ...commonOptions,
+        scales:{
+          x:{ticks:{color:"#9ca3af", maxRotation:0}, grid:{display:false}},
+          y:{ticks:{color:"#9ca3af", callback:v=>v+"M"}, grid:{color:"rgba(255,255,255,.06)"}}
+        }
+      }
+    });
+
+    new Chart(document.getElementById("engagementRadar"), {
+      type:"radar",
+      data:{
+        labels:["Avg duration","Pages/visit","Low bounce","Returning base","Pageviews/user"],
+        datasets:[
+          {
+            label:"Figma",
+            data:[100,100,78,86,100],
+            borderColor:"#ffffff",
+            backgroundColor:"rgba(255,255,255,.10)",
+            pointBackgroundColor:"#ffffff"
+          },
+          {
+            label:"Canva",
+            data:[45,24,92,88,28],
+            borderColor:"#01c3cc",
+            backgroundColor:"rgba(1,195,204,.14)",
+            pointBackgroundColor:"#01c3cc"
+          }
+        ]
+      },
+      options:{
+        responsive:true,
+        maintainAspectRatio:false,
+        scales:{
+          r:{
+            angleLines:{color:"rgba(255,255,255,.08)"},
+            grid:{color:"rgba(255,255,255,.08)"},
+            pointLabels:{color:"#d1d5db"},
+            ticks:{display:false}
+          }
+        },
+        plugins:{legend:{labels:{color:"#e5e7eb"}}}
+      }
+    });
+
+    new Chart(document.getElementById("channelBar"), {
+      type:"bar",
+      data:{
+        labels:["Direct","Referrals","Email","Display Ads"],
+        datasets:[
+          {label:"Figma", data:[248.5,27.4,2.76,0.47], backgroundColor:"#ffffff", borderColor:"#ffffff"},
+          {label:"Canva", data:[1759.0,373.4,59.4,13.2], backgroundColor:"#01c3cc", borderColor:"#01c3cc"}
+        ]
+      },
+      options:{
+        ...commonOptions,
+        scales:{
+          x:{ticks:{color:"#9ca3af"}, grid:{display:false}},
+          y:{ticks:{color:"#9ca3af", callback:v=>v+"M"}, grid:{color:"rgba(255,255,255,.06)"}}
+        }
+      }
+    });
+
+    new Chart(document.getElementById("rankDist"), {
+      type:"bar",
+      data:{
+        labels:["1-3","4-10","11-20","21-50","Other"],
+        datasets:[
+          {label:"Mar 2025", data:rankMar, backgroundColor:"rgba(255,255,255,.35)"},
+          {label:"Feb 2026", data:rankFeb, backgroundColor:"#ffffff"}
+        ]
+      },
+      options:{
+        ...commonOptions,
+        scales:{
+          x:{ticks:{color:"#9ca3af"}, grid:{display:false}},
+          y:{ticks:{color:"#9ca3af", callback:v=>v+"%"}, grid:{color:"rgba(255,255,255,.06)"}}
+        }
+      }
+    });
+
+    new Chart(document.getElementById("topicClusterChart"), {
+      type:"bar",
+      data:{
+        labels:organicTopics.labels,
+        datasets:[{
+          label:"Organic clicks",
+          data:organicTopics.values,
+          backgroundColor:["#fff","#c4b5fd","#93c5fd","#67e8f9","#a5b4fc","#d8b4fe","#f9a8d4","#86efac","#fde68a","#fca5a5"]
+        }]
+      },
+      options:{
+        ...commonOptions,
+        indexAxis:"y",
+        scales:{
+          x:{ticks:{color:"#9ca3af"}, grid:{color:"rgba(255,255,255,.06)"}},
+          y:{ticks:{color:"#d1d5db"}, grid:{display:false}}
+        }
+      }
+    });
+
+    new Chart(document.getElementById("ppcSpendChart"), {
+      type:"line",
+      data:{
+        labels:ppcLabels,
+        datasets:[
+          {label:"Figma PPC spend", data:figmaPPC, borderColor:"#ffffff", backgroundColor:"rgba(255,255,255,.1)", borderWidth:3, tension:.3, pointRadius:0},
+          {label:"Canva PPC spend", data:canvaPPC, borderColor:"#01c3cc", backgroundColor:"rgba(1,195,204,.1)", borderWidth:3, tension:.3, pointRadius:0}
+        ]
+      },
+      options:{
+        ...commonOptions,
+        scales:{
+          x:{ticks:{color:"#9ca3af", maxRotation:0}, grid:{display:false}},
+          y:{ticks:{color:"#9ca3af", callback:v=>"$"+(v/1000000).toFixed(1)+"M"}, grid:{color:"rgba(255,255,255,.06)"}}
+        }
+      }
+    });
+
+    new Chart(document.getElementById("paidTopics"), {
+      type:"doughnut",
+      data:{
+        labels:paidTopics.labels,
+        datasets:[{
+          data:paidTopics.values,
+          backgroundColor:["#ffffff","#67e8f9","#01c3cc","#a5b4fc","#86efac","#fde68a","#f9a8d4","#c4b5fd","#fca5a5","#94a3b8"],
+          borderColor:"#111214",
+          borderWidth:2
+        }]
+      },
+      options:{
+        responsive:true,
+        maintainAspectRatio:false,
+        plugins:{legend:{position:"right", labels:{color:"#e5e7eb"}}}
+      }
+    });
+
+    new Chart(document.getElementById("socialChart"), {
+      type:"bar",
+      data:{
+        labels:social.labels,
+        datasets:[{
+          label:"Figma share of visits within each social source vs competitors (%)",
+          data:social.values,
+          backgroundColor:"#ffffff"
+        }]
+      },
+      options:{
+        ...commonOptions,
+        scales:{
+          x:{ticks:{color:"#9ca3af"}, grid:{display:false}},
+          y:{ticks:{color:"#9ca3af", callback:v=>v+"%"}, grid:{color:"rgba(255,255,255,.06)"}}
+        }
+      }
+    });
+
+    const simCtx = document.getElementById("simChart");
+    const simChart = new Chart(simCtx, {
+      type:"bar",
+      data:{
+        labels:["Paid Search","SEO/Content","CRM/Lifecycle","Partnerships"],
+        datasets:[{
+          label:"Estimated pipeline contribution",
+          data:[0,0,0,0],
+          backgroundColor:["#ffffff","#67e8f9","#a5b4fc","#86efac"]
+        }]
+      },
+      options:{
+        ...commonOptions,
+        scales:{
+          x:{ticks:{color:"#9ca3af"}, grid:{display:false}},
+          y:{ticks:{color:"#9ca3af", callback:v=>"$"+(v/1000).toFixed(0)+"k"}, grid:{color:"rgba(255,255,255,.06)"}}
+        }
+      }
+    });
+
+    const el = id => document.getElementById(id);
+
+    function updateSim(){
+      const paid = +el("paidRange").value;
+      const seo = +el("seoRange").value;
+      const crm = +el("crmRange").value;
+      const partner = +el("partnerRange").value;
+      const cvrLift = +el("cvrRange").value / 100;
+
+      el("paidVal").textContent = money(paid);
+      el("seoVal").textContent = money(seo);
+      el("crmVal").textContent = money(crm);
+      el("partnerVal").textContent = money(partner);
+      el("cvrVal").textContent = Math.round(cvrLift*100) + "%";
+
+      // Proxy assumptions
+      const paidVisits = paid / 3.1;
+      const seoVisits = seo / 2.4;
+      const crmActivated = crm / 220;
+      const partnerVisits = partner / 2.1;
+
+      const baseActivationRate = 0.035;
+      const partnerActivationRate = 0.055;
+      const uplift = 1 + cvrLift;
+
+      const activatedFromPaid = paidVisits * baseActivationRate * uplift;
+      const activatedFromSeo = seoVisits * (baseActivationRate * 0.9) * uplift;
+      const activatedFromPartner = partnerVisits * partnerActivationRate * uplift;
+      const activatedFromCRM = crmActivated * uplift * 10;
+
+      const totalVisits = paidVisits + seoVisits + partnerVisits;
+      const totalActivated = activatedFromPaid + activatedFromSeo + activatedFromPartner + activatedFromCRM;
+
+      const pipelinePerActivated = 420;
+      const paidValue = activatedFromPaid * pipelinePerActivated;
+      const seoValue = activatedFromSeo * pipelinePerActivated;
+      const crmValue = activatedFromCRM * pipelinePerActivated;
+      const partnerValue = activatedFromPartner * pipelinePerActivated;
+
+      const totalValue = paidValue + seoValue + crmValue + partnerValue;
+      const investment = paid + seo + crm + partner;
+      const roi = investment > 0 ? totalValue / investment : 0;
+
+      el("simVisits").textContent = num(totalVisits);
+      el("simActivated").textContent = num(totalActivated);
+      el("simValue").textContent = money(totalValue);
+      el("simROI").textContent = roi.toFixed(2) + "x";
+
+      simChart.data.datasets[0].data = [paidValue, seoValue, crmValue, partnerValue];
+      simChart.update();
+    }
+
+    ["paidRange","seoRange","crmRange","partnerRange","cvrRange"].forEach(id=>{
+      el(id).addEventListener("input", updateSim);
+    });
+    updateSim();
+
+    document.querySelectorAll('.nav-link').forEach(link=>{
+      link.addEventListener('click', ()=>{
+        document.querySelectorAll('.nav-link').forEach(l=>l.classList.remove('active'));
+        link.classList.add('active');
+      });
+    });
+  </script>
+
+</body></html>

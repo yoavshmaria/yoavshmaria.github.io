@@ -1,0 +1,1048 @@
+<html lang="en"><head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Base44 Growth Intelligence Report</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <style>
+    :root{
+      --primary:#ff631f;
+      --secondary:#ff0000;
+      --bg:#0d0d0f;
+      --panel:#16171b;
+      --panel-2:#1d1f25;
+      --text:#f7f7f8;
+      --muted:#b5b8c2;
+      --line:rgba(255,255,255,.08);
+      --success:#22c55e;
+      --warn:#f59e0b;
+      --info:#60a5fa;
+    }
+    html{scroll-behavior:smooth}
+    body{background:linear-gradient(180deg,#0c0c0e,#111216 35%,#0e1014);color:var(--text);font-family:Inter,ui-sans-serif,system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif}
+    .sidebar{
+      width:240px;
+      background:linear-gradient(180deg, rgba(255,99,31,.95), rgba(120,25,5,.98));
+      box-shadow:20px 0 60px rgba(0,0,0,.35);
+    }
+    .content{margin-left:240px}
+    .card{
+      background:linear-gradient(180deg,rgba(255,255,255,.04),rgba(255,255,255,.02));
+      border:1px solid var(--line);
+      border-radius:20px;
+      box-shadow:0 15px 40px rgba(0,0,0,.22);
+      backdrop-filter: blur(10px);
+    }
+    .glass{
+      background:linear-gradient(180deg, rgba(255,255,255,.08), rgba(255,255,255,.03));
+      border:1px solid rgba(255,255,255,.1);
+    }
+    .kpi{
+      background:linear-gradient(135deg, rgba(255,99,31,.18), rgba(255,0,0,.10));
+      border:1px solid rgba(255,99,31,.25);
+    }
+    .pill{border:1px solid rgba(255,255,255,.1); background:rgba(255,255,255,.05)}
+    .nav-link{display:block;padding:.7rem .9rem;border-radius:.8rem;color:#fff;opacity:.88}
+    .nav-link:hover,.nav-link.active{background:rgba(255,255,255,.16);opacity:1}
+    .section-title{
+      font-size:1.9rem;font-weight:800;letter-spacing:-.02em;
+      background:linear-gradient(90deg,#fff,#ffd3c0 55%,#ffb08f);
+      -webkit-background-clip:text;background-clip:text;color:transparent;
+    }
+    .subtle{color:var(--muted)}
+    .metric-up{color:var(--success)}
+    .metric-down{color:#f87171}
+    .chart-wrap{
+      position:relative;
+      height:320px;
+      max-height:320px;
+      min-height:320px;
+      overflow:hidden;
+      align-self:start;
+    }
+    .chart-wrap.tall{
+      height:380px;max-height:380px;min-height:380px;
+    }
+    .grid-start{align-items:start}
+    .table-row{border-bottom:1px solid rgba(255,255,255,.06)}
+    .heat{
+      background:linear-gradient(90deg, rgba(255,99,31,.05), rgba(255,99,31,.22));
+    }
+    .ad-card img{object-fit:cover}
+    .badge{
+      font-size:.72rem;padding:.28rem .5rem;border-radius:999px;font-weight:700;
+      border:1px solid rgba(255,255,255,.1);
+    }
+    .roi-input{
+      width:100%;
+      accent-color:var(--primary);
+    }
+    .sticky-top{position:sticky;top:0;z-index:20;background:rgba(14,16,20,.75);backdrop-filter:blur(10px)}
+    .gradient-border{
+      position:relative;
+      border-radius:24px;
+      overflow:hidden;
+    }
+    .gradient-border:before{
+      content:"";
+      position:absolute;inset:0;padding:1px;border-radius:24px;
+      background:linear-gradient(135deg, rgba(255,99,31,.7), rgba(255,0,0,.25), rgba(255,255,255,.08));
+      -webkit-mask:linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+      -webkit-mask-composite:xor;
+              mask-composite:exclude;
+      pointer-events:none;
+    }
+    .mini-bar{
+      height:10px;border-radius:999px;background:rgba(255,255,255,.08);overflow:hidden
+    }
+    .mini-bar > span{display:block;height:100%;border-radius:999px;background:linear-gradient(90deg,var(--primary),var(--secondary))}
+    @media (max-width: 1024px){
+      .sidebar{position:relative;width:100%;height:auto}
+      .content{margin-left:0}
+    }
+  </style>
+<style>*, ::before, ::after{--tw-border-spacing-x:0;--tw-border-spacing-y:0;--tw-translate-x:0;--tw-translate-y:0;--tw-rotate:0;--tw-skew-x:0;--tw-skew-y:0;--tw-scale-x:1;--tw-scale-y:1;--tw-pan-x: ;--tw-pan-y: ;--tw-pinch-zoom: ;--tw-scroll-snap-strictness:proximity;--tw-gradient-from-position: ;--tw-gradient-via-position: ;--tw-gradient-to-position: ;--tw-ordinal: ;--tw-slashed-zero: ;--tw-numeric-figure: ;--tw-numeric-spacing: ;--tw-numeric-fraction: ;--tw-ring-inset: ;--tw-ring-offset-width:0px;--tw-ring-offset-color:#fff;--tw-ring-color:rgb(59 130 246 / 0.5);--tw-ring-offset-shadow:0 0 #0000;--tw-ring-shadow:0 0 #0000;--tw-shadow:0 0 #0000;--tw-shadow-colored:0 0 #0000;--tw-blur: ;--tw-brightness: ;--tw-contrast: ;--tw-grayscale: ;--tw-hue-rotate: ;--tw-invert: ;--tw-saturate: ;--tw-sepia: ;--tw-drop-shadow: ;--tw-backdrop-blur: ;--tw-backdrop-brightness: ;--tw-backdrop-contrast: ;--tw-backdrop-grayscale: ;--tw-backdrop-hue-rotate: ;--tw-backdrop-invert: ;--tw-backdrop-opacity: ;--tw-backdrop-saturate: ;--tw-backdrop-sepia: ;--tw-contain-size: ;--tw-contain-layout: ;--tw-contain-paint: ;--tw-contain-style: }::backdrop{--tw-border-spacing-x:0;--tw-border-spacing-y:0;--tw-translate-x:0;--tw-translate-y:0;--tw-rotate:0;--tw-skew-x:0;--tw-skew-y:0;--tw-scale-x:1;--tw-scale-y:1;--tw-pan-x: ;--tw-pan-y: ;--tw-pinch-zoom: ;--tw-scroll-snap-strictness:proximity;--tw-gradient-from-position: ;--tw-gradient-via-position: ;--tw-gradient-to-position: ;--tw-ordinal: ;--tw-slashed-zero: ;--tw-numeric-figure: ;--tw-numeric-spacing: ;--tw-numeric-fraction: ;--tw-ring-inset: ;--tw-ring-offset-width:0px;--tw-ring-offset-color:#fff;--tw-ring-color:rgb(59 130 246 / 0.5);--tw-ring-offset-shadow:0 0 #0000;--tw-ring-shadow:0 0 #0000;--tw-shadow:0 0 #0000;--tw-shadow-colored:0 0 #0000;--tw-blur: ;--tw-brightness: ;--tw-contrast: ;--tw-grayscale: ;--tw-hue-rotate: ;--tw-invert: ;--tw-saturate: ;--tw-sepia: ;--tw-drop-shadow: ;--tw-backdrop-blur: ;--tw-backdrop-brightness: ;--tw-backdrop-contrast: ;--tw-backdrop-grayscale: ;--tw-backdrop-hue-rotate: ;--tw-backdrop-invert: ;--tw-backdrop-opacity: ;--tw-backdrop-saturate: ;--tw-backdrop-sepia: ;--tw-contain-size: ;--tw-contain-layout: ;--tw-contain-paint: ;--tw-contain-style: }/* ! tailwindcss v3.4.17 | MIT License | https://tailwindcss.com */*,::after,::before{box-sizing:border-box;border-width:0;border-style:solid;border-color:#e5e7eb}::after,::before{--tw-content:''}:host,html{line-height:1.5;-webkit-text-size-adjust:100%;-moz-tab-size:4;tab-size:4;font-family:ui-sans-serif, system-ui, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";font-feature-settings:normal;font-variation-settings:normal;-webkit-tap-highlight-color:transparent}body{margin:0;line-height:inherit}hr{height:0;color:inherit;border-top-width:1px}abbr:where([title]){-webkit-text-decoration:underline dotted;text-decoration:underline dotted}h1,h2,h3,h4,h5,h6{font-size:inherit;font-weight:inherit}a{color:inherit;text-decoration:inherit}b,strong{font-weight:bolder}code,kbd,pre,samp{font-family:ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;font-feature-settings:normal;font-variation-settings:normal;font-size:1em}small{font-size:80%}sub,sup{font-size:75%;line-height:0;position:relative;vertical-align:baseline}sub{bottom:-.25em}sup{top:-.5em}table{text-indent:0;border-color:inherit;border-collapse:collapse}button,input,optgroup,select,textarea{font-family:inherit;font-feature-settings:inherit;font-variation-settings:inherit;font-size:100%;font-weight:inherit;line-height:inherit;letter-spacing:inherit;color:inherit;margin:0;padding:0}button,select{text-transform:none}button,input:where([type=button]),input:where([type=reset]),input:where([type=submit]){-webkit-appearance:button;background-color:transparent;background-image:none}:-moz-focusring{outline:auto}:-moz-ui-invalid{box-shadow:none}progress{vertical-align:baseline}::-webkit-inner-spin-button,::-webkit-outer-spin-button{height:auto}[type=search]{-webkit-appearance:textfield;outline-offset:-2px}::-webkit-search-decoration{-webkit-appearance:none}::-webkit-file-upload-button{-webkit-appearance:button;font:inherit}summary{display:list-item}blockquote,dd,dl,figure,h1,h2,h3,h4,h5,h6,hr,p,pre{margin:0}fieldset{margin:0;padding:0}legend{padding:0}menu,ol,ul{list-style:none;margin:0;padding:0}dialog{padding:0}textarea{resize:vertical}input::placeholder,textarea::placeholder{opacity:1;color:#9ca3af}[role=button],button{cursor:pointer}:disabled{cursor:default}audio,canvas,embed,iframe,img,object,svg,video{display:block;vertical-align:middle}img,video{max-width:100%;height:auto}[hidden]:where(:not([hidden=until-found])){display:none}.fixed{position:fixed}.left-0{left:0px}.top-0{top:0px}.mb-2{margin-bottom:0.5rem}.mb-3{margin-bottom:0.75rem}.mb-4{margin-bottom:1rem}.mb-6{margin-bottom:1.5rem}.mb-8{margin-bottom:2rem}.mt-1{margin-top:0.25rem}.mt-2{margin-top:0.5rem}.mt-3{margin-top:0.75rem}.mt-4{margin-top:1rem}.mt-5{margin-top:1.25rem}.mt-6{margin-top:1.5rem}.mt-8{margin-top:2rem}.mt-auto{margin-top:auto}.block{display:block}.flex{display:flex}.table-row{display:table-row}.grid{display:grid}.hidden{display:none}.h-10{height:2.5rem}.h-12{height:3rem}.h-72{height:18rem}.h-screen{height:100vh}.min-h-screen{min-height:100vh}.w-10{width:2.5rem}.w-12{width:3rem}.w-full{width:100%}.min-w-\[300px\]{min-width:300px}.max-w-4xl{max-width:56rem}.grid-cols-2{grid-template-columns:repeat(2, minmax(0, 1fr))}.flex-col{flex-direction:column}.items-center{align-items:center}.justify-center{justify-content:center}.justify-between{justify-content:space-between}.gap-3{gap:0.75rem}.gap-4{gap:1rem}.gap-6{gap:1.5rem}.space-y-1 > :not([hidden]) ~ :not([hidden]){--tw-space-y-reverse:0;margin-top:calc(0.25rem * calc(1 - var(--tw-space-y-reverse)));margin-bottom:calc(0.25rem * var(--tw-space-y-reverse))}.space-y-2 > :not([hidden]) ~ :not([hidden]){--tw-space-y-reverse:0;margin-top:calc(0.5rem * calc(1 - var(--tw-space-y-reverse)));margin-bottom:calc(0.5rem * var(--tw-space-y-reverse))}.space-y-3 > :not([hidden]) ~ :not([hidden]){--tw-space-y-reverse:0;margin-top:calc(0.75rem * calc(1 - var(--tw-space-y-reverse)));margin-bottom:calc(0.75rem * var(--tw-space-y-reverse))}.space-y-4 > :not([hidden]) ~ :not([hidden]){--tw-space-y-reverse:0;margin-top:calc(1rem * calc(1 - var(--tw-space-y-reverse)));margin-bottom:calc(1rem * var(--tw-space-y-reverse))}.space-y-5 > :not([hidden]) ~ :not([hidden]){--tw-space-y-reverse:0;margin-top:calc(1.25rem * calc(1 - var(--tw-space-y-reverse)));margin-bottom:calc(1.25rem * var(--tw-space-y-reverse))}.overflow-hidden{overflow:hidden}.rounded-2xl{border-radius:1rem}.rounded-lg{border-radius:0.5rem}.rounded-xl{border-radius:0.75rem}.border{border-width:1px}.border-b{border-bottom-width:1px}.border-white\/10{border-color:rgb(255 255 255 / 0.1)}.border-white\/5{border-color:rgb(255 255 255 / 0.05)}.bg-blue-500\/20{background-color:rgb(59 130 246 / 0.2)}.bg-orange-500\/20{background-color:rgb(249 115 22 / 0.2)}.bg-red-500\/20{background-color:rgb(239 68 68 / 0.2)}.bg-white{--tw-bg-opacity:1;background-color:rgb(255 255 255 / var(--tw-bg-opacity, 1))}.bg-white\/10{background-color:rgb(255 255 255 / 0.1)}.bg-white\/5{background-color:rgb(255 255 255 / 0.05)}.bg-white\/90{background-color:rgb(255 255 255 / 0.9)}.p-1{padding:0.25rem}.p-3{padding:0.75rem}.p-4{padding:1rem}.p-5{padding:1.25rem}.p-6{padding:1.5rem}.px-6{padding-left:1.5rem;padding-right:1.5rem}.py-4{padding-top:1rem;padding-bottom:1rem}.py-6{padding-top:1.5rem;padding-bottom:1.5rem}.pb-12{padding-bottom:3rem}.pb-6{padding-bottom:1.5rem}.pt-8{padding-top:2rem}.text-left{text-align:left}.text-2xl{font-size:1.5rem;line-height:2rem}.text-3xl{font-size:1.875rem;line-height:2.25rem}.text-lg{font-size:1.125rem;line-height:1.75rem}.text-sm{font-size:0.875rem;line-height:1.25rem}.text-xl{font-size:1.25rem;line-height:1.75rem}.text-xs{font-size:0.75rem;line-height:1rem}.font-black{font-weight:900}.font-bold{font-weight:700}.font-extrabold{font-weight:800}.font-semibold{font-weight:600}.leading-6{line-height:1.5rem}.leading-7{line-height:1.75rem}.leading-8{line-height:2rem}.leading-none{line-height:1}.text-\[var\(--primary\)\]{color:var(--primary)}.text-blue-200{--tw-text-opacity:1;color:rgb(191 219 254 / var(--tw-text-opacity, 1))}.text-orange-200{--tw-text-opacity:1;color:rgb(254 215 170 / var(--tw-text-opacity, 1))}.text-red-200{--tw-text-opacity:1;color:rgb(254 202 202 / var(--tw-text-opacity, 1))}.text-white{--tw-text-opacity:1;color:rgb(255 255 255 / var(--tw-text-opacity, 1))}.text-white\/55{color:rgb(255 255 255 / 0.55)}.text-white\/70{color:rgb(255 255 255 / 0.7)}.text-white\/75{color:rgb(255 255 255 / 0.75)}.text-white\/80{color:rgb(255 255 255 / 0.8)}@media (min-width: 768px){.md\:grid-cols-2{grid-template-columns:repeat(2, minmax(0, 1fr))}.md\:grid-cols-3{grid-template-columns:repeat(3, minmax(0, 1fr))}.md\:p-8{padding:2rem}.md\:px-8{padding-left:2rem;padding-right:2rem}.md\:pt-10{padding-top:2.5rem}}@media (min-width: 1024px){.lg\:flex{display:flex}.lg\:hidden{display:none}.lg\:flex-row{flex-direction:row}.lg\:flex-col{flex-direction:column}.lg\:items-end{align-items:flex-end}.lg\:justify-between{justify-content:space-between}}@media (min-width: 1280px){.xl\:col-span-2{grid-column:span 2 / span 2}.xl\:grid-cols-2{grid-template-columns:repeat(2, minmax(0, 1fr))}.xl\:grid-cols-3{grid-template-columns:repeat(3, minmax(0, 1fr))}.xl\:grid-cols-4{grid-template-columns:repeat(4, minmax(0, 1fr))}.xl\:flex-row{flex-direction:row}.xl\:items-end{align-items:flex-end}.xl\:justify-between{justify-content:space-between}}</style></head>
+<body>
+  <div class="flex">
+    <aside class="sidebar fixed left-0 top-0 h-screen p-5 hidden lg:flex lg:flex-col">
+      <div class="flex items-center gap-3 mb-8">
+        <img src="https://static.wixstatic.com/media/343a2a_21038eb20f1843febc451e40e0aed5ab%7Emv2.png/v1/fill/w_192%2Ch_192%2Clg_1%2Cusm_0.66_1.00_0.01/343a2a_21038eb20f1843febc451e40e0aed5ab%7Emv2.png" alt="Base44 logo" class="w-12 h-12 rounded-xl bg-white/90 p-1" onerror="this.style.display='none';this.nextElementSibling.style.display='flex';">
+        <div class="hidden w-12 h-12 rounded-xl bg-white text-[var(--primary)] items-center justify-center font-black text-2xl">B</div>
+        <div>
+          <div class="font-black text-xl leading-none">Base44</div>
+          <div class="text-white/75 text-sm">US Growth Intelligence</div>
+        </div>
+      </div>
+      <nav class="space-y-1 text-sm">
+        <a href="#overview" class="nav-link active">Overview</a>
+        <a href="#market" class="nav-link">Market Position</a>
+        <a href="#channels" class="nav-link">Channel Mix</a>
+        <a href="#search" class="nav-link">Search Intelligence</a>
+        <a href="#ads" class="nav-link">Ads &amp; Messaging</a>
+        <a href="#seo" class="nav-link">SEO Growth Topics</a>
+        <a href="#social" class="nav-link">Social &amp; Referrals</a>
+        <a href="#geography" class="nav-link">Geography</a>
+        <a href="#landing" class="nav-link">Landing Pages</a>
+        <a href="#playbook" class="nav-link">90-Day Playbook</a>
+        <a href="#roi" class="nav-link">ROI Simulator</a>
+      </nav>
+      <div class="mt-auto card p-4 text-sm">
+        <div class="font-bold mb-2">Fast read</div>
+        <div class="text-white/80 leading-6">
+          Base44 has achieved breakout scale. The biggest ROI unlock now is shifting from broad conquesting and brand-heavy traffic into higher-intent category capture, retention loops, and conversion-first landing experiences.
+        </div>
+      </div>
+    </aside>
+
+    <main class="content w-full min-h-screen">
+      <div class="sticky-top px-6 md:px-8 py-4 border-b border-white/5 lg:hidden">
+        <div class="flex items-center gap-3">
+          <img src="https://static.wixstatic.com/media/343a2a_21038eb20f1843febc451e40e0aed5ab%7Emv2.png/v1/fill/w_192%2Ch_192%2Clg_1%2Cusm_0.66_1.00_0.01/343a2a_21038eb20f1843febc451e40e0aed5ab%7Emv2.png" alt="Base44 logo" class="w-10 h-10 rounded-lg bg-white p-1">
+          <div>
+            <div class="font-black">Base44</div>
+            <div class="text-xs text-white/70">Growth Intelligence</div>
+          </div>
+        </div>
+      </div>
+
+      <section id="overview" class="px-6 md:px-8 pt-8 md:pt-10 pb-6">
+        <div class="gradient-border card p-6 md:p-8">
+          <div class="flex flex-col xl:flex-row xl:items-end xl:justify-between gap-6">
+            <div class="max-w-4xl">
+              <div class="badge bg-white/10 text-white mb-4">Similarweb-powered competitive intelligence</div>
+              <h1 class="section-title">How Base44 can compound marketing ROI faster than the category</h1>
+              <p class="mt-4 text-lg text-white/80 leading-8">
+                Base44 is no longer in early discovery mode. It has moved into breakout demand creation: <span class="font-bold text-white">5.45M monthly visits</span> and <span class="font-bold text-white">2.39M unique users</span> by Feb 2026, while engagement remains strong at <span class="font-bold text-white">5.87 pages/visit</span> and <span class="font-bold text-white">7.1 min avg. visit duration</span>.
+              </p>
+              <p class="mt-3 text-white/70 leading-7">
+                The challenge is not “how to get traffic.” The challenge is <span class="text-white font-semibold">how to rebalance acquisition toward cheaper, more durable, higher-intent topic ownership</span> while preserving brand momentum.
+              </p>
+            </div>
+            <div class="grid grid-cols-2 gap-3 min-w-[300px]">
+              <div class="kpi rounded-2xl p-4">
+                <div class="text-sm text-white/70">Monthly Visits</div>
+                <div class="text-3xl font-black mt-1">5.45M</div>
+                <div class="text-xs metric-up mt-1">+136% vs Jan 2026</div>
+              </div>
+              <div class="kpi rounded-2xl p-4">
+                <div class="text-sm text-white/70">Unique Users</div>
+                <div class="text-3xl font-black mt-1">2.39M</div>
+                <div class="text-xs metric-up mt-1">+45.7% vs Jan 2026</div>
+              </div>
+              <div class="kpi rounded-2xl p-4">
+                <div class="text-sm text-white/70">Paid Spend</div>
+                <div class="text-3xl font-black mt-1">$1.79M</div>
+                <div class="text-xs metric-up mt-1">Feb 2026 global</div>
+              </div>
+              <div class="kpi rounded-2xl p-4">
+                <div class="text-sm text-white/70">Returner Mix</div>
+                <div class="text-3xl font-black mt-1">25.2%</div>
+                <div class="text-xs text-white/70 mt-1">Still under-developed</div>
+              </div>
+            </div>
+          </div>
+
+          <div class="grid md:grid-cols-3 gap-4 mt-8">
+            <div class="glass rounded-2xl p-5">
+              <div class="font-bold mb-2">What’s working</div>
+              <ul class="space-y-2 text-white/75 text-sm leading-6">
+                <li>• Massive demand acceleration from paid and direct.</li>
+                <li>• Brand already dominates organic click share around Base44 topics.</li>
+                <li>• Strong engagement beats Lovable on depth and often rivals AI Studio on session quality.</li>
+              </ul>
+            </div>
+            <div class="glass rounded-2xl p-5">
+              <div class="font-bold mb-2">What’s risky</div>
+              <ul class="space-y-2 text-white/75 text-sm leading-6">
+                <li>• Paid spend is scaling faster than retention and branded moat.</li>
+                <li>• Paid conquesting includes broad competitor/platform terms with diluted purchase intent.</li>
+                <li>• Organic traffic is still overly concentrated on brand topics.</li>
+              </ul>
+            </div>
+            <div class="glass rounded-2xl p-5">
+              <div class="font-bold mb-2">Highest-ROI move</div>
+              <ul class="space-y-2 text-white/75 text-sm leading-6">
+                <li>• Build topic-led conversion assets for AI app builder, AI website builder, vibe coding, templates, and switching comparisons.</li>
+                <li>• Reduce low-fit PPC leakage; reallocate into high-intent landing pages and lifecycle activation.</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section id="market" class="px-6 md:px-8 py-6">
+        <div class="grid xl:grid-cols-3 gap-6 grid-start">
+          <div class="card p-6 xl:col-span-2">
+            <div class="flex items-center justify-between mb-4">
+              <div>
+                <h2 class="text-2xl font-extrabold">Traffic momentum vs key competitors</h2>
+                <p class="subtle mt-1">Base44 has closed the gap rapidly with Lovable and is now near parity in monthly visits.</p>
+              </div>
+            </div>
+            <div class="chart-wrap tall"><canvas id="visitsTrend" width="1878" height="760" style="display: block; box-sizing: border-box; height: 380px; width: 939.3px;"></canvas></div>
+          </div>
+          <div class="card p-6">
+            <h3 class="text-xl font-bold mb-4">Competitive readout</h3>
+            <div class="space-y-4 text-sm">
+              <div class="p-4 rounded-2xl bg-white/5">
+                <div class="flex items-center justify-between">
+                  <span>Base44</span><span class="font-bold">5.45M visits</span>
+                </div>
+                <div class="mini-bar mt-2"><span style="width:99%"></span></div>
+                <div class="text-white/70 mt-2">Explosive climb from near-zero to category contender in ~12 months.</div>
+              </div>
+              <div class="p-4 rounded-2xl bg-white/5">
+                <div class="flex items-center justify-between">
+                  <span>Lovable</span><span class="font-bold">5.31M visits</span>
+                </div>
+                <div class="mini-bar mt-2"><span style="width:97%; background:linear-gradient(90deg,#fcfbf8,#d9d2c9)"></span></div>
+                <div class="text-white/70 mt-2">Stronger retention ratio, weaker session depth.</div>
+              </div>
+              <div class="p-4 rounded-2xl bg-white/5">
+                <div class="flex items-center justify-between">
+                  <span>AI Studio</span><span class="font-bold">13.76M visits</span>
+                </div>
+                <div class="mini-bar mt-2"><span style="width:100%; background:linear-gradient(90deg,#555,#000)"></span></div>
+                <div class="text-white/70 mt-2">Massive ecosystem advantage via Google surfaces and navigational demand.</div>
+              </div>
+            </div>
+            <div class="mt-6 p-4 rounded-2xl heat">
+              <div class="font-bold mb-2">Implication</div>
+              <div class="text-white/80 leading-7 text-sm">
+                Base44 should not try to out-Google Google on navigational or ecosystem terms. It should win on <span class="font-semibold">“make/build/switch/create” intent</span> and on <span class="font-semibold">specific end outcomes</span>: internal tools, client portals, dashboards, websites, automations, and prototypes.
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="grid xl:grid-cols-2 gap-6 mt-6 grid-start">
+          <div class="card p-6">
+            <h3 class="text-xl font-bold mb-4">Unique users trend</h3>
+            <div class="chart-wrap"><canvas id="usersTrend" width="1372" height="640" style="display: block; box-sizing: border-box; height: 320px; width: 686px;"></canvas></div>
+          </div>
+          <div class="card p-6">
+            <h3 class="text-xl font-bold mb-4">Engagement benchmark snapshot</h3>
+            <div class="chart-wrap"><canvas id="engagementRadar" width="1372" height="640" style="display: block; box-sizing: border-box; height: 320px; width: 686px;"></canvas></div>
+          </div>
+        </div>
+      </section>
+
+      <section id="channels" class="px-6 md:px-8 py-6">
+        <div class="card p-6">
+          <div class="flex flex-col lg:flex-row lg:items-end lg:justify-between gap-4 mb-6">
+            <div>
+              <h2 class="text-2xl font-extrabold">Channel mix: Base44 is paid-powered, but direct is now the core growth engine</h2>
+              <p class="subtle mt-1">Over time, Base44’s biggest traffic pools are Direct, Display, and Referrals. Search is strategic, but the story is broader than SEO.</p>
+            </div>
+          </div>
+          <div class="grid xl:grid-cols-3 gap-6 grid-start">
+            <div class="xl:col-span-2">
+              <div class="chart-wrap tall"><canvas id="channelTrend" width="1912" height="760" style="display: block; box-sizing: border-box; height: 380px; width: 956px;"></canvas></div>
+            </div>
+            <div class="space-y-4">
+              <div class="glass rounded-2xl p-5">
+                <div class="font-bold">What the data says</div>
+                <ul class="text-sm text-white/75 mt-3 space-y-2 leading-6">
+                  <li>• Direct traffic is the dominant volume source and rising fast.</li>
+                  <li>• Paid search has become a major scale lever alongside display.</li>
+                  <li>• Referral growth is meaningful, but still under-built compared with product ecosystem potential.</li>
+                  <li>• GenAI-origin traffic exists, but remains small relative to total opportunity.</li>
+                </ul>
+              </div>
+              <div class="glass rounded-2xl p-5">
+                <div class="font-bold">ROI recommendation</div>
+                <ul class="text-sm text-white/75 mt-3 space-y-2 leading-6">
+                  <li>1. Protect direct/brand demand with tighter branded UX and onboarding.</li>
+                  <li>2. Cut broad “tourist intent” PPC themes by 10–20%.</li>
+                  <li>3. Reinvest into comparison pages, templates, and vertical outcome pages.</li>
+                  <li>4. Build partner/referral loops from creator, community, and tool ecosystems.</li>
+                </ul>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section id="search" class="px-6 md:px-8 py-6">
+        <div class="grid xl:grid-cols-3 gap-6 grid-start">
+          <div class="card p-6 xl:col-span-2">
+            <h2 class="text-2xl font-extrabold mb-4">Search visibility is rising fast — but too much click share is brand-led</h2>
+            <div class="chart-wrap tall"><canvas id="rankDist" width="1878" height="760" style="display: block; box-sizing: border-box; height: 380px; width: 939.3px;"></canvas></div>
+            <div class="grid md:grid-cols-3 gap-4 mt-6">
+              <div class="glass rounded-2xl p-4">
+                <div class="text-sm text-white/70">Top-3 share</div>
+                <div class="text-3xl font-black mt-1">49.0%</div>
+                <div class="metric-up text-sm mt-1">Up from 42.5% in Dec</div>
+              </div>
+              <div class="glass rounded-2xl p-4">
+                <div class="text-sm text-white/70">Total ranking terms</div>
+                <div class="text-3xl font-black mt-1">18.8K</div>
+                <div class="metric-up text-sm mt-1">+28% vs Jan</div>
+              </div>
+              <div class="glass rounded-2xl p-4">
+                <div class="text-sm text-white/70">Organic concentration</div>
+                <div class="text-3xl font-black mt-1">91%</div>
+                <div class="text-white/70 text-sm mt-1">from Base44 AI topic alone</div>
+              </div>
+            </div>
+          </div>
+
+          <div class="card p-6">
+            <h3 class="text-xl font-bold mb-4">Search diagnosis</h3>
+            <div class="space-y-4 text-sm">
+              <div class="p-4 rounded-2xl bg-white/5">
+                <div class="font-semibold text-white">Strength</div>
+                <div class="text-white/75 mt-1 leading-6">Base44 already wins navigational intent and branded sitelink real estate extremely well.</div>
+              </div>
+              <div class="p-4 rounded-2xl bg-white/5">
+                <div class="font-semibold text-white">Gap</div>
+                <div class="text-white/75 mt-1 leading-6">Non-brand problem/solution discovery is still thin relative to total rank footprint. This caps “cheap future demand.”</div>
+              </div>
+              <div class="p-4 rounded-2xl bg-white/5">
+                <div class="font-semibold text-white">Opportunity</div>
+                <div class="text-white/75 mt-1 leading-6">Own topics such as AI app builder, app development without code, AI website creation, vibe coding workflows, reusable templates, and migration/switching comparisons.</div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="grid xl:grid-cols-2 gap-6 mt-6 grid-start">
+          <div class="card p-6">
+            <h3 class="text-xl font-bold mb-4">Organic topic clusters to scale</h3>
+            <div class="chart-wrap"><canvas id="organicTopics" width="1372" height="640" style="display: block; box-sizing: border-box; height: 320px; width: 686px;"></canvas></div>
+          </div>
+          <div class="card p-6">
+            <h3 class="text-xl font-bold mb-4">Paid topic clusters now buying attention</h3>
+            <div class="chart-wrap"><canvas id="paidTopics" width="1372" height="640" style="display: block; box-sizing: border-box; height: 320px; width: 686px;"></canvas></div>
+          </div>
+        </div>
+
+        <div class="card p-6 mt-6">
+          <h3 class="text-xl font-bold mb-4">Strategic search takeaway</h3>
+          <div class="grid md:grid-cols-2 xl:grid-cols-4 gap-4 text-sm">
+            <div class="glass rounded-2xl p-4">
+              <div class="font-bold mb-2">Defend</div>
+              <div class="text-white/75 leading-6">Keep dominating Base44 brand, pricing, login, founder, templates, and dashboard examples.</div>
+            </div>
+            <div class="glass rounded-2xl p-4">
+              <div class="font-bold mb-2">Expand</div>
+              <div class="text-white/75 leading-6">Go deeper into category and use-case topics where volume is large but intent is still commercially close.</div>
+            </div>
+            <div class="glass rounded-2xl p-4">
+              <div class="font-bold mb-2">Conquest carefully</div>
+              <div class="text-white/75 leading-6">Competitor terms can work, but only when paired with comparison intent and sharp differentiation.</div>
+            </div>
+            <div class="glass rounded-2xl p-4">
+              <div class="font-bold mb-2">Own SERP features</div>
+              <div class="text-white/75 leading-6">Build content for AI overviews, videos, image-led templates, related questions, and sitelinks-rich architecture.</div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section id="ads" class="px-6 md:px-8 py-6">
+        <div class="card p-6">
+          <h2 class="text-2xl font-extrabold mb-2">Ads &amp; messaging intelligence</h2>
+          <p class="subtle mb-6">Base44’s current ad language is simple and broad. It converts on intent already captured, but leaves emotional and outcome-based differentiation on the table.</p>
+
+          <div class="grid xl:grid-cols-2 gap-6 grid-start">
+            <div class="glass rounded-2xl p-5">
+              <h3 class="text-xl font-bold mb-4">Current message pattern</h3>
+              <ul class="space-y-3 text-sm text-white/75 leading-6">
+                <li>• “Build Anything”</li>
+                <li>• “Build it Free”</li>
+                <li>• “No code app builder”</li>
+                <li>• “Create websites with AI”</li>
+              </ul>
+              <div class="mt-4 p-4 rounded-xl bg-white/5">
+                <div class="font-semibold">What’s missing</div>
+                <div class="text-white/75 mt-2 leading-6">
+                  Proof, speed, specificity, switching reasons, workflow outcomes, and “who it’s for.” The current copy is broad enough to attract clicks, but not always sharp enough to pre-qualify the best-fit builder, founder, freelancer, or operator.
+                </div>
+              </div>
+            </div>
+            <div class="glass rounded-2xl p-5">
+              <h3 class="text-xl font-bold mb-4">Messaging gap vs competitors</h3>
+              <ul class="space-y-3 text-sm text-white/75 leading-6">
+                <li>• Against AI Studio: emphasize shipping products, not exploring models.</li>
+                <li>• Against Lovable: emphasize robustness, templates, workflows, real app outcomes, and business utility.</li>
+                <li>• Against general no-code builders: emphasize AI-assisted speed + fewer moving parts + fast publish path.</li>
+              </ul>
+              <div class="mt-4 p-4 rounded-xl bg-white/5">
+                <div class="font-semibold">Recommended positioning</div>
+                <div class="text-white/75 mt-2 leading-6">
+                  <span class="text-white font-semibold">“From prompt to production-ready app.”</span> This bridges curiosity, action, and credibility.
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="grid xl:grid-cols-3 gap-6 mt-6 grid-start">
+            <div class="card p-5 ad-card">
+              <div class="badge bg-orange-500/20 text-orange-200 mb-3">New search ad angle</div>
+              <div class="text-xl font-bold">Turn one prompt into a working app</div>
+              <div class="text-white/75 mt-3 leading-6 text-sm">
+                Build internal tools, client portals, dashboards, and websites with AI. No setup. No glue code. Publish faster with Base44.
+              </div>
+              <div class="mt-4 text-xs text-white/55">Best for high-intent category + website/app creation topics</div>
+            </div>
+            <div class="card p-5 ad-card">
+              <div class="badge bg-red-500/20 text-red-200 mb-3">Comparison ad angle</div>
+              <div class="text-xl font-bold">Switch from brittle prototypes to real apps</div>
+              <div class="text-white/75 mt-3 leading-6 text-sm">
+                If your current AI builder stops at demos, move to Base44. Templates, data flows, user-ready interfaces, and faster iteration.
+              </div>
+              <div class="mt-4 text-xs text-white/55">Best for Lovable, Replit, website-builder conquest pages</div>
+            </div>
+            <div class="card p-5 ad-card">
+              <div class="badge bg-blue-500/20 text-blue-200 mb-3">Use-case ad angle</div>
+              <div class="text-xl font-bold">Build the tool your team needed yesterday</div>
+              <div class="text-white/75 mt-3 leading-6 text-sm">
+                Create CRMs, approval flows, dashboards, lead routers, flashcards, directories, and customer portals in minutes.
+              </div>
+              <div class="mt-4 text-xs text-white/55">Best for long-tail outcome and template-led campaigns</div>
+            </div>
+          </div>
+
+          <div class="mt-6">
+            <h3 class="text-xl font-bold mb-4">Recommended search ad copy set</h3>
+            <div class="grid md:grid-cols-2 xl:grid-cols-3 gap-4 text-sm">
+              <div class="glass rounded-2xl p-4">
+                <div class="font-bold">Ad Copy A — Category capture</div>
+                <div class="mt-2 text-white/80">Headline: Build AI Apps That Actually Ship</div>
+                <div class="text-white/70">Description: From prompt to working product. Create dashboards, portals, workflows, and websites with Base44.</div>
+              </div>
+              <div class="glass rounded-2xl p-4">
+                <div class="font-bold">Ad Copy B — Speed + proof</div>
+                <div class="mt-2 text-white/80">Headline: Your App, Live in Minutes</div>
+                <div class="text-white/70">Description: Skip setup and stack complexity. Build with AI, customize visually, publish faster.</div>
+              </div>
+              <div class="glass rounded-2xl p-4">
+                <div class="font-bold">Ad Copy C — Website builder</div>
+                <div class="mt-2 text-white/80">Headline: Create Websites With AI — And Extend Them Into Apps</div>
+                <div class="text-white/70">Description: Go beyond pages. Build websites, forms, portals, and business flows in one place.</div>
+              </div>
+              <div class="glass rounded-2xl p-4">
+                <div class="font-bold">Ad Copy D — Comparison</div>
+                <div class="mt-2 text-white/80">Headline: Better Than a Prototype</div>
+                <div class="text-white/70">Description: Compare Base44 to other AI builders. More structure, more use cases, more ways to launch.</div>
+              </div>
+              <div class="glass rounded-2xl p-4">
+                <div class="font-bold">Ad Copy E — Templates</div>
+                <div class="mt-2 text-white/80">Headline: Start With Templates, Finish With Your Product</div>
+                <div class="text-white/70">Description: Pick a template for CRM, portal, dashboard, or directory and tailor it with AI.</div>
+              </div>
+              <div class="glass rounded-2xl p-4">
+                <div class="font-bold">Ad Copy F — Team utility</div>
+                <div class="mt-2 text-white/80">Headline: Build Internal Tools Without Engineering Bottlenecks</div>
+                <div class="text-white/70">Description: Give ops, founders, and marketers the fastest route from process pain to working software.</div>
+              </div>
+            </div>
+          </div>
+
+          <div class="mt-8">
+            <h3 class="text-xl font-bold mb-4">Display / paid social creative direction</h3>
+            <div class="grid xl:grid-cols-3 gap-4">
+              <div class="card p-4">
+                <img src="https://sw-df-ads-capture-creatives-production.s3.us-east-1.amazonaws.com/atc-thumbnails/CR18047804266894065665/400x667?X-Amz-Expires=86400&amp;response-content-disposition=attachment%3B%20filename%3D%22creative_screenshot.png%22&amp;X-Amz-Algorithm=AWS4-HMAC-SHA256&amp;X-Amz-Credential=AKIA4GKBI5ER5IXVZOXV%2F20260325%2Fus-east-1%2Fs3%2Faws4_request&amp;X-Amz-Date=20260325T054158Z&amp;X-Amz-SignedHeaders=host&amp;X-Amz-Signature=4b3fa21d5d94b24357290db4f13a6627404f1773aadab1d307819f84a7e8b298" alt="Base44 creative 1" class="w-full h-72 rounded-xl bg-white/5">
+                <div class="mt-4 font-bold">Creative concept 1: Prompt → Product</div>
+                <div class="text-sm text-white/70 mt-2 leading-6">Show a single prompt transforming into a dashboard, portal, and mobile-ready app in 3 beats. CTA: Build yours now.</div>
+              </div>
+              <div class="card p-4">
+                <img src="https://sw-df-ads-capture-creatives-production.s3.us-east-1.amazonaws.com/atc-thumbnails/CR18258213546494001153/400x667?X-Amz-Expires=86400&amp;response-content-disposition=attachment%3B%20filename%3D%22creative_screenshot.png%22&amp;X-Amz-Algorithm=AWS4-HMAC-SHA256&amp;X-Amz-Credential=AKIA4GKBI5ER5IXVZOXV%2F20260325%2Fus-east-1%2Fs3%2Faws4_request&amp;X-Amz-Date=20260325T054158Z&amp;X-Amz-SignedHeaders=host&amp;X-Amz-Signature=98f8bf891371ec24c7606825da45043288a34df72577e5713966101e59d2bd6a" alt="Base44 creative 2" class="w-full h-72 rounded-xl bg-white/5">
+                <div class="mt-4 font-bold">Creative concept 2: Business outcomes</div>
+                <div class="text-sm text-white/70 mt-2 leading-6">Carousel/video sequence of use cases: lead tracker, booking system, customer portal, flashcards, CRM. CTA: Pick a template, launch today.</div>
+              </div>
+              <div class="card p-4">
+                <img src="https://sw-df-ads-capture-creatives-production.s3.us-east-1.amazonaws.com/atc-thumbnails/CR18310487490374402049/400x667?X-Amz-Expires=86400&amp;response-content-disposition=attachment%3B%20filename%3D%22creative_screenshot.png%22&amp;X-Amz-Algorithm=AWS4-HMAC-SHA256&amp;X-Amz-Credential=AKIA4GKBI5ER5IXVZOXV%2F20260325%2Fus-east-1%2Fs3%2Faws4_request&amp;X-Amz-Date=20260325T054158Z&amp;X-Amz-SignedHeaders=host&amp;X-Amz-Signature=748ebdb4f8b4e593d3cecdef264ea37576499be826328c0437c9d3ab81e07272" alt="Base44 creative 3" class="w-full h-72 rounded-xl bg-white/5">
+                <div class="mt-4 font-bold">Creative concept 3: Switching story</div>
+                <div class="text-sm text-white/70 mt-2 leading-6">Split-screen: “prototype stuck” vs “app shipped.” Strong for competitor and creator audiences. CTA: See how Base44 compares.</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section id="seo" class="px-6 md:px-8 py-6">
+        <div class="card p-6">
+          <h2 class="text-2xl font-extrabold mb-4">SEO growth topics Base44 should own next</h2>
+          <div class="grid xl:grid-cols-2 gap-6 grid-start">
+            <div>
+              <div class="space-y-4">
+                <div class="glass rounded-2xl p-5">
+                  <div class="font-bold mb-2">Topic cluster 1 — AI app builder intent</div>
+                  <div class="text-sm text-white/75 leading-6">Build a hub around building apps with AI, from prototypes to production. Include pages by audience, outcome, template, and complexity level.</div>
+                </div>
+                <div class="glass rounded-2xl p-5">
+                  <div class="font-bold mb-2">Topic cluster 2 — AI website creation</div>
+                  <div class="text-sm text-white/75 leading-6">Base44 is already buying this topic aggressively. Organic support should include comparison guides, examples, prompt libraries, and conversion pages.</div>
+                </div>
+                <div class="glass rounded-2xl p-5">
+                  <div class="font-bold mb-2">Topic cluster 3 — Vibe coding</div>
+                  <div class="text-sm text-white/75 leading-6">The topic is rising and heavily SERP-featured. Win with explainers, workflows, examples, and “best tools / best use cases / prompt to app” content.</div>
+                </div>
+                <div class="glass rounded-2xl p-5">
+                  <div class="font-bold mb-2">Topic cluster 4 — Comparison + switching</div>
+                  <div class="text-sm text-white/75 leading-6">Pages comparing Base44 to Lovable, Replit, website builders, and app builders should focus on jobs-to-be-done, not just feature grids.</div>
+                </div>
+              </div>
+            </div>
+            <div class="glass rounded-2xl p-5">
+              <h3 class="text-xl font-bold mb-4">Priority content architecture</h3>
+              <div class="overflow-hidden rounded-xl border border-white/10">
+                <table class="w-full text-sm">
+                  <thead class="bg-white/5">
+                    <tr>
+                      <th class="text-left p-3">Pillar</th>
+                      <th class="text-left p-3">Why it matters</th>
+                      <th class="text-left p-3">Commercial path</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr class="table-row">
+                      <td class="p-3">AI App Builder</td>
+                      <td class="p-3 text-white/70">Core category expansion</td>
+                      <td class="p-3 text-white/70">/features, /templates, /pricing</td>
+                    </tr>
+                    <tr class="table-row">
+                      <td class="p-3">AI Website Builder</td>
+                      <td class="p-3 text-white/70">Already paid-validated</td>
+                      <td class="p-3 text-white/70">/lp-website + examples</td>
+                    </tr>
+                    <tr class="table-row">
+                      <td class="p-3">Vibe Coding</td>
+                      <td class="p-3 text-white/70">Trend growth + SERP features</td>
+                      <td class="p-3 text-white/70">Guide → template → signup</td>
+                    </tr>
+                    <tr class="table-row">
+                      <td class="p-3">Templates</td>
+                      <td class="p-3 text-white/70">Shortens time to value</td>
+                      <td class="p-3 text-white/70">Template page → register</td>
+                    </tr>
+                    <tr class="table-row">
+                      <td class="p-3">Comparisons</td>
+                      <td class="p-3 text-white/70">High-intent switcher traffic</td>
+                      <td class="p-3 text-white/70">Comparison → product proof</td>
+                    </tr>
+                    <tr>
+                      <td class="p-3">Use-case outcomes</td>
+                      <td class="p-3 text-white/70">Best future moat</td>
+                      <td class="p-3 text-white/70">Outcome page → template / demo</td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+              <div class="mt-4 text-sm text-white/75 leading-6">
+                <span class="font-semibold text-white">Key SEO rule:</span> every topic should map to an action: start free, use template, compare tools, view examples, or see pricing.
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section id="social" class="px-6 md:px-8 py-6">
+        <div class="grid xl:grid-cols-3 gap-6 grid-start">
+          <div class="card p-6 xl:col-span-2">
+            <h2 class="text-2xl font-extrabold mb-4">Social &amp; referral signals: Reddit is the sharpest underexploited source</h2>
+            <div class="chart-wrap"><canvas id="socialChart" width="1878" height="640" style="display: block; box-sizing: border-box; height: 320px; width: 939.3px;"></canvas></div>
+          </div>
+          <div class="card p-6">
+            <h3 class="text-xl font-bold mb-4">Actionable social read</h3>
+            <ul class="space-y-3 text-sm text-white/75 leading-6">
+              <li>• YouTube is the largest social source overall, but Base44’s relative share there is still modest.</li>
+              <li>• Reddit delivers disproportionate Base44 share vs other social sources, signaling product-market conversation fit.</li>
+              <li>• LinkedIn and Instagram are growing for the ecosystem; for Base44, they should be turned into “builder proof” channels.</li>
+              <li>• Referral traffic should be expanded through communities, product directories, and creator partnerships.</li>
+            </ul>
+            <div class="mt-5 p-4 rounded-2xl bg-white/5">
+              <div class="font-bold mb-2">Best next move</div>
+              <div class="text-white/75 text-sm leading-6">
+                Create a repeatable founder/creator program: “I built X in Base44” with templates, teardown threads, and short-form walkthroughs repurposed across YouTube, Reddit, LinkedIn, and Discord.
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section id="geography" class="px-6 md:px-8 py-6">
+        <div class="card p-6">
+          <h2 class="text-2xl font-extrabold mb-4">Geography: US should remain the command center, but several markets are high-efficiency expansion candidates</h2>
+          <div class="grid xl:grid-cols-2 gap-6 grid-start">
+            <div class="chart-wrap"><canvas id="geoChart" width="1422" height="640" style="display: block; box-sizing: border-box; height: 320px; width: 711px;"></canvas></div>
+            <div class="space-y-4">
+              <div class="glass rounded-2xl p-5">
+                <div class="font-bold">Primary market</div>
+                <div class="text-white/75 text-sm mt-2 leading-6">
+                  The US contributes the largest Base44 user and traffic share among reported countries, with strong average engagement benchmarks. This is the market to deepen with conversion rate optimization, retention, and enterprise-adjacent positioning.
+                </div>
+              </div>
+              <div class="glass rounded-2xl p-5">
+                <div class="font-bold">Expansion shortlist</div>
+                <div class="text-white/75 text-sm mt-2 leading-6">
+                  Based on engagement quality and Base44 presence: <span class="text-white font-semibold">Canada, UK, Brazil, France, Germany, Mexico</span>. These markets show useful combinations of session depth, duration, and non-trivial share.
+                </div>
+              </div>
+              <div class="glass rounded-2xl p-5">
+                <div class="font-bold">Localized play</div>
+                <div class="text-white/75 text-sm mt-2 leading-6">
+                  Localize only where buying intent aligns with templates and website-building demand. Start with pricing pages, use-case pages, and search ads before fully localizing product education.
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section id="landing" class="px-6 md:px-8 py-6">
+        <div class="grid xl:grid-cols-2 gap-6 grid-start">
+          <div class="card p-6">
+            <h2 class="text-2xl font-extrabold mb-4">Organic landing page winners</h2>
+            <div class="space-y-3 text-sm">
+              <div class="glass rounded-2xl p-4 flex justify-between gap-4">
+                <div>
+                  <div class="font-semibold">Homepage</div>
+                  <div class="text-white/70">169.2K clicks • branded demand anchor</div>
+                </div>
+                <div class="metric-up">+1.2%</div>
+              </div>
+              <div class="glass rounded-2xl p-4 flex justify-between gap-4">
+                <div>
+                  <div class="font-semibold">App dashboard</div>
+                  <div class="text-white/70">41.2K clicks • strong sitelink behavior</div>
+                </div>
+                <div class="metric-up">+24.1%</div>
+              </div>
+              <div class="glass rounded-2xl p-4 flex justify-between gap-4">
+                <div>
+                  <div class="font-semibold">Pricing</div>
+                  <div class="text-white/70">20.2K clicks • high intent</div>
+                </div>
+                <div class="metric-up">+18.7%</div>
+              </div>
+              <div class="glass rounded-2xl p-4 flex justify-between gap-4">
+                <div>
+                  <div class="font-semibold">Templates</div>
+                  <div class="text-white/70">8.26K clicks • strong growth vector</div>
+                </div>
+                <div class="metric-up">+21.6%</div>
+              </div>
+              <div class="glass rounded-2xl p-4 flex justify-between gap-4">
+                <div>
+                  <div class="font-semibold">Login</div>
+                  <div class="text-white/70">5.9K clicks • retention signal</div>
+                </div>
+                <div class="metric-up">+145.8%</div>
+              </div>
+            </div>
+            <div class="mt-5 p-4 rounded-2xl bg-white/5 text-sm text-white/75 leading-6">
+              Organic winners are mostly navigational and brand-adjacent. Base44 should now engineer <span class="text-white font-semibold">more non-brand entry pages that behave like product pages</span>.
+            </div>
+          </div>
+
+          <div class="card p-6">
+            <h2 class="text-2xl font-extrabold mb-4">Paid landing page winners</h2>
+            <div class="space-y-3 text-sm">
+              <div class="glass rounded-2xl p-4 flex justify-between gap-4">
+                <div>
+                  <div class="font-semibold">/lp-en</div>
+                  <div class="text-white/70">260.3K clicks • 9,943 paid terms</div>
+                </div>
+                <div class="metric-up">+79.4%</div>
+              </div>
+              <div class="glass rounded-2xl p-4 flex justify-between gap-4">
+                <div>
+                  <div class="font-semibold">Homepage</div>
+                  <div class="text-white/70">228.8K clicks • huge recent surge</div>
+                </div>
+                <div class="metric-up">&gt;5000%</div>
+              </div>
+              <div class="glass rounded-2xl p-4 flex justify-between gap-4">
+                <div>
+                  <div class="font-semibold">/lp-website</div>
+                  <div class="text-white/70">95.1K clicks • website-builder thesis working</div>
+                </div>
+                <div class="metric-up">+770.5%</div>
+              </div>
+              <div class="glass rounded-2xl p-4 flex justify-between gap-4">
+                <div>
+                  <div class="font-semibold">Pricing</div>
+                  <div class="text-white/70">16.9K clicks • underused conversion endpoint</div>
+                </div>
+                <div class="metric-up">+1795.5%</div>
+              </div>
+            </div>
+            <div class="mt-5 p-4 rounded-2xl bg-white/5 text-sm text-white/75 leading-6">
+              Best next CRO move: create <span class="text-white font-semibold">one landing page per intent family</span> — AI app builder, AI website builder, template-led use cases, switchers, and team/internal tools — instead of letting one general page absorb too much intent.
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section id="playbook" class="px-6 md:px-8 py-6">
+        <div class="card p-6">
+          <h2 class="text-2xl font-extrabold mb-6">90-day growth playbook</h2>
+          <div class="grid md:grid-cols-2 xl:grid-cols-4 gap-4 text-sm">
+            <div class="glass rounded-2xl p-5">
+              <div class="badge bg-white/10 text-white mb-3">Days 1–30</div>
+              <div class="font-bold mb-2">Rebalance paid search</div>
+              <ul class="text-white/75 space-y-2 leading-6">
+                <li>• Split campaigns by intent: brand, category, website, competitor, outcome.</li>
+                <li>• Reduce low-fit broad conquest terms.</li>
+                <li>• Push pricing and template sitelinks harder.</li>
+              </ul>
+            </div>
+            <div class="glass rounded-2xl p-5">
+              <div class="badge bg-white/10 text-white mb-3">Days 1–45</div>
+              <div class="font-bold mb-2">Fix landing architecture</div>
+              <ul class="text-white/75 space-y-2 leading-6">
+                <li>• Build dedicated pages for AI app builder and AI website builder.</li>
+                <li>• Add social proof, examples, use cases, template previews.</li>
+                <li>• Match headline to query intent family.</li>
+              </ul>
+            </div>
+            <div class="glass rounded-2xl p-5">
+              <div class="badge bg-white/10 text-white mb-3">Days 15–60</div>
+              <div class="font-bold mb-2">Launch topic engine</div>
+              <ul class="text-white/75 space-y-2 leading-6">
+                <li>• Publish comparison pages and “best tool for X” pages.</li>
+                <li>• Create 20–30 template/use-case pages.</li>
+                <li>• Make every page convertible.</li>
+              </ul>
+            </div>
+            <div class="glass rounded-2xl p-5">
+              <div class="badge bg-white/10 text-white mb-3">Days 30–90</div>
+              <div class="font-bold mb-2">Build retention loops</div>
+              <ul class="text-white/75 space-y-2 leading-6">
+                <li>• Prompt libraries and build streak emails.</li>
+                <li>• “Built with Base44” sharing flows.</li>
+                <li>• In-product template recommendations.</li>
+              </ul>
+            </div>
+          </div>
+
+          <div class="grid xl:grid-cols-3 gap-6 mt-6">
+            <div class="glass rounded-2xl p-5">
+              <div class="font-bold mb-2">Expected impact if executed well</div>
+              <div class="text-white/75 text-sm leading-6">
+                Lower paid CAC, stronger non-brand organic growth, better return visitor mix, and higher monetization per acquisition cohort.
+              </div>
+            </div>
+            <div class="glass rounded-2xl p-5">
+              <div class="font-bold mb-2">North-star metrics</div>
+              <div class="text-white/75 text-sm leading-6">
+                Paid landing page conversion rate, return visitor share, template-start rate, pricing-page visit share, and non-brand organic click share.
+              </div>
+            </div>
+            <div class="glass rounded-2xl p-5">
+              <div class="font-bold mb-2">Primary risk to avoid</div>
+              <div class="text-white/75 text-sm leading-6">
+                Continuing to scale media faster than message specificity and landing-page relevance. That creates expensive growth that looks healthy but gets less efficient every month.
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section id="roi" class="px-6 md:px-8 py-6 pb-12">
+        <div class="card p-6">
+          <h2 class="text-2xl font-extrabold mb-2">Interactive ROI proxy simulator</h2>
+          <p class="subtle mb-6">This simulator estimates relative impact from reallocating budget and improving conversion efficiency. It is a planning proxy, not a finance model.</p>
+
+          <div class="grid xl:grid-cols-2 gap-6 grid-start">
+            <div class="space-y-5">
+              <div class="glass rounded-2xl p-5">
+                <label class="block font-semibold mb-2">Monthly paid budget ($)</label>
+                <input id="budget" type="range" min="300000" max="2500000" step="50000" value="1793824" class="roi-input">
+                <div class="text-white/80 mt-2"><span id="budgetVal">$1,900,000</span></div>
+              </div>
+
+              <div class="glass rounded-2xl p-5">
+                <label class="block font-semibold mb-2">Budget shifted from broad conquesting to high-intent pages</label>
+                <input id="realloc" type="range" min="0" max="40" step="1" value="18" class="roi-input">
+                <div class="text-white/80 mt-2"><span id="reallocVal">19%</span> reallocation</div>
+              </div>
+
+              <div class="glass rounded-2xl p-5">
+                <label class="block font-semibold mb-2">Landing page conversion uplift</label>
+                <input id="cvr" type="range" min="0" max="60" step="1" value="22" class="roi-input">
+                <div class="text-white/80 mt-2"><span id="cvrVal">42%</span> uplift</div>
+              </div>
+
+              <div class="glass rounded-2xl p-5">
+                <label class="block font-semibold mb-2">Retention / return-visit uplift</label>
+                <input id="ret" type="range" min="0" max="40" step="1" value="12" class="roi-input">
+                <div class="text-white/80 mt-2"><span id="retVal">9%</span> uplift</div>
+              </div>
+            </div>
+
+            <div class="space-y-4">
+              <div class="grid grid-cols-2 gap-4">
+                <div class="kpi rounded-2xl p-5">
+                  <div class="text-sm text-white/70">Estimated efficient visits</div>
+                  <div id="roiVisits" class="text-3xl font-black mt-1">855.0K</div>
+                  <div class="text-xs text-white/70 mt-1">proxy from reallocation efficiency</div>
+                </div>
+                <div class="kpi rounded-2xl p-5">
+                  <div class="text-sm text-white/70">Estimated activated users</div>
+                  <div id="roiUsers" class="text-3xl font-black mt-1">29.1K</div>
+                  <div class="text-xs text-white/70 mt-1">proxy from traffic × CVR improvements</div>
+                </div>
+                <div class="kpi rounded-2xl p-5">
+                  <div class="text-sm text-white/70">Estimated revenue index</div>
+                  <div id="roiRevenue" class="text-3xl font-black mt-1">171</div>
+                  <div class="text-xs text-white/70 mt-1">baseline index = 100</div>
+                </div>
+                <div class="kpi rounded-2xl p-5">
+                  <div class="text-sm text-white/70">Estimated ROI index</div>
+                  <div id="roiIndex" class="text-3xl font-black mt-1">1.71x</div>
+                  <div class="text-xs text-white/70 mt-1">baseline = 1.00x</div>
+                </div>
+              </div>
+              <div class="glass rounded-2xl p-5">
+                <div class="chart-wrap"><canvas id="roiChart" width="1338" height="640" style="display: block; box-sizing: border-box; height: 320px; width: 669px;"></canvas></div>
+              </div>
+              <div class="glass rounded-2xl p-5 text-sm text-white/75 leading-6">
+                Model assumption: Base44’s biggest ROI gain is not from spending dramatically more. It is from <span class="text-white font-semibold">routing the existing budget into better-fit intent pools</span>, then improving the post-click path so more users start, return, and monetize.
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+    </main>
+  </div>
+
+  <script>
+    const fmtM = v => (v >= 1000000 ? (v/1000000).toFixed(2)+'M' : v >= 1000 ? (v/1000).toFixed(1)+'K' : v);
+    const months = ["2025-03","2025-04","2025-05","2025-06","2025-07","2025-08","2025-09","2025-10","2025-11","2025-12","2026-01","2026-02"];
+
+    Chart.defaults.color = "rgba(255,255,255,.78)";
+    Chart.defaults.borderColor = "rgba(255,255,255,.08)";
+    Chart.defaults.font.family = "Inter, ui-sans-serif, system-ui";
+
+    function lineChart(id, labels, datasets, yFmt='num'){
+      new Chart(document.getElementById(id), {
+        type:'line',
+        data:{labels,datasets},
+        options:{
+          responsive:true,
+          maintainAspectRatio:false,
+          interaction:{mode:'index',intersect:false},
+          plugins:{
+            legend:{labels:{boxWidth:12, usePointStyle:true}},
+            tooltip:{callbacks:{label:(ctx)=>{
+              const v = ctx.raw;
+              return ` ${ctx.dataset.label}: ${yFmt==='sec' ? Math.round(v/60)+'m '+Math.round(v%60)+'s' : fmtM(v)}`;
+            }}}
+          },
+          scales:{
+            y:{ticks:{callback:(v)=> yFmt==='sec' ? Math.round(v/60)+'m' : fmtM(v)}, grid:{color:'rgba(255,255,255,.06)'}},
+            x:{grid:{display:false}}
+          }
+        }
+      });
+    }
+
+    lineChart('visitsTrend', months, [
+      {label:'Base44', data:[33224,42689,76234,263674,1357518,1988009,2047144,2305584,3181149,3381609,4095327,5445406], borderColor:'#ff631f', backgroundColor:'rgba(255,99,31,.18)', tension:.35, fill:false, pointRadius:2},
+      {label:'Lovable', data:[3689035,5552477,5487778,7577095,3493800,3609100,2965448,3333361,3316498,3925691,5011499,5307522], borderColor:'#d9d2c9', backgroundColor:'rgba(252,251,248,.16)', tension:.35, fill:false, pointRadius:2},
+      {label:'AI Studio', data:[7714745,8968524,9388039,9960452,9833644,11072086,14457726,13581638,15638737,16626240,15286667,13761482], borderColor:'#7b7b7b', backgroundColor:'rgba(255,255,255,.08)', tension:.35, fill:false, pointRadius:2}
+    ]);
+
+    lineChart('usersTrend', months, [
+      {label:'Base44', data:[13939,8524,32362,82085,531623,745554,700085,691652,1003002,1300075,1638861,2387819], borderColor:'#ff631f', tension:.35, pointRadius:2},
+      {label:'Lovable', data:[411801,570215,565707,624498,845012,753368,681411,753065,683856,821970,891007,937683], borderColor:'#d9d2c9', tension:.35, pointRadius:2},
+      {label:'AI Studio', data:[1827042,1508129,1797393,1862721,1753019,2118848,2963457,2605955,3035511,2885085,2582843,2663145], borderColor:'#7b7b7b', tension:.35, pointRadius:2}
+    ]);
+
+    new Chart(document.getElementById('engagementRadar'), {
+      type:'radar',
+      data:{
+        labels:['Pages/Visit','Low Bounce','Visit Duration','Returner Mix','Pageview Depth'],
+        datasets:[
+          {label:'Base44', data:[5.87,53.01,7.10,25.2,31.97], borderColor:'#ff631f', backgroundColor:'rgba(255,99,31,.22)'},
+          {label:'Lovable', data:[4.67,62.25,8.56,43.6,24.78], borderColor:'#fcfbf8', backgroundColor:'rgba(252,251,248,.10)'},
+          {label:'AI Studio', data:[5.55,71.03,7.39,50.4,76.39], borderColor:'#8f8f8f', backgroundColor:'rgba(255,255,255,.08)'}
+        ]
+      },
+      options:{
+        responsive:true,
+        maintainAspectRatio:false,
+        scales:{r:{grid:{color:'rgba(255,255,255,.08)'}, angleLines:{color:'rgba(255,255,255,.08)'}, suggestedMin:0}}
+      }
+    });
+
+    lineChart('channelTrend', months, [
+      {label:'Direct', data:[13018,18929,38570,113811,423405,715750,772684,979710,1740305,1657480,1887735,2541894], borderColor:'#ff631f', tension:.35, pointRadius:2},
+      {label:'Referrals', data:[8554,11448,22049,53541,165545,268684,325831,357160,566735,657749,599090,454362], borderColor:'#60a5fa', tension:.35, pointRadius:2},
+      {label:'Gen AI', data:[126,207,527,1612,5099,4965,5939,7636,18456,24084,20319,9469], borderColor:'#22c55e', tension:.35, pointRadius:2}
+    ]);
+
+    new Chart(document.getElementById('rankDist'), {
+      type:'bar',
+      data:{
+        labels:['1-3','4-10','11-20','21-50','Other'],
+        datasets:[
+          {label:'Jan 2026', data:[45.77,14.75,20.65,15.38,3.44], backgroundColor:'rgba(255,99,31,.55)'},
+          {label:'Feb 2026', data:[49.01,16.12,15.36,15.87,3.65], backgroundColor:'rgba(255,0,0,.45)'}
+        ]
+      },
+      options:{
+        responsive:true,
+        maintainAspectRatio:false,
+        plugins:{legend:{position:'top'}},
+        scales:{y:{ticks:{callback:(v)=>v+'%'}}}
+      }
+    });
+
+    new Chart(document.getElementById('organicTopics'), {
+      type:'bar',
+      data:{
+        labels:['Base44 AI','Pricing','Projects','App Development','AI App Builder','Game Dev','AI App Dev','Founder'],
+        datasets:[{
+          label:'Organic clicks share proxy',
+          data:[91.0,2.36,0.84,0.44,0.40,0.38,0.32,0.27],
+          backgroundColor:['#ff631f','#ff7e45','#ff915f','#ffa778','#ffb48a','#ffc09b','#ffcfb3','#ffe0cf']
+        }]
+      },
+      options:{
+        indexAxis:'y', responsive:true, maintainAspectRatio:false,
+        plugins:{legend:{display:false}},
+        scales:{x:{ticks:{callback:(v)=>v+'%'}}}
+      }
+    });
+
+    new Chart(document.getElementById('paidTopics'), {
+      type:'bar',
+      data:{
+        labels:['Base44 AI','Google AI Studio','Replit','Lovable AI','AI Website Builder','Vibe Coding','Squarespace','Firebase'],
+        datasets:[{
+          label:'Paid clicks share proxy',
+          data:[50.9,3.86,3.22,3.06,1.95,1.61,1.29,1.20],
+          backgroundColor:['#ff631f','#ff7e45','#ff915f','#ffa778','#ffb48a','#ffc09b','#ffcfb3','#ffe0cf']
+        }]
+      },
+      options:{
+        indexAxis:'y', responsive:true, maintainAspectRatio:false,
+        plugins:{legend:{display:false}},
+        scales:{x:{ticks:{callback:(v)=>v+'%'}}}
+      }
+    });
+
+    new Chart(document.getElementById('socialChart'), {
+      type:'doughnut',
+      data:{
+        labels:['YouTube','Reddit','LinkedIn','Instagram','Facebook','X','Discord'],
+        datasets:[{
+          data:[15.46,23.37,13.28,17.70,10.44,4.34,13.39],
+          backgroundColor:['#ff631f','#ff0000','#60a5fa','#ec4899','#3b82f6','#94a3b8','#8b5cf6'],
+          borderWidth:0
+        }]
+      },
+      options:{responsive:true, maintainAspectRatio:false, plugins:{legend:{position:'bottom'}}}
+    });
+
+    new Chart(document.getElementById('geoChart'), {
+      type:'bar',
+      data:{
+        labels:['US','Canada','UK','Brazil','France','Germany','Mexico'],
+        datasets:[
+          {label:'Base44 share within country traffic set', data:[17.74,12.24,18.42,10.07,7.82,6.14,9.33], backgroundColor:'#ff631f'},
+          {label:'Engagement quality (pages/visit)', data:[5.58,6.94,5.31,6.73,4.89,4.77,8.85], backgroundColor:'rgba(96,165,250,.7)'}
+        ]
+      },
+      options:{responsive:true, maintainAspectRatio:false}
+    });
+
+    const roiChart = new Chart(document.getElementById('roiChart'), {
+      type:'bar',
+      data:{
+        labels:['Baseline','Improved scenario'],
+        datasets:[
+          {label:'Revenue index', data:[100,155], backgroundColor:['rgba(255,255,255,.18)','rgba(255,99,31,.7)']},
+          {label:'ROI index x100', data:[100,155], backgroundColor:['rgba(255,255,255,.08)','rgba(255,0,0,.45)']}
+        ]
+      },
+      options:{responsive:true, maintainAspectRatio:false, plugins:{legend:{display:false}}, scales:{y:{beginAtZero:true}}}
+    });
+
+    function calcROI(){
+      const budget = +document.getElementById('budget').value;
+      const realloc = +document.getElementById('realloc').value;
+      const cvr = +document.getElementById('cvr').value;
+      const ret = +document.getElementById('ret').value;
+
+      document.getElementById('budgetVal').textContent = '$' + budget.toLocaleString();
+      document.getElementById('reallocVal').textContent = realloc + '%';
+      document.getElementById('cvrVal').textContent = cvr + '%';
+      document.getElementById('retVal').textContent = ret + '%';
+
+      const baselineCpc = 2.75;
+      const efficiencyGain = 1 + (realloc * 0.0125);
+      const visits = (budget / baselineCpc) * efficiencyGain;
+      const activationRate = 0.024 * (1 + cvr/100);
+      const activated = visits * activationRate;
+      const revenueIndex = 100 * (1 + (realloc*0.008) + (cvr*0.012) + (ret*0.006));
+      const roiIndex = revenueIndex / 100;
+
+      document.getElementById('roiVisits').textContent = fmtM(Math.round(visits));
+      document.getElementById('roiUsers').textContent = fmtM(Math.round(activated));
+      document.getElementById('roiRevenue').textContent = Math.round(revenueIndex);
+      document.getElementById('roiIndex').textContent = roiIndex.toFixed(2) + 'x';
+
+      roiChart.data.datasets[0].data = [100, Math.round(revenueIndex)];
+      roiChart.data.datasets[1].data = [100, Math.round(revenueIndex)];
+      roiChart.update();
+    }
+
+    ['budget','realloc','cvr','ret'].forEach(id=>document.getElementById(id).addEventListener('input', calcROI));
+    calcROI();
+
+    document.querySelectorAll('.nav-link').forEach(link=>{
+      link.addEventListener('click', ()=>{
+        document.querySelectorAll('.nav-link').forEach(l=>l.classList.remove('active'));
+        link.classList.add('active');
+      });
+    });
+  </script>
+
+</body></html>

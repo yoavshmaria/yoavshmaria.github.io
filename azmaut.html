@@ -126,6 +126,21 @@ label.key-label{display:flex;align-items:center;gap:6px;font-size:14px;color:var
   display:none;position:fixed;inset:0;background:rgba(0,0,0,0.6);z-index:150;
 }
 
+/* EDIT MODE */
+#edit-btn.active{background:var(--accent);color:#fff;border-color:var(--accent)}
+.edit-active .chord-span{
+  cursor:grab;border-bottom:1px dashed var(--chord);
+  min-width:1.2em;border-radius:2px;padding:0 2px;
+}
+.edit-active .chord-span:active{cursor:grabbing}
+.edit-active .word-pair.drag-over>.chord-span{background:var(--active);outline:1px solid var(--chord)}
+.chord-edit-input{
+  background:transparent;border:none;border-bottom:1px solid var(--chord);
+  color:var(--chord);font-family:'Courier New',monospace;
+  font-size:0.82em;font-weight:700;width:4.5em;
+  direction:ltr;outline:none;padding:0;line-height:1.5;
+}
+
 /* SCROLLBAR */
 ::-webkit-scrollbar{width:6px}
 ::-webkit-scrollbar-track{background:var(--sidebar-bg)}
@@ -172,6 +187,7 @@ label.key-label{display:flex;align-items:center;gap:6px;font-size:14px;color:var
         <label class="key-label">טון:
           <select id="key-select" onchange="onKeyChange()"></select>
         </label>
+        <button id="edit-btn" class="hdr-btn" onclick="toggleEditMode()" title="עריכת אקורדים">עריכה ✏</button>
       </div>
     </div>
     <div id="song-content">
@@ -286,6 +302,7 @@ function loadSong(id) {
   currentKeyIdx = song.defaultKey;
   document.getElementById('key-select').value = currentKeyIdx;
 
+  loadChordOverrides(song);
   renderSong(song);
 }
 
@@ -300,15 +317,21 @@ function renderSong(song) {
   const semitones = (currentKeyIdx - song.tabKey + 12) % 12;
   let html = '';
 
-  song.lines.forEach(line => {
-    html += '<div class="song-line">';
+  song.lines.forEach((line, lineIdx) => {
+    html += `<div class="song-line" data-line="${lineIdx}">`;
     const chords = line.map(p => p.chord ? transposeChord(p.chord, semitones) : '');
     const revChords = [...chords].reverse();
     line.forEach((pair, i) => {
       const chord = revChords[i];
       const word = pair.word || '';
-      html += `<span class="word-pair">`;
-      html += `<span class="chord-span">${escHtml(chord)}</span>`;
+      const pairAttrs = editMode
+        ? ` data-pair="${i}" data-line="${lineIdx}" ondragover="onChordDragOver(event,this)" ondragleave="onChordDragLeave(this)" ondrop="onChordDrop(event,this)"`
+        : '';
+      const chordAttrs = editMode
+        ? ` data-pair="${i}" data-line="${lineIdx}" draggable="true" ondragstart="onChordDragStart(event,this)" onclick="startChordEdit(this)"`
+        : '';
+      html += `<span class="word-pair"${pairAttrs}>`;
+      html += `<span class="chord-span"${chordAttrs}>${escHtml(chord)}</span>`;
       if (word) {
         html += `<span class="word-span">${escHtml(word)}</span>`;
       }
@@ -318,6 +341,7 @@ function renderSong(song) {
   });
 
   content.innerHTML = html;
+  content.classList.toggle('edit-active', editMode);
 }
 
 function onKeyChange() {
@@ -355,6 +379,122 @@ function escHtml(s) {
 }
 
 document.addEventListener('DOMContentLoaded', init);
+
+// ── EDIT MODE ────────────────────────────────────────────────
+let editMode = false;
+
+function toggleEditMode() {
+  editMode = !editMode;
+  document.getElementById('edit-btn').classList.toggle('active', editMode);
+  if (currentSongId) {
+    const song = SONGS.find(s => s.id === currentSongId);
+    if (song) renderSong(song);
+  }
+}
+
+// ── PERSISTENCE ──────────────────────────────────────────────
+function loadChordOverrides(song) {
+  try {
+    const saved = localStorage.getItem('chords_' + song.id);
+    if (!saved) return;
+    const lineChords = JSON.parse(saved);
+    lineChords.forEach((lc, li) => {
+      if (!song.lines[li]) return;
+      lc.forEach((chord, pi) => {
+        if (song.lines[li][pi]) song.lines[li][pi].chord = chord;
+      });
+    });
+  } catch(e) {}
+}
+
+function saveChordOverrides(song) {
+  const lineChords = song.lines.map(line => line.map(p => p.chord));
+  localStorage.setItem('chords_' + song.id, JSON.stringify(lineChords));
+}
+
+// ── CLICK TO EDIT ─────────────────────────────────────────────
+function startChordEdit(el) {
+  if (!editMode) return;
+  const song = SONGS.find(s => s.id === currentSongId);
+  if (!song) return;
+  const pairIdx = parseInt(el.dataset.pair);
+  const lineIdx = parseInt(el.dataset.line);
+  const line = song.lines[lineIdx];
+  const chordDataIdx = line.length - 1 - pairIdx;
+  const semitones = (currentKeyIdx - song.tabKey + 12) % 12;
+
+  const input = document.createElement('input');
+  input.type = 'text';
+  input.className = 'chord-edit-input';
+  input.value = el.textContent.replace('\u200B', '').trim();
+
+  let committed = false;
+  const commit = () => {
+    if (committed) return;
+    committed = true;
+    const val = input.value.trim();
+    const revSemitones = (12 - semitones) % 12;
+    song.lines[lineIdx][chordDataIdx].chord = val ? transposeChord(val, revSemitones) : '';
+    saveChordOverrides(song);
+    renderSong(song);
+  };
+
+  input.addEventListener('blur', commit);
+  input.addEventListener('keydown', e => {
+    if (e.key === 'Enter') { e.preventDefault(); input.blur(); }
+    if (e.key === 'Escape') {
+      committed = true;
+      input.removeEventListener('blur', commit);
+      renderSong(song);
+    }
+  });
+
+  el.replaceWith(input);
+  input.focus();
+  input.select();
+}
+
+// ── DRAG TO SWAP ──────────────────────────────────────────────
+let dragSrc = null;
+
+function onChordDragStart(e, el) {
+  const song = SONGS.find(s => s.id === currentSongId);
+  if (!song) return;
+  const pairIdx = parseInt(el.dataset.pair);
+  const lineIdx = parseInt(el.dataset.line);
+  dragSrc = { lineIdx, chordDataIdx: song.lines[lineIdx].length - 1 - pairIdx };
+  e.dataTransfer.effectAllowed = 'move';
+  e.dataTransfer.setData('text/plain', '');
+}
+
+function onChordDragOver(e, el) {
+  e.preventDefault();
+  e.dataTransfer.dropEffect = 'move';
+  el.classList.add('drag-over');
+}
+
+function onChordDragLeave(el) {
+  el.classList.remove('drag-over');
+}
+
+function onChordDrop(e, el) {
+  e.preventDefault();
+  el.classList.remove('drag-over');
+  if (!dragSrc) return;
+  const song = SONGS.find(s => s.id === currentSongId);
+  if (!song) return;
+  const pairIdx = parseInt(el.dataset.pair);
+  const lineIdx = parseInt(el.dataset.line);
+  if (lineIdx !== dragSrc.lineIdx) { dragSrc = null; return; }
+  const tgtDataIdx = song.lines[lineIdx].length - 1 - pairIdx;
+  const srcDataIdx = dragSrc.chordDataIdx;
+  const tmp = song.lines[lineIdx][srcDataIdx].chord;
+  song.lines[lineIdx][srcDataIdx].chord = song.lines[lineIdx][tgtDataIdx].chord;
+  song.lines[lineIdx][tgtDataIdx].chord = tmp;
+  dragSrc = null;
+  saveChordOverrides(song);
+  renderSong(song);
+}
 </script>
 </body>
 </html>

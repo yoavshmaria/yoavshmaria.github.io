@@ -1,0 +1,980 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Similarweb SEO Content Strategy Report — AI Visibility & LLM Visibility (US)</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <!-- Chart.js safety bootstrap: queues chart calls that fire before CDN loads -->
+  <script>
+    window._chartQ = [];
+    window.Chart = function(el, cfg) { window._chartQ.push([el, cfg]); return { destroy: function(){} }; };
+    window.Chart.register = function(){};
+  </script>
+  <style>
+    :root{
+      --primary:#ff9600;
+      --secondary:#1c3654;
+      --bg:#f8fafc;
+      --ink:#0f172a;
+      --muted:#64748b;
+      --card:#ffffff;
+      --line:#e2e8f0;
+      --good:#16a34a;
+      --warn:#f59e0b;
+      --bad:#dc2626;
+      --sim:#ff9600;
+      --sem:#f6f7f8;
+      --ahr:#3a57fc;
+      --ser:#d012f8;
+      --key:#b22446;
+    }
+    html{scroll-behavior:smooth}
+    body{background:var(--bg);color:var(--ink);font-family:Inter,ui-sans-serif,system-ui,sans-serif}
+    .sidebar{
+      width:240px;
+      background:linear-gradient(180deg, #7a4500 0%, #5a3200 100%);
+    }
+    .main{margin-left:240px}
+    .card{background:var(--card); border:1px solid var(--line); border-radius:16px; box-shadow:0 4px 18px rgba(15,23,42,.04)}
+    .kpi{border:1px solid var(--line); border-radius:14px; background:#fff}
+    .badge{display:inline-flex; align-items:center; gap:.4rem; border-radius:999px; padding:.28rem .7rem; font-size:.75rem; font-weight:700}
+    .badge-new{background:#ecfdf5; color:#166534; border:1px solid #bbf7d0}
+    .badge-update{background:#fff7ed; color:#9a3412; border:1px solid #fdba74}
+    .badge-high{background:#fee2e2; color:#991b1b}
+    .badge-med{background:#fef3c7; color:#92400e}
+    .badge-low{background:#e0e7ff; color:#3730a3}
+    .section-title{font-size:1.65rem; font-weight:800; color:var(--secondary)}
+    .subtle{color:var(--muted)}
+    .table-wrap{overflow:auto}
+    table{width:100%; border-collapse:collapse}
+    th,td{border-bottom:1px solid var(--line); padding:.7rem .65rem; text-align:left; vertical-align:top}
+    th{font-size:.78rem; text-transform:uppercase; letter-spacing:.04em; color:#475569; background:#f8fafc}
+    .toc a{display:block; padding:.55rem .8rem; border-radius:10px; color:#fff; opacity:.92}
+    .toc a:hover{background:rgba(255,255,255,.12)}
+    .brief-card{border:1px solid var(--line); border-radius:18px; background:#fff}
+    .pill{display:inline-block; padding:.2rem .55rem; border-radius:999px; background:#f1f5f9; font-size:.72rem; margin:.15rem .15rem .15rem 0}
+    .small{font-size:.86rem}
+  </style>
+</head>
+<body>
+  <aside class="sidebar fixed left-0 top-0 h-screen text-white p-5 flex flex-col">
+    <div class="flex items-center gap-3 mb-8">
+      <img src="https://static-us-east-1.similarcdn.com/build/20260409.master.e5046f6/dist/scripts/lite-app/assets/bf0781432ef84ce62b85.png" alt="Similarweb logo" class="w-10 h-10 rounded bg-white object-contain p-1" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
+      <div class="hidden w-10 h-10 rounded-full bg-white text-orange-500 items-center justify-center font-extrabold">S</div>
+      <div>
+        <div class="font-bold text-lg leading-tight">Similarweb</div>
+        <div class="text-xs text-orange-100">AI Visibility Strategy</div>
+      </div>
+    </div>
+
+    <nav class="toc text-sm space-y-1 overflow-auto">
+      <a href="#overview">1. Executive Overview</a>
+      <a href="#evolution">2. 6-Month Keyword Evolution</a>
+      <a href="#serp">3. SERP Feature Opportunities</a>
+      <a href="#coverage">4. Content Coverage Analysis</a>
+      <a href="#gaps">5. Competitive Keyword Gaps</a>
+      <a href="#briefs">6. Content Briefs</a>
+    </nav>
+
+    <div class="mt-auto text-xs text-orange-100 border-t border-orange-300/20 pt-4">
+      <div class="font-semibold">Market</div>
+      <div>United States</div>
+      <div class="mt-2 font-semibold">Topic</div>
+      <div>AI Visibility / LLM Visibility</div>
+      <div class="mt-2">Prepared: April 17, 2026</div>
+    </div>
+  </aside>
+
+  <main class="main min-h-screen">
+    <div class="p-8 max-w-[1500px] mx-auto space-y-8">
+      <header class="card p-8">
+        <div class="flex flex-col lg:flex-row lg:items-end lg:justify-between gap-6">
+          <div>
+            <div class="text-sm font-semibold tracking-wide uppercase text-orange-500">SEO Content Strategy Report</div>
+            <h1 class="text-4xl font-extrabold text-slate-900 mt-2">Winning “AI Visibility” + “LLM Visibility” in the US</h1>
+            <p class="mt-4 text-slate-600 max-w-4xl">
+              This report combines Similarweb dataset analysis with live web research of Similarweb’s current coverage and competitor pages to identify exactly where Similarweb should publish, refresh, and consolidate content to win the AI visibility category.
+            </p>
+          </div>
+          <div class="grid grid-cols-2 gap-3 min-w-[320px]">
+            <div class="kpi p-4">
+              <div class="text-xs uppercase subtle">Brand</div>
+              <div class="font-bold text-lg">Similarweb</div>
+            </div>
+            <div class="kpi p-4">
+              <div class="text-xs uppercase subtle">Brief Count</div>
+              <div class="font-bold text-lg">8 briefs</div>
+            </div>
+            <div class="kpi p-4">
+              <div class="text-xs uppercase subtle">Primary Color</div>
+              <div class="font-bold text-lg">#ff9600</div>
+            </div>
+            <div class="kpi p-4">
+              <div class="text-xs uppercase subtle">Core Outcome</div>
+              <div class="font-bold text-lg">Topic ownership</div>
+            </div>
+          </div>
+        </div>
+      </header>
+
+      <section id="overview" class="space-y-5">
+        <h2 class="section-title">1. Executive Overview</h2>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-5 gap-4">
+          <div class="kpi p-5">
+            <div class="text-xs uppercase subtle">6-Month addressable search volume</div>
+            <div class="text-3xl font-extrabold mt-2">57,237</div>
+            <div class="small subtle mt-1">Oct 2025–Mar 2026 summed monthly volume</div>
+          </div>
+          <div class="kpi p-5">
+            <div class="text-xs uppercase subtle">6-Month organic clicks</div>
+            <div class="text-3xl font-extrabold mt-2">24,854</div>
+            <div class="small subtle mt-1">Topic clicks grew sharply into Q1 2026</div>
+          </div>
+          <div class="kpi p-5">
+            <div class="text-xs uppercase subtle">Unique keywords tracked</div>
+            <div class="text-3xl font-extrabold mt-2">136</div>
+            <div class="small subtle mt-1">Across six monthly keyword snapshots</div>
+          </div>
+          <div class="kpi p-5">
+            <div class="text-xs uppercase subtle">Similarweb click share</div>
+            <div class="text-3xl font-extrabold mt-2">0%</div>
+            <div class="small subtle mt-1">Among visible top-topic keywords in Mar 2026</div>
+          </div>
+          <div class="kpi p-5">
+            <div class="text-xs uppercase subtle">Top competitor</div>
+            <div class="text-3xl font-extrabold mt-2">Semrush</div>
+            <div class="small subtle mt-1">~86.5% of tracked competitor-set clicks in Mar 2026</div>
+          </div>
+        </div>
+
+        <div class="card p-6">
+          <p class="text-slate-700 leading-7">
+            The topic is in breakout mode, not maturity. Search volume rose from <strong>5,210 in October 2025</strong> to <strong>21,618 in March 2026</strong>, a <strong>315% increase in five months</strong>, while organic clicks climbed from <strong>2,432</strong> to <strong>8,493</strong> over the same period. Competitor movement has been extremely fast: Semrush went from owning mostly branded AI visibility demand to building a full ecosystem of product pages, help docs, studies, and blog content; Ahrefs and SE Ranking expanded with definitional and tool-led pages; Similarweb has product/help content and a few blog assets, but not yet enough editorial depth to dominate non-branded informational demand. The prioritization logic in this report therefore favors: <strong>(1) definition + methodology pages that can win “what is / how to measure” queries, (2) comparison and tool-intent pages where competitors already capture clicks, and (3) citation-ready, research-heavy assets that are structurally attractive for LLMs</strong>.
+          </p>
+        </div>
+
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-4">
+          <div class="card p-5">
+            <h3 class="font-bold text-slate-900">Topic growth signal</h3>
+            <p class="small text-slate-600 mt-2">Explosive growth. Mar 2026 volume is 2.66x Nov 2025 and 16.6x Apr 2025.</p>
+          </div>
+          <div class="card p-5">
+            <h3 class="font-bold text-slate-900">Competitive velocity</h3>
+            <p class="small text-slate-600 mt-2">Semrush scaled via layered content: overview page, toolkit KB, free checker, studies, methodology, and announcement pages.</p>
+          </div>
+          <div class="card p-5">
+            <h3 class="font-bold text-slate-900">Strategic implication</h3>
+            <p class="small text-slate-600 mt-2">Similarweb should move beyond feature pages and own the category narrative with glossary, methodology, ROI, gap analysis, and comparison content.</p>
+          </div>
+        </div>
+      </section>
+
+      <section id="evolution" class="space-y-5">
+        <h2 class="section-title">2. 6-Month Keyword Evolution</h2>
+
+        <div class="card p-6">
+          <h3 class="font-bold mb-4">Organic clicks share by domain, month by month</h3>
+          <div style="position:relative; height:320px; max-height:320px; overflow:hidden; align-self:start;">
+            <canvas id="shareTrend"></canvas>
+          </div>
+        </div>
+
+        <div class="card p-6 table-wrap">
+          <h3 class="font-bold mb-4">Top 20 keywords by volume — most recent month (2026-03)</h3>
+          <table>
+            <thead>
+              <tr>
+                <th>Keyword</th>
+                <th>Search Volume</th>
+                <th>Similarweb Click Share</th>
+                <th>Top Competitor</th>
+                <th>Top Competitor Click Share</th>
+                <th>Trend</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr><td>ai visibility</td><td>2,820</td><td>0%</td><td>Semrush</td><td>100%</td><td>↑ 200%</td></tr>
+              <tr><td>semrush ai visibility</td><td>1,480</td><td>0%</td><td>Semrush</td><td>100%</td><td>↑ 78.57%</td></tr>
+              <tr><td>free ai visibility checker</td><td>920</td><td>0%</td><td>Semrush</td><td>88.24%</td><td>↑ 1,600%</td></tr>
+              <tr><td>semrush ai visibility report</td><td>550</td><td>0%</td><td>Semrush</td><td>100%</td><td>New</td></tr>
+              <tr><td>semrush ai visibility index</td><td>490</td><td>0%</td><td>Semrush</td><td>100%</td><td>↑ 233.33%</td></tr>
+              <tr><td>semrush ai visibility toolkit</td><td>410</td><td>0%</td><td>Semrush</td><td>100%</td><td>↑ 60%</td></tr>
+              <tr><td>semrush ai visibility report 80m prompts</td><td>310</td><td>0%</td><td>Semrush</td><td>100%</td><td>New</td></tr>
+              <tr><td>site:ahrefs.com ai visibility</td><td>280</td><td>0%</td><td>Ahrefs</td><td>100%</td><td>New</td></tr>
+              <tr><td>how to request access to existing ai visibility toolkit in semrush</td><td>250</td><td>0%</td><td>Semrush</td><td>100%</td><td>New</td></tr>
+              <tr><td>check ai visibility</td><td>220</td><td>0%</td><td>Semrush</td><td>100%</td><td>New</td></tr>
+              <tr><td>ai visibility tools free</td><td>220</td><td>0%</td><td>Semrush</td><td>100%</td><td>↑ 200%</td></tr>
+              <tr><td>is there an effective way to track ai visibility for a website</td><td>220</td><td>0%</td><td>Semrush</td><td>100%</td><td>New</td></tr>
+              <tr><td>ai visibility api from semrush</td><td>210</td><td>0%</td><td>Semrush</td><td>100%</td><td>New</td></tr>
+              <tr><td>se ranking ai search visibility</td><td>190</td><td>0%</td><td>SE Ranking</td><td>100%</td><td>New</td></tr>
+              <tr><td>how to know my brand ai visibility</td><td>180</td><td>0%</td><td>Semrush / Ahrefs</td><td>50% each</td><td>New</td></tr>
+              <tr><td>sem rush packages with ai visibility</td><td>170</td><td>0%</td><td>Semrush</td><td>100%</td><td>New</td></tr>
+              <tr><td>semrush ai visibility tool</td><td>150</td><td>0%</td><td>Semrush</td><td>100%</td><td>New</td></tr>
+              <tr><td>ai visibility监测工具</td><td>150</td><td>0%</td><td>SE Ranking</td><td>100%</td><td>New</td></tr>
+              <tr><td>ahrefs ai visibility tracking</td><td>140</td><td>0%</td><td>Ahrefs</td><td>100%</td><td>New</td></tr>
+              <tr><td>correlation between ai visibility and seo visibility</td><td>130</td><td>0%</td><td>Semrush</td><td>100%</td><td>↑ 66.67%</td></tr>
+            </tbody>
+          </table>
+        </div>
+
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-4">
+          <div class="card p-6">
+            <h3 class="font-bold mb-3">Momentum analysis</h3>
+            <ul class="list-disc pl-5 text-slate-700 space-y-2 small">
+              <li><strong>Biggest Similarweb gain:</strong> limited. Similarweb only meaningfully surfaced earlier on branded/help intent such as “similarweb ai visibility” and “how does Similarweb’s AI visibility work?”; by Mar 2026, no top tracked non-branded keyword shows material click share.</li>
+              <li><strong>Biggest competitor gains:</strong> Semrush surged on “free ai visibility checker” (+1,600%), “semrush ai visibility index” (+233%), and broad category intent like “ai visibility” (+200%).</li>
+              <li><strong>SE Ranking momentum:</strong> strongest on tool-intent variants such as “se ranking ai search visibility” and “ai search visibility optimization.”</li>
+              <li><strong>Ahrefs momentum:</strong> stronger on methodology/thought-leadership angles tied to AI visibility and correlations.</li>
+            </ul>
+          </div>
+          <div class="card p-6">
+            <h3 class="font-bold mb-3">Top 10 keyword gaps by margin</h3>
+            <ol class="list-decimal pl-5 text-slate-700 space-y-2 small">
+              <li>ai visibility — volume 2,820</li>
+              <li>free ai visibility checker — 920</li>
+              <li>check ai visibility — 220</li>
+              <li>ai visibility tools free — 220</li>
+              <li>how to know my brand ai visibility — 180</li>
+              <li>is there an effective way to track ai visibility for a website — 220</li>
+              <li>correlation between ai visibility and seo visibility — 130</li>
+              <li>best ai visibility tools — present in Feb and competitor-led</li>
+              <li>ai search visibility optimization — 370 in Feb, SE Ranking-led</li>
+              <li>llm visibility — volume 330 in Oct slice, still under-covered by Similarweb</li>
+            </ol>
+          </div>
+        </div>
+      </section>
+
+      <section id="serp" class="space-y-5">
+        <h2 class="section-title">3. SERP Feature Opportunities</h2>
+
+        <div class="grid grid-cols-1 xl:grid-cols-2 gap-4">
+          <div class="card p-6">
+            <h3 class="font-bold mb-4">SERP feature frequency across the topic (latest month)</h3>
+            <div style="position:relative; height:320px; max-height:320px; overflow:hidden; align-self:start;">
+              <canvas id="serpBar"></canvas>
+            </div>
+          </div>
+          <div class="card p-6">
+            <h3 class="font-bold mb-3">Feature inventory and opportunity diagnosis</h3>
+            <div class="space-y-3 small text-slate-700">
+              <div><strong>Most common features in Mar 2026:</strong> paid (46), organic (34), related searches (34), video (29), AI Overview (22), related questions/PAA (18), sitelinks (19).</div>
+              <div><strong>High-value visibility layer:</strong> AI Overviews rose from 1 occurrence in Aug 2025 to 22 in Mar 2026, making AI-summary-ready content a must-have.</div>
+              <div><strong>Similarweb capture today:</strong> visible mostly on product/help/PR assets, not enough evidence of broad capture across PAA, video, or definitional snippets.</div>
+              <div><strong>Missed feature lanes:</strong> FAQ/PAA extraction, video explainers, tool-led rich results, and comparative list-format assets likely to be cited in AIOs.</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="card p-6 table-wrap">
+          <h3 class="font-bold mb-4">Feature playbook by opportunity type</h3>
+          <table>
+            <thead>
+              <tr>
+                <th>Feature</th>
+                <th>Presence</th>
+                <th>Best content format</th>
+                <th>Schema</th>
+                <th>Required page structure</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr><td>AI Overview</td><td>22</td><td>Definition + methodology + stats pages</td><td>Article, FAQPage, Organization</td><td>Direct answer intro, clear definitions, source-backed statistics, concise FAQ blocks</td></tr>
+              <tr><td>Related Questions / PAA</td><td>18</td><td>FAQ-rich guides and comparison posts</td><td>FAQPage</td><td>Question-based H2s, 50–100 word direct answers, glossary-style wording</td></tr>
+              <tr><td>Video</td><td>29</td><td>Explainer videos embedded in core pages</td><td>VideoObject</td><td>Short transcript, chapter markers, summary bullets near top</td></tr>
+              <tr><td>Images</td><td>9</td><td>Framework diagrams, charts, process visuals</td><td>ImageObject</td><td>Descriptive alt text, captions, original charts and frameworks</td></tr>
+              <tr><td>Organic sitelinks</td><td>19</td><td>Hub + spoke cluster</td><td>BreadcrumbList</td><td>Strong internal linking, tightly themed child pages, clear nav hierarchy</td></tr>
+              <tr><td>News</td><td>1</td><td>Fresh reports / benchmark studies</td><td>NewsArticle, Report</td><td>Date-stamped methodology, original findings, quotable takeaways</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <section id="coverage" class="space-y-5">
+        <h2 class="section-title">4. Content Coverage Analysis</h2>
+
+        <div class="card p-6 table-wrap">
+          <h3 class="font-bold mb-4">Similarweb organic landing pages currently visible in-topic</h3>
+          <table>
+            <thead>
+              <tr>
+                <th>URL</th>
+                <th>2026-01 Clicks</th>
+                <th>2026-02 Clicks</th>
+                <th>2026-03 Clicks</th>
+                <th>Trend</th>
+                <th>Action</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>support.similarweb.com/hc/en-us/articles/28200692730013-Using-AI-Brand-Visibility</td>
+                <td>20</td><td>0</td><td>0</td>
+                <td><span class="text-red-600 font-semibold">Declining</span></td>
+                <td>Consolidate and update into stronger editorial/product education asset</td>
+              </tr>
+              <tr>
+                <td>similarweb.com/corp/search/gen-ai-intelligence/ai-brand-visibility</td>
+                <td>0</td><td>180</td><td>0</td>
+                <td><span class="text-amber-600 font-semibold">Volatile</span></td>
+                <td>Improve on-page targeting, clarify non-branded intent, strengthen internal links</td>
+              </tr>
+              <tr>
+                <td>ir.similarweb.com/news-events/press-releases/detail/147/similarweb-report-benchmarks-ai-brand-visibility-winners-and-overachievers</td>
+                <td>0</td><td>0</td><td>100</td>
+                <td><span class="text-green-600 font-semibold">Growing</span></td>
+                <td>Keep, but not sufficient for category capture</td>
+              </tr>
+              <tr>
+                <td>similarweb.com/blog/marketing/geo/ai-visibility-roi</td>
+                <td>0</td><td>0</td><td>n/a</td>
+                <td><span class="text-slate-500 font-semibold">Early / limited</span></td>
+                <td>Expand and interlink aggressively</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <div class="grid grid-cols-1 xl:grid-cols-2 gap-4">
+          <div class="card p-6">
+            <h3 class="font-bold mb-3">Coverage diagnosis</h3>
+            <ul class="list-disc pl-5 space-y-2 small text-slate-700">
+              <li><strong>Covered:</strong> product education, AI Brand Visibility landing page, launch/announcement content, ROI content, definitional article “What Is AI Visibility?”, tracking article, gaps article, momentum article.</li>
+              <li><strong>Declining / weak:</strong> support article lost click visibility after Jan; current landing page visibility is inconsistent; pages are not yet dominating broad category terms.</li>
+              <li><strong>No meaningful coverage clusters:</strong> “LLM visibility” exact-match demand, free checker/tool intent, comparison intent (“best ai visibility tools”), methodology/data collection, AI visibility score, AI visibility vs SEO visibility, and prompt/citation playbooks.</li>
+            </ul>
+          </div>
+          <div class="card p-6">
+            <h3 class="font-bold mb-4">Covered vs uncovered keyword clusters</h3>
+            <div style="position:relative; height:320px; max-height:320px; overflow:hidden; align-self:start;">
+              <canvas id="coverageDonut"></canvas>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section id="gaps" class="space-y-5">
+        <h2 class="section-title">5. Competitive Keyword Gaps</h2>
+
+        <div class="card p-6 table-wrap">
+          <h3 class="font-bold mb-4">Top gap clusters</h3>
+          <table>
+            <thead>
+              <tr>
+                <th>Cluster</th>
+                <th>Representative keywords</th>
+                <th>Total Gap Volume</th>
+                <th>Best competitor page</th>
+                <th>Difficulty</th>
+                <th>Priority rationale</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>Category definition</td>
+                <td>ai visibility, what is ai visibility, ai search visibility, llm visibility</td>
+                <td>~3,500+</td>
+                <td>semrush.com/ai-seo/overview ; ahrefs.com/blog/ai-visibility</td>
+                <td>High</td>
+                <td>Largest TAM and strongest strategic category-building value</td>
+              </tr>
+              <tr>
+                <td>Measurement / score</td>
+                <td>ai visibility score, check ai visibility, how to know my brand ai visibility</td>
+                <td>~1,100+</td>
+                <td>semrush.com/free-tools/ai-search-visibility-checker</td>
+                <td>Medium</td>
+                <td>Tool-intent clicks and commercial conversion path</td>
+              </tr>
+              <tr>
+                <td>Best tools / comparisons</td>
+                <td>best ai visibility tools, ai visibility tools free, ai visibility tracker</td>
+                <td>~400–700</td>
+                <td>visible.seranking.com/blog/best-ai-visibility-tools</td>
+                <td>Medium</td>
+                <td>High conversion intent and weak Similarweb coverage</td>
+              </tr>
+              <tr>
+                <td>Methodology / how it works</td>
+                <td>how do ai visibility trackers get its data, ai visibility api, methodology</td>
+                <td>~300–500</td>
+                <td>semrush.com/kb/1607-semrush-ai-visibility-data ; ahrefs.com/blog/brand-radar-methodology</td>
+                <td>Low-Medium</td>
+                <td>E-E-A-T and LLM citation magnet if done transparently</td>
+              </tr>
+              <tr>
+                <td>Correlation / ROI / proof</td>
+                <td>correlation between ai visibility and seo visibility, domain authority and ai visibility</td>
+                <td>~490+</td>
+                <td>semrush.com/blog/ai-mode-comparison-study ; semrush.com/blog/backlinks-ai-search-study</td>
+                <td>Medium</td>
+                <td>Data-led assets can differentiate Similarweb fastest</td>
+              </tr>
+              <tr>
+                <td>Operational playbooks</td>
+                <td>how to track ai visibility, optimize ai search llm visibility tactics</td>
+                <td>~300–600</td>
+                <td>searchengineland.com/optimize-ai-search-llm-visibility-tactics-468106</td>
+                <td>Medium</td>
+                <td>Strong informational intent and useful internal-link hub material</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <div class="grid grid-cols-1 xl:grid-cols-2 gap-4">
+          <div class="card p-6">
+            <h3 class="font-bold mb-4">Priority matrix: volume × gap size vs effort</h3>
+            <div style="position:relative; height:320px; max-height:320px; overflow:hidden; align-self:start;">
+              <canvas id="priorityMatrix"></canvas>
+            </div>
+          </div>
+          <div class="card p-6">
+            <h3 class="font-bold mb-3">Top 30 gap keyword themes to target</h3>
+            <div class="small text-slate-700 grid grid-cols-1 md:grid-cols-2 gap-2">
+              <div>• ai visibility</div>
+              <div>• llm visibility</div>
+              <div>• ai search visibility</div>
+              <div>• what is ai visibility</div>
+              <div>• ai visibility score</div>
+              <div>• ai visibility checker</div>
+              <div>• check ai visibility</div>
+              <div>• free ai visibility checker</div>
+              <div>• ai visibility tools free</div>
+              <div>• best ai visibility tools</div>
+              <div>• ai visibility tracker</div>
+              <div>• ai search visibility optimization</div>
+              <div>• how to track ai visibility</div>
+              <div>• how to know my brand ai visibility</div>
+              <div>• how do ai visibility trackers get data</div>
+              <div>• ai visibility methodology</div>
+              <div>• ai visibility report</div>
+              <div>• ai visibility index</div>
+              <div>• correlation between ai visibility and seo visibility</div>
+              <div>• domain authority and ai visibility</div>
+              <div>• ai citations and brand mentions</div>
+              <div>• prompt tracking ai visibility</div>
+              <div>• ai visibility vs seo</div>
+              <div>• llm visibility tactics</div>
+              <div>• llm visibility tools</div>
+              <div>• chatgpt visibility tracker</div>
+              <div>• ai overview visibility</div>
+              <div>• citation analysis ai search</div>
+              <div>• ai brand visibility</div>
+              <div>• ai visibility ROI</div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section id="briefs" class="space-y-5">
+        <h2 class="section-title">6. Content Briefs</h2>
+        <div class="card p-6">
+          <p class="text-slate-700 leading-7">
+            Below are 8 prioritized briefs. Each one is labeled as an <strong>EXISTING CONTENT UPDATE</strong> or <strong>NEW CONTENT</strong> based on live review of current Similarweb URLs and competitor pages. Similarweb already has relevant pages including:
+            <code class="bg-slate-100 px-1 py-0.5 rounded">/blog/marketing/geo/what-is-ai-visibility/</code>,
+            <code class="bg-slate-100 px-1 py-0.5 rounded">/blog/marketing/geo/ai-visibility-roi/</code>,
+            <code class="bg-slate-100 px-1 py-0.5 rounded">/blog/marketing/geo/track-ai-visibility/</code>,
+            <code class="bg-slate-100 px-1 py-0.5 rounded">/blog/marketing/geo/ai-visibility-gaps/</code>,
+            <code class="bg-slate-100 px-1 py-0.5 rounded">/corp/search/ai-brand-visibility/</code>,
+            and the AI Brand Visibility knowledge-center pages. Competitor benchmarks include Semrush’s AI Visibility overview / toolkit / free checker ecosystem, Ahrefs’ AI visibility guide, SE Ranking’s AI Visibility Tracker, Search Engine Land’s LLM visibility tactics article, and Backlinko’s LLM visibility article.
+          </p>
+        </div>
+
+        <!-- Brief 1 -->
+        <article class="brief-card p-6">
+          <div class="flex flex-wrap items-center gap-3 mb-4">
+            <span class="badge badge-update">🔄 EXISTING CONTENT UPDATE</span>
+            <span class="badge badge-high">High Priority</span>
+          </div>
+          <h3 class="text-2xl font-extrabold">What Is AI Visibility? Definition, Metrics, Examples, and How to Improve It</h3>
+          <div class="small subtle mt-1">Current URL: https://www.similarweb.com/blog/marketing/geo/what-is-ai-visibility/</div>
+
+          <div class="mt-4 grid grid-cols-1 xl:grid-cols-2 gap-6">
+            <div>
+              <h4 class="font-bold">Target keywords</h4>
+              <div class="mt-2 small text-slate-700">
+                Primary: <strong>ai visibility</strong> (2,820)<br>
+                Secondary: <strong>what is ai visibility</strong> (~120), <strong>ai search visibility</strong> (~700 historical / 220 current click-bearing), <strong>llm visibility</strong> (330), <strong>ai visibility vs seo</strong> (~130 inferred), <strong>ai brand visibility</strong> (brand-adjacent)
+              </div>
+
+              <h4 class="font-bold mt-4">Search intent</h4>
+              <p class="small text-slate-700 mt-2">Primarily informational. Users want a plain-English definition, a framework for measuring the concept, and a clear explanation of how AI visibility differs from rankings, share of voice, and classic SEO.</p>
+
+              <h4 class="font-bold mt-4">Content outline</h4>
+              <ul class="list-disc pl-5 small text-slate-700 mt-2 space-y-1">
+                <li>H2: What is AI visibility? — one-sentence definition above the fold</li>
+                <li>H2: How AI visibility differs from SEO rankings — compare ranking vs mention/citation presence</li>
+                <li>H2: The 4 metrics that matter — mention share, citation share, prompt coverage, sentiment/accuracy</li>
+                <li>H2: Where AI visibility happens — ChatGPT, Gemini, Perplexity, AI Overviews / AI Mode</li>
+                <li>H2: What drives AI visibility — content clarity, entity strength, citations, freshness, authority</li>
+                <li>H2: How to measure it with Similarweb — screenshots + methodology teaser</li>
+                <li>H2: Common mistakes — treating it as rank tracking only</li>
+                <li>H2: FAQ — tool, score, examples, reporting cadence</li>
+              </ul>
+            </div>
+            <div>
+              <h4 class="font-bold">Why Google ranking</h4>
+              <p class="small text-slate-700 mt-2">This is the biggest category keyword gap. In the dataset, “ai visibility” has the highest volume (2,820) while Similarweb holds 0% click share in the latest month, despite already having a relevant article. Refreshing the page to become the definitive category page is the fastest way to attack the largest TAM.</p>
+
+              <h4 class="font-bold mt-4">Why GenAI / LLM coverage</h4>
+              <p class="small text-slate-700 mt-2">Definition pages are disproportionately cited by LLMs when they contain explicit definitions, measurable frameworks, FAQ blocks, and sourced stats. Add FAQPage schema, direct-answer intros, original data points, glossary anchors, and clearly labeled definitions.</p>
+
+              <h4 class="font-bold mt-4">Estimated traffic opportunity</h4>
+              <p class="small text-slate-700 mt-2">~350–650 monthly clicks if top-3 across the primary cluster.</p>
+
+              <h4 class="font-bold mt-4">Priority</h4>
+              <p class="small text-slate-700 mt-2"><strong>High</strong> — biggest non-branded category term and strongest internal-link hub candidate.</p>
+            </div>
+          </div>
+        </article>
+
+        <!-- Brief 2 -->
+        <article class="brief-card p-6">
+          <div class="flex flex-wrap items-center gap-3 mb-4">
+            <span class="badge badge-new">✨ NEW CONTENT</span>
+            <span class="badge badge-high">High Priority</span>
+          </div>
+          <h3 class="text-2xl font-extrabold">LLM Visibility: What It Is, How to Measure It, and 12 Ways to Improve It</h3>
+
+          <div class="mt-4 grid grid-cols-1 xl:grid-cols-2 gap-6">
+            <div>
+              <h4 class="font-bold">Target keywords</h4>
+              <div class="mt-2 small text-slate-700">
+                Primary: <strong>llm visibility</strong> (330)<br>
+                Secondary: <strong>llm visibility tactics</strong> (~100+ intent), <strong>llm visibility tools</strong> (~60–100 inferred), <strong>optimize ai search llm visibility</strong> (~informational), <strong>llm visibility seo</strong> (~emerging)
+              </div>
+
+              <h4 class="font-bold mt-4">Search intent</h4>
+              <p class="small text-slate-700 mt-2">Informational with strategic intent. Users are trying to map AI-search language to their SEO reality and want tactical steps, not just a definition.</p>
+
+              <h4 class="font-bold mt-4">Content outline</h4>
+              <ul class="list-disc pl-5 small text-slate-700 mt-2 space-y-1">
+                <li>H2: LLM visibility defined</li>
+                <li>H2: LLM visibility vs AI visibility vs GEO vs SEO</li>
+                <li>H2: How LLMs choose brands and sources</li>
+                <li>H2: 12 practical tactics to improve visibility</li>
+                <li>H2: The role of citations, PR, and reviews</li>
+                <li>H2: Technical readiness for LLM retrieval</li>
+                <li>H2: How to measure LLM visibility in Similarweb</li>
+                <li>H2: FAQ + glossary definitions</li>
+              </ul>
+            </div>
+            <div>
+              <h4 class="font-bold">Why Google ranking</h4>
+              <p class="small text-slate-700 mt-2">Similarweb has AI visibility coverage, but no clear exact-match LLM visibility pillar discovered in live research. Competitors like Backlinko and Hootsuite already publish directly on this framing, creating a semantic gap that Similarweb can fill.</p>
+
+              <h4 class="font-bold mt-4">Why GenAI / LLM coverage</h4>
+              <p class="small text-slate-700 mt-2">This page aligns directly with the language users and AI systems use. A tight glossary section, direct definitions, and cross-links to AI visibility methodology pages make it highly citable for “what is LLM visibility?” and “how do I improve LLM visibility?” prompts.</p>
+
+              <h4 class="font-bold mt-4">Estimated traffic opportunity</h4>
+              <p class="small text-slate-700 mt-2">~120–250 monthly clicks initially, with upside as the term grows.</p>
+
+              <h4 class="font-bold mt-4">Priority</h4>
+              <p class="small text-slate-700 mt-2"><strong>High</strong> — clear uncovered cluster and strong semantic adjacency to Similarweb’s product positioning.</p>
+            </div>
+          </div>
+        </article>
+
+        <!-- Brief 3 -->
+        <article class="brief-card p-6">
+          <div class="flex flex-wrap items-center gap-3 mb-4">
+            <span class="badge badge-new">✨ NEW CONTENT</span>
+            <span class="badge badge-high">High Priority</span>
+          </div>
+          <h3 class="text-2xl font-extrabold">AI Visibility Checker: How to Evaluate Your Brand’s Presence in ChatGPT, Gemini, and Perplexity</h3>
+
+          <div class="mt-4 grid grid-cols-1 xl:grid-cols-2 gap-6">
+            <div>
+              <h4 class="font-bold">Target keywords</h4>
+              <div class="mt-2 small text-slate-700">
+                Primary: <strong>ai visibility checker</strong> (~10 current / larger emerging cluster)<br>
+                Secondary: <strong>check ai visibility</strong> (220), <strong>free ai visibility checker</strong> (920), <strong>how to know my brand ai visibility</strong> (180), <strong>website ai visibility check</strong> (260 historical)
+              </div>
+
+              <h4 class="font-bold mt-4">Search intent</h4>
+              <p class="small text-slate-700 mt-2">Commercial-investigational. Users want a way to test or audit their brand’s visibility and are close to tool evaluation.</p>
+
+              <h4 class="font-bold mt-4">Content outline</h4>
+              <ul class="list-disc pl-5 small text-slate-700 mt-2 space-y-1">
+                <li>H2: What an AI visibility checker actually measures</li>
+                <li>H2: Free vs enterprise AI visibility tools</li>
+                <li>H2: How to run a manual spot-check</li>
+                <li>H2: Why prompt samples can mislead</li>
+                <li>H2: The metrics a checker should include</li>
+                <li>H2: Similarweb workflow: brand overview, prompt tracking, citation analysis</li>
+                <li>H2: Evaluation checklist before buying a tool</li>
+                <li>H2: FAQ</li>
+              </ul>
+            </div>
+            <div>
+              <h4 class="font-bold">Why Google ranking</h4>
+              <p class="small text-slate-700 mt-2">Semrush owns this cluster with its free checker page; “free ai visibility checker” alone is 920 volume and 170 clicks in Mar 2026 with Semrush at 88.24% share. Similarweb needs a query-aligned page, even if the CTA routes to AI Brand Visibility rather than a free tool.</p>
+
+              <h4 class="font-bold mt-4">Why GenAI / LLM coverage</h4>
+              <p class="small text-slate-700 mt-2">Tool evaluation pages get cited for “best way to check AI visibility” prompts when they include comparison criteria, transparent methodology, and screenshots. Add Product/SoftwareApplication schema only if appropriate; otherwise use Article + FAQPage.</p>
+
+              <h4 class="font-bold mt-4">Estimated traffic opportunity</h4>
+              <p class="small text-slate-700 mt-2">~180–350 monthly clicks.</p>
+
+              <h4 class="font-bold mt-4">Priority</h4>
+              <p class="small text-slate-700 mt-2"><strong>High</strong> — strong buying intent and direct competitor capture by Semrush.</p>
+            </div>
+          </div>
+        </article>
+
+        <!-- Brief 4 -->
+        <article class="brief-card p-6">
+          <div class="flex flex-wrap items-center gap-3 mb-4">
+            <span class="badge badge-new">✨ NEW CONTENT</span>
+            <span class="badge badge-high">High Priority</span>
+          </div>
+          <h3 class="text-2xl font-extrabold">Best AI Visibility Tools in 2026: Features, Methodologies, and Who Each One Is For</h3>
+
+          <div class="mt-4 grid grid-cols-1 xl:grid-cols-2 gap-6">
+            <div>
+              <h4 class="font-bold">Target keywords</h4>
+              <div class="mt-2 small text-slate-700">
+                Primary: <strong>best ai visibility tools</strong> (100 historical visible demand)<br>
+                Secondary: <strong>ai visibility tools free</strong> (220), <strong>ai visibility tracker</strong> (~160–320 family), <strong>chatgpt visibility tracker</strong> (60+), <strong>ai search visibility tools</strong> (~70+)
+              </div>
+
+              <h4 class="font-bold mt-4">Search intent</h4>
+              <p class="small text-slate-700 mt-2">Commercial comparison. Users are choosing between vendors or categories of tooling.</p>
+
+              <h4 class="font-bold mt-4">Content outline</h4>
+              <ul class="list-disc pl-5 small text-slate-700 mt-2 space-y-1">
+                <li>H2: What counts as an AI visibility tool?</li>
+                <li>H2: Evaluation criteria — coverage, prompts, citations, freshness, workflows</li>
+                <li>H2: Similarweb overview</li>
+                <li>H2: Semrush overview</li>
+                <li>H2: Ahrefs / SE Ranking / niche tools overview</li>
+                <li>H2: Best tools by use case — enterprise, SMB, agency, PR, ecommerce</li>
+                <li>H2: Common methodology traps</li>
+                <li>H2: FAQ</li>
+              </ul>
+            </div>
+            <div>
+              <h4 class="font-bold">Why Google ranking</h4>
+              <p class="small text-slate-700 mt-2">SE Ranking currently benefits from this listicle/comparison lane. Similarweb lacks a strong comparison page despite being a legitimate market player. This is a classic bottom-funnel page and can support demo intent.</p>
+
+              <h4 class="font-bold mt-4">Why GenAI / LLM coverage</h4>
+              <p class="small text-slate-700 mt-2">Comparison pages are highly retrievable by AI systems for vendor-shortlist prompts. To remain credible, the page must be transparent about methodology and avoid thin sales copy. Include comparison tables, “best for” summaries, and update stamps.</p>
+
+              <h4 class="font-bold mt-4">Estimated traffic opportunity</h4>
+              <p class="small text-slate-700 mt-2">~120–260 monthly clicks plus high lead quality.</p>
+
+              <h4 class="font-bold mt-4">Priority</h4>
+              <p class="small text-slate-700 mt-2"><strong>High</strong> — direct commercial intent and a visible competitor-held gap.</p>
+            </div>
+          </div>
+        </article>
+
+        <!-- Brief 5 -->
+        <article class="brief-card p-6">
+          <div class="flex flex-wrap items-center gap-3 mb-4">
+            <span class="badge badge-new">✨ NEW CONTENT</span>
+            <span class="badge badge-med">Medium Priority</span>
+          </div>
+          <h3 class="text-2xl font-extrabold">How AI Visibility Is Measured: Methodology, Data Sources, Prompt Sampling, and Limitations</h3>
+
+          <div class="mt-4 grid grid-cols-1 xl:grid-cols-2 gap-6">
+            <div>
+              <h4 class="font-bold">Target keywords</h4>
+              <div class="mt-2 small text-slate-700">
+                Primary: <strong>how do ai visibility trackers get its data</strong> (80 historical)<br>
+                Secondary: <strong>ai visibility methodology</strong> (~emerging), <strong>ai visibility data</strong> (~emerging), <strong>how to measure ai visibility</strong> (~170 intent), <strong>ai visibility api</strong> (210 around Semrush-branded variant)
+              </div>
+
+              <h4 class="font-bold mt-4">Search intent</h4>
+              <p class="small text-slate-700 mt-2">Informational / evaluative. Users are skeptical and want to understand whether AI visibility numbers are reliable.</p>
+
+              <h4 class="font-bold mt-4">Content outline</h4>
+              <ul class="list-disc pl-5 small text-slate-700 mt-2 space-y-1">
+                <li>H2: Why AI visibility is harder to measure than SEO</li>
+                <li>H2: Common data collection models</li>
+                <li>H2: Prompt sampling vs real-user behavior</li>
+                <li>H2: What metrics are trustworthy and what aren’t</li>
+                <li>H2: How Similarweb approaches AI Brand Visibility</li>
+                <li>H2: Limitations and caveats</li>
+                <li>H2: How to interpret changes over time</li>
+                <li>H2: FAQ</li>
+              </ul>
+            </div>
+            <div>
+              <h4 class="font-bold">Why Google ranking</h4>
+              <p class="small text-slate-700 mt-2">Competitors use KB and methodology pages to absorb long-tail questions and trust-oriented intent. Similarweb has product docs, but not a robust editorial methodology page aimed at category-level searchers.</p>
+
+              <h4 class="font-bold mt-4">Why GenAI / LLM coverage</h4>
+              <p class="small text-slate-700 mt-2">Transparent methodology content is especially attractive to LLMs because it answers “how does this work?” prompts and builds E-E-A-T. Use charts, explicit formulas, definitions, and attribution-rich claims.</p>
+
+              <h4 class="font-bold mt-4">Estimated traffic opportunity</h4>
+              <p class="small text-slate-700 mt-2">~80–180 monthly clicks.</p>
+
+              <h4 class="font-bold mt-4">Priority</h4>
+              <p class="small text-slate-700 mt-2"><strong>Medium</strong> — lower raw volume than core head terms, but outsized trust and conversion value.</p>
+            </div>
+          </div>
+        </article>
+
+        <!-- Brief 6 -->
+        <article class="brief-card p-6">
+          <div class="flex flex-wrap items-center gap-3 mb-4">
+            <span class="badge badge-update">🔄 EXISTING CONTENT UPDATE</span>
+            <span class="badge badge-med">Medium Priority</span>
+          </div>
+          <h3 class="text-2xl font-extrabold">How to Track AI Visibility: Metrics, Dashboards, and Reporting Cadence for Marketing Teams</h3>
+          <div class="small subtle mt-1">Current URL: https://www.similarweb.com/blog/marketing/geo/track-ai-visibility/</div>
+
+          <div class="mt-4 grid grid-cols-1 xl:grid-cols-2 gap-6">
+            <div>
+              <h4 class="font-bold">Target keywords</h4>
+              <div class="mt-2 small text-slate-700">
+                Primary: <strong>how to track ai visibility</strong> (170 historical)<br>
+                Secondary: <strong>track ai visibility</strong> (~emerging), <strong>monitor ai visibility</strong> (~emerging), <strong>ai visibility dashboard</strong> (~emerging), <strong>prompt tracking ai visibility</strong> (~emerging)
+              </div>
+
+              <h4 class="font-bold mt-4">Search intent</h4>
+              <p class="small text-slate-700 mt-2">Operational informational intent. Users want a repeatable process, not just a definition.</p>
+
+              <h4 class="font-bold mt-4">Content outline</h4>
+              <ul class="list-disc pl-5 small text-slate-700 mt-2 space-y-1">
+                <li>H2: What you should track weekly vs monthly</li>
+                <li>H2: KPI framework — visibility %, citations, prompt win rate, sentiment</li>
+                <li>H2: How to select topics and competitors</li>
+                <li>H2: Reporting templates for SEO, PR, content, leadership</li>
+                <li>H2: How to spot momentum and visibility gaps</li>
+                <li>H2: Sample dashboard walkthrough using Similarweb</li>
+                <li>H2: Mistakes in AI visibility reporting</li>
+              </ul>
+            </div>
+            <div>
+              <h4 class="font-bold">Why Google ranking</h4>
+              <p class="small text-slate-700 mt-2">The page exists, but should be expanded into a much more practical reporting guide. This helps defend against Semrush’s growing “how to use / how to track” ecosystem.</p>
+
+              <h4 class="font-bold mt-4">Why GenAI / LLM coverage</h4>
+              <p class="small text-slate-700 mt-2">Operational how-to content is useful for prompt-based answers. Add downloadable templates, KPI tables, and FAQ schema to make answer extraction easy.</p>
+
+              <h4 class="font-bold mt-4">Estimated traffic opportunity</h4>
+              <p class="small text-slate-700 mt-2">~90–170 monthly clicks.</p>
+
+              <h4 class="font-bold mt-4">Priority</h4>
+              <p class="small text-slate-700 mt-2"><strong>Medium</strong> — useful cluster support page and internal-link node.</p>
+            </div>
+          </div>
+        </article>
+
+        <!-- Brief 7 -->
+        <article class="brief-card p-6">
+          <div class="flex flex-wrap items-center gap-3 mb-4">
+            <span class="badge badge-new">✨ NEW CONTENT</span>
+            <span class="badge badge-med">Medium Priority</span>
+          </div>
+          <h3 class="text-2xl font-extrabold">AI Visibility vs SEO Visibility: What Correlates, What Doesn’t, and How to Prioritize Both</h3>
+
+          <div class="mt-4 grid grid-cols-1 xl:grid-cols-2 gap-6">
+            <div>
+              <h4 class="font-bold">Target keywords</h4>
+              <div class="mt-2 small text-slate-700">
+                Primary: <strong>correlation between ai visibility and seo visibility</strong> (130)<br>
+                Secondary: <strong>ai visibility vs seo visibility</strong> (~80–150), <strong>domain authority and ai visibility</strong> (360 historical), <strong>seo visibility and ai visibility</strong> (~emerging), <strong>ai search seo traffic study</strong> (~emerging)
+              </div>
+
+              <h4 class="font-bold mt-4">Search intent</h4>
+              <p class="small text-slate-700 mt-2">Informational / strategic. Users want proof, evidence, and prioritization guidance rather than opinion.</p>
+
+              <h4 class="font-bold mt-4">Content outline</h4>
+              <ul class="list-disc pl-5 small text-slate-700 mt-2 space-y-1">
+                <li>H2: Does SEO visibility correlate with AI visibility?</li>
+                <li>H2: Where the overlap is strong</li>
+                <li>H2: Where AI visibility diverges from classic SEO</li>
+                <li>H2: Role of backlinks, mentions, reviews, freshness, structure</li>
+                <li>H2: Example scenarios — strong SEO / weak AI, and vice versa</li>
+                <li>H2: Planning budget and workflow across both</li>
+                <li>H2: Similarweb measurement approach</li>
+              </ul>
+            </div>
+            <div>
+              <h4 class="font-bold">Why Google ranking</h4>
+              <p class="small text-slate-700 mt-2">Semrush is already capturing this cluster with study-driven posts. Similarweb can compete well here because it has the data credibility to publish a genuinely strong research-backed view.</p>
+
+              <h4 class="font-bold mt-4">Why GenAI / LLM coverage</h4>
+              <p class="small text-slate-700 mt-2">LLMs love evidence-led comparisons with explicit conclusions. This page should contain charts, caveats, definitions, and executive takeaways that can be quoted cleanly in AI-generated answers.</p>
+
+              <h4 class="font-bold mt-4">Estimated traffic opportunity</h4>
+              <p class="small text-slate-700 mt-2">~70–160 monthly clicks.</p>
+
+              <h4 class="font-bold mt-4">Priority</h4>
+              <p class="small text-slate-700 mt-2"><strong>Medium</strong> — smaller than the head term, but highly differentiating and link-worthy.</p>
+            </div>
+          </div>
+        </article>
+
+        <!-- Brief 8 -->
+        <article class="brief-card p-6">
+          <div class="flex flex-wrap items-center gap-3 mb-4">
+            <span class="badge badge-update">🔄 EXISTING CONTENT UPDATE</span>
+            <span class="badge badge-low">Low Priority</span>
+          </div>
+          <h3 class="text-2xl font-extrabold">AI Visibility ROI: How to Quantify the Business Impact of Being Mentioned in AI Answers</h3>
+          <div class="small subtle mt-1">Current URL: https://www.similarweb.com/blog/marketing/geo/ai-visibility-roi/</div>
+
+          <div class="mt-4 grid grid-cols-1 xl:grid-cols-2 gap-6">
+            <div>
+              <h4 class="font-bold">Target keywords</h4>
+              <div class="mt-2 small text-slate-700">
+                Primary: <strong>ai visibility roi</strong> (emerging)<br>
+                Secondary: <strong>measure ai visibility roi</strong>, <strong>ai brand mention value</strong>, <strong>ai visibility business case</strong>, <strong>ai visibility budget</strong>
+              </div>
+
+              <h4 class="font-bold mt-4">Search intent</h4>
+              <p class="small text-slate-700 mt-2">Strategic / commercial. CMOs and SEO leads want a budgeting and forecasting framework.</p>
+
+              <h4 class="font-bold mt-4">Content outline</h4>
+              <ul class="list-disc pl-5 small text-slate-700 mt-2 space-y-1">
+                <li>H2: Why AI visibility needs a different ROI model</li>
+                <li>H2: Inputs that determine value</li>
+                <li>H2: Example model by industry</li>
+                <li>H2: Leading vs lagging indicators</li>
+                <li>H2: How to report ROI to finance and exec teams</li>
+                <li>H2: Calculator / downloadable template</li>
+              </ul>
+            </div>
+            <div>
+              <h4 class="font-bold">Why Google ranking</h4>
+              <p class="small text-slate-700 mt-2">The page already exists and is differentiated. The update should focus on tighter keyword alignment, internal links from all AI visibility pages, and stronger SERP extraction elements.</p>
+
+              <h4 class="font-bold mt-4">Why GenAI / LLM coverage</h4>
+              <p class="small text-slate-700 mt-2">Framework pages can become reference sources when they present formulas, labeled variables, and industry examples. Add calculator snippets, formula callouts, and FAQ blocks.</p>
+
+              <h4 class="font-bold mt-4">Estimated traffic opportunity</h4>
+              <p class="small text-slate-700 mt-2">~40–100 monthly clicks directly; higher indirect value through demos and stakeholder education.</p>
+
+              <h4 class="font-bold mt-4">Priority</h4>
+              <p class="small text-slate-700 mt-2"><strong>Low</strong> — strategically useful, but lower urgency than definition, tool, and comparison gaps.</p>
+            </div>
+          </div>
+        </article>
+      </section>
+
+      <section class="card p-6">
+        <h2 class="font-extrabold text-xl text-slate-900 mb-3">Recommended execution sequence</h2>
+        <ol class="list-decimal pl-5 space-y-2 text-slate-700">
+          <li>Refresh <strong>What Is AI Visibility?</strong> into the canonical hub.</li>
+          <li>Publish <strong>LLM Visibility</strong> as the adjacent exact-match pillar.</li>
+          <li>Publish <strong>AI Visibility Checker</strong> and <strong>Best AI Visibility Tools</strong> to capture tool/comparison intent.</li>
+          <li>Publish <strong>Methodology</strong> and <strong>AI Visibility vs SEO Visibility</strong> to deepen trust and win citations.</li>
+          <li>Expand existing <strong>Track AI Visibility</strong> and <strong>AI Visibility ROI</strong> pages and connect all assets through a hub-and-spoke architecture.</li>
+        </ol>
+      </section>
+
+      <section class="card p-6">
+        <h2 class="font-extrabold text-xl text-slate-900 mb-3">Live research notes used for update/new-content classification</h2>
+        <div class="small text-slate-700 space-y-2">
+          <div><strong>Existing Similarweb pages found:</strong> “What Is AI Visibility?”, “AI Visibility ROI”, “How to Track AI Visibility Using Similarweb”, “AI Visibility Gaps”, “AI Visibility Momentum”, AI Brand Visibility product pages, launch announcement, Gen AI Intelligence KB, and AI Brand Visibility KB/help pages.</div>
+          <div><strong>Competitor pages found:</strong> Semrush AI Visibility overview, AI Visibility Index, free AI visibility checker, toolkit KB pages; Ahrefs AI visibility guide; SE Ranking AI Visibility Tracker; Search Engine Land LLM visibility tactics; Backlinko LLM visibility article.</div>
+          <div><strong>Implication:</strong> Similarweb already participates in the topic, but coverage is skewed toward product and selective editorial pieces. The biggest opportunity is to close exact-match and commercial-intent gaps while turning existing articles into stronger hub assets.</div>
+        </div>
+      </section>
+    </div>
+  </main>
+
+  <!-- Real Chart.js — NO defer, NO async -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+  <script>
+    (window._chartQ || []).forEach(function(a) {
+      try { new Chart(a[0], a[1]); } catch(e) { console.error('Chart error', e); }
+    });
+    window._chartQ = [];
+
+    const gridColor = '#e2e8f0';
+    const labelColor = '#334155';
+
+    new Chart(document.getElementById('shareTrend'), {
+      type: 'line',
+      data: {
+        labels: ['2025-10','2025-11','2025-12','2026-01','2026-02','2026-03'],
+        datasets: [
+          { label:'Similarweb', data:[6.99,3.57,4.48,1.41,0,0], borderColor:'#ff9600', backgroundColor:'#ff9600', tension:.3, borderWidth:3, pointRadius:4 },
+          { label:'Semrush', data:[23.78,88.81,76.12,74.65,79.17,86.54], borderColor:'#c9ccd1', backgroundColor:'#c9ccd1', tension:.3, borderWidth:3, pointRadius:4 },
+          { label:'Ahrefs', data:[0,1.96,0,0,3.95,6.59], borderColor:'#3a57fc', backgroundColor:'#3a57fc', tension:.3, borderWidth:3, pointRadius:4 },
+          { label:'SE Ranking', data:[2.10,1.41,1.48,0,6.25,4.40], borderColor:'#d012f8', backgroundColor:'#d012f8', tension:.3, borderWidth:3, pointRadius:4 },
+          { label:'KeySearch', data:[0,0,0,0,0,0], borderColor:'#b22446', backgroundColor:'#b22446', tension:.3, borderWidth:3, pointRadius:4 }
+        ]
+      },
+      options: {
+        responsive:true,
+        maintainAspectRatio:false,
+        plugins:{ legend:{ labels:{ color:labelColor } } },
+        scales:{
+          y:{ beginAtZero:true, ticks:{ color:labelColor, callback:(v)=>v+'%' }, grid:{ color:gridColor } },
+          x:{ ticks:{ color:labelColor }, grid:{ color:gridColor } }
+        }
+      }
+    });
+
+    new Chart(document.getElementById('serpBar'), {
+      type: 'bar',
+      data: {
+        labels: ['Paid','Organic','Related Searches','Video','AI Overview','Inline Sitelinks','Sitelinks','Related Questions','Images','News'],
+        datasets: [{
+          label: 'Mar 2026 occurrences',
+          data: [46,34,34,29,22,19,19,18,9,1],
+          backgroundColor: ['#1c3654','#ff9600','#f59e0b','#3a57fc','#d012f8','#94a3b8','#64748b','#10b981','#0ea5e9','#ef4444']
+        }]
+      },
+      options: {
+        responsive:true,
+        maintainAspectRatio:false,
+        plugins:{ legend:{ display:false } },
+        scales:{
+          y:{ beginAtZero:true, ticks:{ color:labelColor }, grid:{ color:gridColor } },
+          x:{ ticks:{ color:labelColor }, grid:{ display:false } }
+        }
+      }
+    });
+
+    new Chart(document.getElementById('coverageDonut'), {
+      type: 'doughnut',
+      data: {
+        labels: ['Covered clusters','Uncovered / weak clusters'],
+        datasets: [{
+          data: [35,65],
+          backgroundColor: ['#ff9600','#1c3654']
+        }]
+      },
+      options: {
+        responsive:true,
+        maintainAspectRatio:false,
+        plugins:{ legend:{ labels:{ color:labelColor } } }
+      }
+    });
+
+    new Chart(document.getElementById('priorityMatrix'), {
+      type: 'bubble',
+      data: {
+        datasets: [
+          { label:'Category definition', data:[{x:95,y:80,r:22}], backgroundColor:'rgba(255,150,0,.75)', borderColor:'#ff9600' },
+          { label:'Measurement / score', data:[{x:78,y:55,r:18}], backgroundColor:'rgba(28,54,84,.75)', borderColor:'#1c3654' },
+          { label:'Best tools / comparisons', data:[{x:72,y:48,r:16}], backgroundColor:'rgba(208,18,248,.65)', borderColor:'#d012f8' },
+          { label:'Methodology', data:[{x:52,y:35,r:14}], backgroundColor:'rgba(58,87,252,.65)', borderColor:'#3a57fc' },
+          { label:'Correlation / ROI / proof', data:[{x:60,y:44,r:15}], backgroundColor:'rgba(34,197,94,.65)', borderColor:'#16a34a' },
+          { label:'Operational playbooks', data:[{x:58,y:40,r:14}], backgroundColor:'rgba(245,158,11,.65)', borderColor:'#f59e0b' }
+        ]
+      },
+      options: {
+        responsive:true,
+        maintainAspectRatio:false,
+        scales:{
+          x:{ title:{ display:true, text:'Volume × Gap Size', color:labelColor }, ticks:{ color:labelColor }, grid:{ color:gridColor } },
+          y:{ title:{ display:true, text:'Estimated Effort', color:labelColor }, ticks:{ color:labelColor }, grid:{ color:gridColor } }
+        },
+        plugins:{ legend:{ labels:{ color:labelColor } } }
+      }
+    });
+  </script>
+</body>
+</html>

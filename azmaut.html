@@ -187,6 +187,7 @@ label.key-label{display:flex;align-items:center;gap:6px;font-size:14px;color:var
         <label class="key-label">טון:
           <select id="key-select" onchange="onKeyChange()"></select>
         </label>
+        <button id="default-key-btn" class="hdr-btn" onclick="setDefaultKey()" title="שמור טון כברירת מחדל לשיר זה">⭐ קבע</button>
         <button id="edit-btn" class="hdr-btn" onclick="toggleEditMode()" title="עריכת אקורדים">עריכה ✏</button>
       </div>
     </div>
@@ -248,7 +249,53 @@ let currentSongId = null;
 let currentKeyIdx = 0;  // index into KEYS array (0=C)
 let currentFontSize = parseInt(localStorage.getItem('fontSize') || '20');
 
-function init() {
+// ── INDEXEDDB ─────────────────────────────────────────────────
+let db = null;
+
+function openDB() {
+  return new Promise((resolve, reject) => {
+    const req = indexedDB.open('shiron_db', 1);
+    req.onupgradeneeded = e => {
+      e.target.result.createObjectStore('song_settings', { keyPath: 'id' });
+    };
+    req.onsuccess = e => resolve(e.target.result);
+    req.onerror = e => reject(e.target.error);
+  });
+}
+
+async function initDB() {
+  try { db = await openDB(); } catch(e) { console.warn('IndexedDB unavailable', e); }
+}
+
+function saveDefaultKey(songId, keyIdx) {
+  if (!db) return;
+  const tx = db.transaction('song_settings', 'readwrite');
+  tx.objectStore('song_settings').put({ id: songId, defaultKey: keyIdx });
+}
+
+function loadDefaultKey(songId) {
+  return new Promise(resolve => {
+    if (!db) { resolve(null); return; }
+    const req = db.transaction('song_settings', 'readonly')
+                  .objectStore('song_settings').get(songId);
+    req.onsuccess = e => resolve(e.target.result ? e.target.result.defaultKey : null);
+    req.onerror = () => resolve(null);
+  });
+}
+
+function setDefaultKey() {
+  if (!currentSongId) return;
+  saveDefaultKey(currentSongId, currentKeyIdx);
+  const btn = document.getElementById('default-key-btn');
+  const orig = btn.textContent;
+  btn.textContent = '✓ נשמר';
+  btn.disabled = true;
+  setTimeout(() => { btn.textContent = orig; btn.disabled = false; }, 1500);
+}
+
+async function init() {
+  await initDB();
+
   // Build song list
   const list = document.getElementById('song-list');
   SONGS.forEach(song => {
@@ -280,7 +327,7 @@ function init() {
   }
 }
 
-function loadSong(id) {
+async function loadSong(id) {
   const song = SONGS.find(s => s.id === id);
   if (!song) return;
 
@@ -298,8 +345,9 @@ function loadSong(id) {
   document.getElementById('song-title').textContent = song.title;
   document.getElementById('header-title').textContent = song.title;
 
-  // Set key to song's default
-  currentKeyIdx = song.defaultKey;
+  // Use saved default key if available, else song's built-in default
+  const savedKey = await loadDefaultKey(id);
+  currentKeyIdx = savedKey !== null ? savedKey : song.defaultKey;
   document.getElementById('key-select').value = currentKeyIdx;
 
   loadChordOverrides(song);
